@@ -1,0 +1,17 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
+# debian-compat wrapper: debian/*.install files hard-code Debian's perl and python paths,
+# so expose them inside debian/tmp as symlinks to where openSUSE's interpreters installed the files
+for d in debian/tmp; do
+    [ -d $d ] || continue
+    v=$(perl -MConfig -e 'print $Config{version}' 2>/dev/null)
+    if [ -n "$v" ] && [ -d $d/usr/lib/perl5/vendor_perl/$v ] && [ ! -e $d/usr/share/perl5 ]; then
+        mkdir -p $d/usr/share && ln -s ../lib/perl5/vendor_perl/$v $d/usr/share/perl5
+    fi
+    for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))' 2>/dev/null); do
+        if [ -d $d$site ] && [ ! -e $d/usr/lib/python3/dist-packages ]; then
+            mkdir -p $d/usr/lib/python3 && ln -s $d$site $d/usr/lib/python3/dist-packages
+        fi
+    done
+done
+exec /usr/bin/dh_install "$@"

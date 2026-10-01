@@ -27,6 +27,7 @@ Source0:        macros.debian
 Source1:        debian-install
 Source2:        relocate.map
 Source3:        owned-dirs
+Source4:        dh_install
 BuildRequires:  binutils
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -73,6 +74,7 @@ Summary:        Debian triplet-prefixed names for the openSUSE toolchain
 Requires:       binutils
 Requires:       gcc
 Requires:       gcc-c++
+Requires:       gawk
 Requires:       pkgconf-pkg-config
 
 %description -n debian-compat-toolchain
@@ -112,6 +114,7 @@ for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_buil
     printf '#!/bin/sh\necho "debian-compat: skipping ${0##*/} $*" >&2\n' > %{buildroot}/usr/lib/debian-compat/bin/$s
     chmod 755 %{buildroot}/usr/lib/debian-compat/bin/$s
 done
+install -m755 %{SOURCE4} %{buildroot}/usr/lib/debian-compat/bin/dh_install
 # filesystem
 mkdir -p %{buildroot}/usr/lib/python3 %{buildroot}/usr/share
 ln -s ../lib64 %{buildroot}/usr/lib/x86_64-linux-gnu
@@ -120,6 +123,7 @@ ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{bu
 # Debian ships triplet-prefixed toolchain names
 mkdir -p %{buildroot}%{_bindir}
 for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
+ln -s gawk %{buildroot}%{_bindir}/mawk
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -148,6 +152,7 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 
 %files -n debian-compat-toolchain
 %{_bindir}/x86_64-linux-gnu-*
+%{_bindir}/mawk
 
 %files -n debian-compat-sensible-utils
 %{_bindir}/sensible-*

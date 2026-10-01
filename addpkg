@@ -26,7 +26,7 @@ for src in "$@"; do
     fi
     deb2spec $src $x/extracted > $pkgdir/$src.spec.new || die "$src: deb2spec failed"
     ver=$(grep '^%global debian_version' $pkgdir/$src.spec.new | cut -d' ' -f3)
-    if [ -e $pkgdir/$src.spec ] && cmp -s $pkgdir/$src.spec $pkgdir/$src.spec.new && [ "$force" != 1 ]; then
+    if [ "$update" = 1 ] && cmp -s $pkgdir/$src.spec $pkgdir/$src.spec.new && [ "$force" != 1 ]; then
         rm $pkgdir/$src.spec.new; log "$src: unchanged ($ver)"; continue
     fi
     mv $pkgdir/$src.spec.new $pkgdir/$src.spec

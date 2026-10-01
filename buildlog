@@ -1,0 +1,11 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: buildlog [PKG...]  - last error lines of failed/broken builds in $prj (default: all of them from status)
+. "$(dirname "$0")/lib.sh"
+pkgs="$*"
+[ -n "$pkgs" ] || { status >/dev/null; pkgs=$(awk '$2 ~ /^(failed|broken)$/ {print $1}' $out/status.txt); }
+for p in $pkgs; do
+    echo "=== $p"
+    osc rbl $prj $p $repo $arch 2>&1 | sed -E 's/^\[ *[0-9]+s\] //' | grep -v -E '^\+|preinstalling|cumulate|####|^ *$|^\.\.\. ' |
+        grep -E -B4 'error:|Error [0-9]|ERROR|rror: |not owned|cannot find|No such file|unpackaged|Bad exit' | grep -v -E '^Executing|^Processing' | tail -${limit:-14}
+done

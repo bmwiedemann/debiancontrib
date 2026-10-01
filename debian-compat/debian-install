@@ -34,7 +34,9 @@ while (<$fh>) {
 }
 close $fh;
 my %fsdir = map { chomp; $_ => 1 } qx(rpm -ql filesystem);
-my @owned = map { chomp; $_ } grep { !/^#/ && /\S/ } do { open(my $o, '<', "$compat/owned-dirs") or die; <$o> };
+my %owned = map { chomp; $_ => 1 } grep { !/^#/ && /\S/ } do { open(my $o, '<', "$compat/owned-dirs") or die; <$o> };
+# directories already owned by a package in the build root need no %dir
+sub owned(@) { my @d = grep { !$fsdir{$_} && !$owned{$_} } @_ or return (); my %u; $u{$1} = 1 for grep { s/^file (.*) is not owned by any package$/$1/ } split /\n/, qx(rpm -qf @d 2>&1); return grep { !$u{$_} } @d }
 
 # relocate("/usr/lib/x86_64-linux-gnu/libfoo.so.1", $isarch) -> new path, or undef to drop
 sub relocate($$) {
@@ -94,8 +96,9 @@ for my $pkg (@pkgs) {
         }
     }
     open(my $lf, '>', "$listdir/$pkg") or die;
+    my %isowned = map { $_ => 1 } owned(grep { $_ ne '/' } keys %dirs);
     for my $d (sort keys %dirs) {
-        next if $fsdir{$d} || $d eq '/' || grep { $d eq $_ || index($d, "$_/") == 0 } @owned;
+        next if $fsdir{$d} || $owned{$d} || $isowned{$d} || $d eq '/';
         print $lf "%dir $d\n";
     }
     for my $f (@list) {
@@ -103,7 +106,7 @@ for my $pkg (@pkgs) {
         $pre = '%config(noreplace) ' if $f =~ m{^/etc/};
         $pre = '%license ' if $f eq "/usr/share/doc/packages/$pkg/copyright";
         $f =~ s/\.gz$// if $f =~ m{^/usr/share/(man|info)/};
-        $f .= '*' if $f =~ m{^/usr/share/(man/man\w+/|info/)[^/]+$};
+        $f .= '*' if $f =~ m{^/usr/share/(man/([^/]+/)?man\w+/|info/)[^/]+$};
         $f = qq("$f") if $f =~ /[\s"']/;
         print $lf "$pre$f\n";
     }
