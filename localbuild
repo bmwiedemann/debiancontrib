@@ -15,10 +15,10 @@ zypper lr debiancontrib-local >/dev/null 2>&1 || sudo -n zypper -n ar --no-gpgch
 sudo -n zypper -n ref debiancontrib-local >/dev/null
 br=\$(rpmspec -q --buildrequires $spec | sed 's/ .*//' | grep -v '^rpmlib')
 [ -z \"\$br\" ] || sudo -n zypper -n in --no-recommends \$br >/dev/null || { echo 'build dependency install failed'; exit 1; }
-rpmbuild --define '_topdir $out/rpmbuild' --define '_sourcedir $d' --define '_rpmdir $out/rpms' --define '_srcrpmdir $out/rpms' -ba $spec > $out/localbuild.log 2>&1 || { tail -60 $out/localbuild.log; exit 1; }
-grep -E '^(Wrote|debian-install|debian-compat):' $out/localbuild.log
+rpmbuild --define '_topdir $out/rpmbuild' --define '_sourcedir $d' --define '_rpmdir $out/rpms' --define '_srcrpmdir $out/rpms' -ba $spec > $out/localbuild-$(basename $d).log 2>&1 || { tail -60 $out/localbuild-$(basename $d).log; exit 1; }
+grep -E '^(Wrote|debian-install|debian-compat):' $out/localbuild-$(basename $d).log
 if [ '$install' = 1 ]; then
     sudo -n zypper -n ref debiancontrib-local >/dev/null
-    sudo -n zypper -n in --no-recommends --allow-unsigned-rpm --force-resolution \$(rpmspec -q --qf '%{NAME}\n' $spec | grep -v debuginfo) >/dev/null && echo installed
+    sudo -n zypper -n in --no-recommends --allow-unsigned-rpm \$(grep '^Wrote:' $out/localbuild-$(basename $d).log | cut -d' ' -f2 | grep -v -e '\.src\.rpm' -e debuginfo -e debugsource) >/dev/null && echo installed
 fi
 "

@@ -98,6 +98,9 @@ mkdir -p %{buildroot}/usr/lib/python3 %{buildroot}/usr/share
 ln -s ../lib64 %{buildroot}/usr/lib/x86_64-linux-gnu
 ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/usr/lib/python3/dist-packages
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
+# Debian ships triplet-prefixed toolchain names
+mkdir -p %{buildroot}%{_bindir}
+for t in gcc g++ cpp gfortran gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd ld.gold nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -120,6 +123,7 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu
+%{_bindir}/x86_64-linux-gnu-*
 %dir /usr/lib/python3
 /usr/lib/python3/dist-packages
 /usr/share/perl5

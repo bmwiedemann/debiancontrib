@@ -1,0 +1,24 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [commit=1] [list=1] updatepkg [SRCNAME...]  - refresh packages whose Debian version moved on
+# without arguments every package of $prj is checked; list=1 only reports
+. "$(dirname "$0")/lib.sh"
+: ${list:=0}
+pkgs="$*"
+[ -n "$pkgs" ] || pkgs=$(osc_api "source/$prj" | grep -o '<entry name="[^"]*"' | cut -d'"' -f2 | grep -v '^debian-compat$')
+: > $out/obsolete.txt
+for p in $pkgs; do
+    spec=$(osc_api "source/$prj/$p/$p.spec" 2>/dev/null) || { log "$p: no spec"; continue; }
+    have=$(echo "$spec" | grep '^%global debian_version' | awk '{print $3}')
+    new=$(grep -P "^$p\t" $cache/debian-sources.tsv | cut -f2)
+    [ -n "$new" ] || { log "$p: gone from Debian $dist"; continue; }
+    status=$(grep -P "^$p\t" $cache/match.tsv | cut -f2)
+    [ "$status" = missing ] || echo "$p $status" >> $out/obsolete.txt
+    [ "$have" = "$new" ] && continue
+    if dpkg --compare-versions "$new" gt "$have"; then
+        echo "$p $have -> $new"
+        [ "$list" = 1 ] || addpkg $p
+    fi
+done
+[ -s $out/obsolete.txt ] && log "now available in openSUSE (consider dropping): $(wc -l < $out/obsolete.txt), see out/obsolete.txt"
+true

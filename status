@@ -1,0 +1,10 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: status  - build status table of $prj/$repo/$arch; exit 0 all good, 1 still building, 2 settled failures
+. "$(dirname "$0")/lib.sh"
+res=$(osc_api "build/$prj/_result?repository=$repo&arch=$arch&view=status") || die "no result"
+echo "$res" | grep -o '<status package="[^"]*" code="[^"]*"' | sed 's/<status package="//; s/" code="/ /; s/"$//' | sort -k2 | tee $out/status.txt | awk '{c[$2]++} END {for (k in c) printf "%-14s %d\n", k, c[k]}' | sort
+echo "$res" | grep -q 'dirty="true"' && { echo "(dirty: scheduler still catching up)"; exit 1; }
+grep -q -E ' (scheduled|building|blocked|dispatching|signing|finished)$' $out/status.txt && exit 1
+grep -q -E ' (failed|broken|unresolvable|unknown)$' $out/status.txt && exit 2
+exit 0

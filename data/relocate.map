@@ -6,6 +6,8 @@ DROP	^/usr/share/bug/
 DROP	^/usr/share/doc-base/
 DROP	^/DEBIAN/
 DROP	\.la$
+DROP	perllocal\.pod$
+DROP	\.packlist$
 DROP	^/usr/share/doc/[^/]+/changelog\.Debian
 DROP	^/usr/share/doc/[^/]+/NEWS\.Debian
 ^/usr/lib/x86_64-linux-gnu/perl5/5\.[0-9.]+/	%{perl_vendorarch}/

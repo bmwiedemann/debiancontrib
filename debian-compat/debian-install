@@ -64,8 +64,9 @@ for my $pkg (@pkgs) {
     find({ no_chdir => 1, wanted => sub { push @entries, $File::Find::name unless $_ eq $tree } }, $tree);
     for my $e (sort @entries) {
         (my $src = $e) =~ s/^\Q$tree\E//;
-        my $dst = relocate($src, $isarch);
+        my $dst = relocate(-d $e && !-l $e ? "$src/" : $src, $isarch);
         next unless defined $dst;
+        $dst =~ s{(.)/$}{$1};
         die "$pkg: $dst still has the Debian multiarch path\n" if $dst =~ m{^/usr/lib/x86_64-linux-gnu/};
         if (-l $e) {
             my $t = readlink $e;
@@ -86,7 +87,7 @@ for my $pkg (@pkgs) {
             chmod((stat $e)[2] & 07777, "$root$dst");
             if ($dst =~ m{^/usr/(lib64/pkgconfig|share/pkgconfig|lib64/cmake|bin/[^/]*-config$)} && -T "$root$dst") {
                 local ($^I, @ARGV) = ('', "$root$dst");
-                while (<>) { s{/usr/lib/x86_64-linux-gnu}{/usr/lib64}g; print }
+                while (<>) { s{/lib/x86_64-linux-gnu}{/lib64}g; print }
             }
             $dirs{$_} = 1 for parents($dst);
             push @list, $dst;

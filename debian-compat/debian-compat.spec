@@ -287,6 +287,28 @@ Pulls in the openSUSE packages providing what Debian's libjpeg-dev provides.
 
 %files -n debian-compat-libjpeg-dev
 
+%package -n debian-compat-libmailtools-perl
+Summary:        Debian compatibility: libmailtools-perl -> perl-MailTools
+Provides:       deb(libmailtools-perl)
+Requires:       perl-MailTools
+BuildArch:      noarch
+
+%description -n debian-compat-libmailtools-perl
+Pulls in the openSUSE packages providing what Debian's libmailtools-perl provides.
+
+%files -n debian-compat-libmailtools-perl
+
+%package -n debian-compat-libmime-tools-perl
+Summary:        Debian compatibility: libmime-tools-perl -> perl-MIME-tools
+Provides:       deb(libmime-tools-perl)
+Requires:       perl-MIME-tools
+BuildArch:      noarch
+
+%description -n debian-compat-libmime-tools-perl
+Pulls in the openSUSE packages providing what Debian's libmime-tools-perl provides.
+
+%files -n debian-compat-libmime-tools-perl
+
 %package -n debian-compat-libncurses-dev
 Summary:        Debian compatibility: libncurses-dev -> pkgconfig(form) pkgconfig(formw) pkgconfig(menu) pkgconfig(menuw) pkgconfig(ncurses++) pkgconfig(ncurses++w) pkgconfig(ncurses) pkgconfig(ncursesw) pkgconfig(panel) pkgconfig(panelw) pkgconfig(tic) pkgconfig(tinfo)
 Provides:       deb(libncurses-dev)
@@ -631,6 +653,9 @@ mkdir -p %{buildroot}/usr/lib/python3 %{buildroot}/usr/share
 ln -s ../lib64 %{buildroot}/usr/lib/x86_64-linux-gnu
 ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/usr/lib/python3/dist-packages
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
+# Debian ships triplet-prefixed toolchain names
+mkdir -p %{buildroot}%{_bindir}
+for t in gcc g++ cpp gfortran gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd ld.gold nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -653,6 +678,7 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu
+%{_bindir}/x86_64-linux-gnu-*
 %dir /usr/lib/python3
 /usr/lib/python3/dist-packages
 /usr/share/perl5

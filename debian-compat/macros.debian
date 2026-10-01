@@ -18,7 +18,8 @@ export DEB_CFLAGS_APPEND="%{optflags}" DEB_CXXFLAGS_APPEND="%{optflags}" \
 export SOURCE_DATE_EPOCH=$(dpkg-parsechangelog -STimestamp) \
 export LC_ALL=C.UTF-8 \
 export HOME=$PWD/.home; mkdir -p $HOME \
-eval "$(dpkg-architecture -a amd64 -t x86_64-linux-gnu -f -s 2>/dev/null)"
+eval "$(dpkg-architecture -a amd64 -t x86_64-linux-gnu -f -s 2>/dev/null)" \
+for v in ARCH ARCH_ABI ARCH_BITS ARCH_CPU ARCH_ENDIAN ARCH_LIBC ARCH_OS GNU_CPU GNU_SYSTEM GNU_TYPE MULTIARCH; do h=DEB_HOST_$v; export DEB_BUILD_$v="${!h}"; done
 
 %debian_build \
 cd %{debian_srcdir} \
