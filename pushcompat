@@ -20,4 +20,4 @@ msg="Update debian-compat to $ver ($n subpackages)"
 [ -e debian-compat.changes ] || msg="Initial debian-compat $ver ($n subpackages)"
 echo "- $msg" | changesadd debian-compat.changes
 osc status
-if [ "$commit" = 1 ]; then osc ci --skip-local-service-run -m "$msg" >/dev/null && log "committed: $msg"; else log "commit=1 to send"; fi
+if [ "$commit" = 1 ]; then { osc ci --skip-local-service-run -m "$msg" >/dev/null || die "osc ci failed"; } && log "committed: $msg"; else log "commit=1 to send"; fi
