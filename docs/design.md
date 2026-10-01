@@ -65,14 +65,16 @@ do not count) or its files match Slowroll, Tumbleweed or any Factory
 devel project. Files are compared as distro-neutral keys (`file_key` in
 lib/deb.pm: command, font file, soname, .pc and header names, perl/python/lua
 module paths), so google-caladea-fonts is found for fonts-crosextra-caladea by
-its Caladea-*.ttf (fonts also by family name prefix, for .ttc vs .otf). Half
-of the keys of one class must exist in openSUSE, and at least two for
-commands, headers and .pc files, which are too generic alone. Metapackages and
-transitional packages (no files outside /usr/share/doc, from
-`cache/debian-nfiles.tsv`) count as present when most of their dependencies
-are (xfce4 -> xfwm4, thunar, ...). `exceptions/have` with `-` overrides a
-false match. `match` warns about packages of our project that now look
-present.
+its Caladea-*.ttf. Fonts also match by family name (at least 8 characters;
+openSUSE's may add up to 3 more, NotoSansCJK -> NotoSansCJKjp, for .ttc vs
+.otf). Half of the keys of one class must exist in openSUSE, and at least two
+for commands, headers and .pc files, which are too generic alone, unless the
+command is named like the package; headers and .pc files do not decide when
+none of the commands exist. Metapackages and transitional packages (no files
+outside /usr/share/{doc,lintian,bug}, from `cache/debian-nfiles.tsv`, not in
+section doc) count as present when at least half of their dependencies are
+(xfce4 -> xfwm4, thunar, ...). `exceptions/have` with `-` overrides a false
+match. `match` warns about packages of our project that now look present.
 `candidates` ranks the rest by popcon, drops `exceptions/blocklist`
 (Debian infrastructure, kernel, firmware, patent-encumbered codecs) and the ecosystems in
 `exceptions/ecosystems` (rust, go, haskell, R, ocaml unless `ecosystems=`

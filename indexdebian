@@ -50,5 +50,5 @@ my %keep = map { $_->[0] => $_ } grep { $_->[1] eq $best{$_->[0]} } @src;
 tsv::write_tsv("$cache/debian-sources.tsv", \@src);
 tsv::write_tsv("$cache/debian-binaries.tsv", \@bin);
 tsv::write_tsv("$cache/debian-files.tsv", \@files);
-tsv::write_tsv("$cache/debian-nfiles.tsv", [map { [$_, $nfiles{$_}] } sort keys %nfiles]); # binary -> number of files outside /usr/share/doc
+tsv::write_tsv("$cache/debian-nfiles.tsv", [map { [$_, $nfiles{$_}] } sort keys %nfiles]); # binary -> number of files outside /usr/share/{doc,lintian,bug}
 printf "%d sources, %d binaries, %d files\n", scalar @src, scalar @bin, scalar @files;

@@ -15,18 +15,20 @@ tsv::read_tsv("$cache/suse-sources.tsv", sub { push @{$src{lc $_[0]}}, $_[3]; pu
 tsv::read_tsv("$cache/suse-provides.tsv", sub { $bin{lc $_[0]} //= $_[1] if $_[0] !~ m{^/|\(} });
 tsv::read_tsv("$cache/suse-binaries.tsv", sub { $bin{lc $_[0]} //= $_[0] });
 tsv::read_tsv("$cache/suse-files.tsv", sub { my $k = file_key($_[0]); $file{$k} //= $_[1] if $k && $_[1] !~ /-32bit$/ });
-# font family = file name up to the style, as prefixes: Debian's NotoSansCJK-Bold.ttc is openSUSE's NotoSansCJKjp-VF.otf
+# font family = file name up to the style; openSUSE's may add a short region suffix: Debian's NotoSansCJK-Bold.ttc
+# is openSUSE's NotoSansCJKjp-VF.otf, but AtkinsonHyperlegible is not AtkinsonHyperlegibleNext
 sub fontfam($) { $_[0] =~ /^font:([a-z0-9]+)/ ? $1 : '' }
 my %fam;
-for my $k (grep { /^font:/ } keys %file) { my $f = fontfam($k); $fam{substr($f, 0, $_)} //= $file{$k} for 8 .. length $f }
+for my $k (sort grep { /^font:/ } keys %file) { my $f = fontfam($k); $fam{substr($f, 0, $_)} //= $file{$k} for grep { $_ >= 8 } length($f) - 3 .. length $f }
 my %depmap; # Debian binary -> openSUSE package, from mkdepmap's per-binary heuristics (perl/python modules, sonames, .pc files ...)
 tsv::read_tsv("$FindBin::RealBin/data/depmap", sub { $depmap{$_[0]} = $_[1] });
 my %debfiles; # binary -> {file_key}
 tsv::read_tsv("$cache/debian-files.tsv", sub { my $k = file_key($_[0]); $debfiles{$_[1]}{$k} = 1 if $k });
-my %nfiles; # binary -> files outside /usr/share/doc; metapackages and transitional packages have none
+my %nfiles; # binary -> files outside /usr/share/{doc,lintian,bug}; metapackages and transitional packages have none
 tsv::read_tsv("$cache/debian-nfiles.tsv", sub { $nfiles{$_[0]} = $_[1] });
 my (%binsrc, %bindeps);
-tsv::read_tsv("$cache/debian-binaries.tsv", sub { $binsrc{$_[0]} //= $_[1]; $bindeps{$_[0]} //= "$_[6], $_[7]" });
+my %binsec;
+tsv::read_tsv("$cache/debian-binaries.tsv", sub { $binsrc{$_[0]} //= $_[1]; $bindeps{$_[0]} //= "$_[6], $_[7]"; $binsec{$_[0]} //= $_[4] });
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
@@ -55,28 +57,42 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
                 my $p = $file{$_} // ($c eq 'font' ? $fam{fontfam($_)} : undef) or next;
                 $fsrc{$_} = $p; push @{$fok{$c}}, $_;
             }
-            # one command name or header (memdump, notify, db.h) is too common to decide on; one font/module/soname is not
-            my %okc = map { $_ => 1 } grep { $fok{$_} && @{$fok{$_}} * 2 >= $ftot{$_} && (@{$fok{$_}} >= 2 || !/^(bin|inc|pc)$/) } keys %ftot;
+            # one command name or header (memdump, notify, db.h) is too common to decide on, unless it is the package's
+            # own name (ecj, tkdiff); one font/module/soname is not
+            my %own = map { $_ => 1 } $name, split /,/, $bins;
+            my %okc = map { $_ => 1 } grep { $fok{$_} && @{$fok{$_}} * 2 >= $ftot{$_} && (@{$fok{$_}} >= 2 || !/^(bin|inc|pc)$/ || $own{$fok{$_}[0] =~ s/^bin://r}) } keys %ftot;
+            # headers alone do not decide when none of the commands exist (minimap2 bundles klib's headers)
+            %okc = () if $ftot{bin} && !$fok{bin} && !grep { !/^(inc|pc)$/ } keys %okc;
             my @fhit = map { @{$fok{$_}} } sort keys %okc;
             @bf = grep { my ($c) = /^(\w+):/; $okc{$c} } @bf;
             my %fpkg; $fpkg{$fsrc{$_}}++ for @fhit;
             if (@hit && (@hit * 2 >= @b || grep { $_ eq $name } @hit)) { ($status, $ev) = ('have-binary', join(',', map { $depmap{$_} ? "$_=$depmap{$_}" : $_ } @hit) . " of " . scalar(@b)) }
-            elsif (@fhit) { ($status, $ev) = ('have-files', join(',', (sort { $fpkg{$b} <=> $fpkg{$a} || $a cmp $b } keys %fpkg)[0..(keys %fpkg > 3 ? 2 : keys(%fpkg) - 1)]) . " " . scalar(@fhit) . "/" . scalar(@bf) . " e.g. $fhit[0]") }
+            elsif (@fhit) {
+                my @p = sort { $fpkg{$b} <=> $fpkg{$a} || $a cmp $b } keys %fpkg; splice @p, 3;
+                ($status, $ev) = ('have-files', join(',', @p) . " " . scalar(@fhit) . "/" . scalar(@bf) . " e.g. $fhit[0]");
+            }
             elsif (@hit) { ($status, $ev) = ('missing', "weak: binaries @hit of " . scalar(@b)) }
             else { ($status, $ev) = ('missing', '') }
         }
     }
     push @res, [$name, $status, $ev, $bins];
 });
-# metapackages / transitional packages (no files beyond /usr/share/doc) whose dependencies openSUSE already has
+# metapackages / transitional packages (no files beyond /usr/share/{doc,lintian,bug}, not documentation)
+# whose dependencies openSUSE already has; repeated until metapackages of metapackages settle
 my %st = map { $_->[0] => $_->[1] } @res;
-for my $r (grep { $_->[1] eq 'missing' && !$have{$_->[0]} } @res) {
-    my @b = grep { !/-(doc|dbg|dbgsym|udeb)$/ } split /,/, $r->[3];
-    next if !@b || grep { $nfiles{$_} || !exists $bindeps{$_} } @b; # not built on amd64 counts as unknown
-    my %own = map { $_ => 1 } @b;
-    my @d = grep { !$own{$_} } map { dep_names($bindeps{$_} // '') } @b;
-    my @ok = grep { my $d = $_; ($binsrc{$d} && ($st{$binsrc{$d}} // '') =~ /^have-/) || $depmap{$d} || grep { $bin{$_} } normalize_name($d) } @d;
-    @$r[1, 2] = ('have-meta', scalar(@ok) . "/" . scalar(@d) . " deps: " . join(',', @ok[0..($#ok > 4 ? 4 : $#ok)])) if @d && @ok * 2 >= @d;
+for (my $changed = 1; $changed;) {
+    $changed = 0;
+    for my $r (grep { $_->[1] eq 'missing' && !$have{$_->[0]} } @res) {
+        my @b = grep { !/-(doc|dbg|dbgsym|udeb)$/ } split /,/, $r->[3];
+        next if !@b || grep { $nfiles{$_} || !exists $bindeps{$_} } @b; # not built on amd64 counts as unknown
+        next unless grep { ($binsec{$_} // '') !~ m{(^|/)doc$} } @b;
+        my %own = map { $_ => 1 } @b;
+        my %seen; my @d = grep { !$own{$_} && !$seen{$_}++ } map { dep_names($bindeps{$_} // '') } @b;
+        my @ok = grep { my $d = $_; ($binsrc{$d} && ($st{$binsrc{$d}} // '') =~ /^have-/) || $depmap{$d} || grep { $bin{$_} } normalize_name($d) } @d;
+        next unless @d && @ok * 2 >= @d;
+        @$r[1, 2] = ('have-meta', scalar(@ok) . "/" . scalar(@d) . " deps: " . join(',', @ok[0..($#ok > 4 ? 4 : $#ok)]));
+        $st{$r->[0]} = 'have-meta'; $changed = 1;
+    }
 }
 for (@res) {
     pop @$_;

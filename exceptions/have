@@ -22,3 +22,5 @@ db5.3	-
 ssmtp	-
 hiredict	-
 vdr-plugin-osdteletext	-
+lua-ljsyscall	-
+astrometry-data-2mass	-

@@ -109,7 +109,7 @@ sub file_key($) {
     my $p = shift;
     return "bin:$1" if $p =~ m{^/usr/s?bin/([^/]+)$};
     return 'font:' . lc $1 if $p =~ m{^/usr/share/fonts/.*/([^/]+\.(?:ttf|otf|ttc|pfb|pfa|pcf(?:\.gz)?|bdf(?:\.gz)?|woff2?))$}i;
-    return "so:$1" if $p =~ m{^/usr/lib(?:64|/x86_64-linux-gnu)?/([^/]+\.so\.\d[^/]*)$};
+    return "so:$1" if $p =~ m{^/usr/lib(?:64|/x86_64-linux-gnu)?/([^/]+\.so\.\d+)(?:\.[^/]*)?$}; # libzstd.so.1.5.7 -> soname libzstd.so.1
     return "pc:$1" if $p =~ m{/pkgconfig/([^/]+)\.pc$};
     return "inc:$1" if $p =~ m{^/usr/include/(?:x86_64-linux-gnu/)?(.+\.h(?:h|pp|xx)?)$};
     return "pm:$1" if $p =~ m{^/usr/(?:share/perl5|lib/x86_64-linux-gnu/perl5/[\d.]+|lib/perl5/(?:vendor_perl/)?[\d.]+(?:/x86_64-linux-thread-multi)?)/(.+\.pm)$};
