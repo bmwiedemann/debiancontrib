@@ -94,6 +94,7 @@ push @out, map { "BuildRequires:  $_" } sort { $a cmp $b } grep { !/^\s*$/ } @br
 push @out, "BuildArch:      noarch" if !grep { $_->{Architecture} ne 'all' } @pkgs;
 push @out, "Provides:       deb(src:$src) = $debver" if $main->{Package} eq $src;
 push @out, "", "%description", desc($main->{Description}), "";
+my $mainpos = $#out - 2; # the main package's dependencies go before its %description
 for my $p (@pkgs) {
     my $n = $p->{Package};
     my $ismain = $n eq $src;
@@ -108,7 +109,7 @@ for my $p (@pkgs) {
     push @l, map { "Recommends:     $_" } deps($p->{Recommends}, 0);
     push @l, map { "Suggests:       $_" } deps($p->{Suggests}, 0);
     push @l, map { "Conflicts:      $_" } grep { my $x = $_; grep { "deb($_->{Package})" eq $x } @pkgs } deps(join(', ', grep { defined } $p->{Conflicts}, $p->{Breaks}), 0);
-    if ($ismain) { splice @out, $#out - 2, 0, @l } else { push @out, @l, "", "%description -n $n", desc($p->{Description}), "" }
+    if ($ismain) { splice @out, $mainpos, 0, @l } else { push @out, @l, "", "%description -n $n", desc($p->{Description}), "" }
 }
 push @out, "%prep", "%debian_prep", "", "%build", "%debian_build", "", "%install", "%debian_install", "";
 push @out, "%check", "%debian_check", "" unless $nocheck;
