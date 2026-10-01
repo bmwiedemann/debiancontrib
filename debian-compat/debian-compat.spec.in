@@ -28,6 +28,7 @@ Source1:        debian-install
 Source2:        relocate.map
 Source3:        owned-dirs
 Source4:        dh_install
+Source5:        py3versions
 BuildRequires:  binutils
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -115,6 +116,10 @@ for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_buil
     chmod 755 %{buildroot}/usr/lib/debian-compat/bin/$s
 done
 install -m755 %{SOURCE4} %{buildroot}/usr/lib/debian-compat/bin/dh_install
+install -m755 %{SOURCE5} %{buildroot}/usr/lib/debian-compat/bin/py3versions
+# what Debian's python3-defaults ships for dh-python
+mkdir -p %{buildroot}/usr/share/python3
+printf '[DEFAULT]\ndefault-version = python%{python3_version}\nsupported-versions = python%{python3_version}\n' > %{buildroot}/usr/share/python3/debian_defaults
 # filesystem
 mkdir -p %{buildroot}/usr/lib/python3 %{buildroot}/usr/share
 ln -s ../lib64 %{buildroot}/usr/lib/x86_64-linux-gnu
@@ -143,6 +148,8 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-rpm-macros
 %{_rpmmacrodir}/macros.debian
 /usr/lib/debian-compat
+%dir /usr/share/python3
+/usr/share/python3/debian_defaults
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu

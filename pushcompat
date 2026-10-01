@@ -10,7 +10,7 @@ if [ ! -d $d/.osc ]; then
     if osc_api "source/$prj/debian-compat" 2>/dev/null | grep -q '<entry '; then (cd $obs && osc co debian-compat >/dev/null)
     else (cd $obs && osc mkpac debian-compat >/dev/null); fi
 fi
-cp -p $top/debian-compat/debian-compat.spec $top/debian-compat/macros.debian $top/debian-compat/debian-install $top/debian-compat/dh_install $top/data/relocate.map $top/data/owned-dirs $d/
+cp -p $top/debian-compat/debian-compat.spec $top/debian-compat/macros.debian $top/debian-compat/debian-install $top/debian-compat/dh_install $top/debian-compat/py3versions $top/data/relocate.map $top/data/owned-dirs $d/
 cd $d
 ver=$(grep '^Version:' debian-compat.spec | awk '{print $2}')
 n=$(grep -c '^%package' debian-compat.spec)

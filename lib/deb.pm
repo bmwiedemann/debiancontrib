@@ -29,6 +29,7 @@ sub read_control($) { return Dpkg::Control::Info->new(filename => $_[0]) }
 sub dep_names($%) {
     my ($str, %o) = @_;
     return () unless defined $str;
+    $str =~ s/\(\s*[<>=]+\s*\$\{[^}]*\}\s*\)//g; # (= ${binary:Version})
     $str =~ s/\$\{[^}]*\}//g;
     $str =~ s/^[\s,]+|[\s,]+$//g;
     $str =~ s/,[\s,]*,/,/g;

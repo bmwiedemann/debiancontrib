@@ -1,0 +1,9 @@
+#!/usr/bin/python3
+# SPDX-License-Identifier: GPL-2.0-or-later
+# debian-compat stand-in for Debian's py3versions: openSUSE has exactly one python3
+import sys, sysconfig
+ver = sysconfig.get_python_version()
+opts = [c for a in sys.argv[1:] if a.startswith('-') and not a.startswith('--') for c in a[1:]]
+if not opts or opts == ['v']:
+    sys.exit("usage: py3versions [-v] -d|-s|-r|-i")
+print(ver if 'v' in opts else 'python' + ver)
