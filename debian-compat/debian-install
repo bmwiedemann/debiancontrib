@@ -5,6 +5,7 @@
 use strict; use warnings;
 use File::Find;
 use File::Path qw(make_path);
+use File::Spec;
 use File::Basename;
 use File::Copy;
 use Dpkg::Control::Info;
@@ -37,6 +38,9 @@ my %fsdir = map { chomp; $_ => 1 } qx(rpm -ql filesystem);
 my %owned = map { chomp; $_ => 1 } grep { !/^#/ && /\S/ } do { open(my $o, '<', "$compat/owned-dirs") or die; <$o> };
 # directories already owned by a package in the build root need no %dir
 sub owned(@) { my @d = grep { !$fsdir{$_} && !$owned{$_} } @_ or return (); my %u; $u{$_} = 1 for grep { s/^(?:error: )?file (.*?)(?: is not owned by any package|: No such file or directory)$/$1/ } split /\n/, qx(rpm -qf @d 2>&1); return grep { !$u{$_} } @d }
+
+# normpath("/usr/share/doc/p/../../x") -> "/usr/share/x"
+sub normpath($) { my @o; for (split m{/+}, $_[0]) { next if $_ eq '' || $_ eq '.'; if ($_ eq '..') { pop @o } else { push @o, $_ } } return '/' . join('/', @o) }
 
 # relocate("/usr/lib/x86_64-linux-gnu/libfoo.so.1", $isarch) -> new path, or undef to drop
 sub relocate($$) {
@@ -72,7 +76,9 @@ for my $pkg (@pkgs) {
         die "$pkg: $dst still has the Debian multiarch path\n" if $dst =~ m{^/usr/lib/x86_64-linux-gnu/};
         if (-l $e) {
             my $t = readlink $e;
-            $t = relocate($t, $isarch) // next if $t =~ m{^/};
+            my $rel = $t !~ m{^/};
+            my $abs = relocate($rel ? normpath(dirname($src) . "/$t") : $t, $isarch) // next;
+            $t = $rel ? File::Spec->abs2rel($abs, dirname($dst)) : $abs;
             make_path($root . dirname($dst));
             unlink "$root$dst";
             symlink($t, "$root$dst") or die "symlink $root$dst: $!";
