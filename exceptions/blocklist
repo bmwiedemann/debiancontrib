@@ -55,7 +55,6 @@
 ^xml-core$
 ^pci\.ids$
 ^usb\.ids$
-^distro-info-data$
 ^laptop-detect$
 ^media-types$
 ^mailcap$
