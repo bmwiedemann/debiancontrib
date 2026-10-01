@@ -12,8 +12,9 @@ d=debian/tmp
 if [ -d $d ]; then
     v=$(perl -MConfig -e 'print $Config{version}')
     vmaj=${v%.*}
-    move $d/usr/lib/perl5/vendor_perl/$v/x86_64-linux-thread-multi $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
-    move $d/usr/lib/perl5/vendor_perl/$v $d/usr/share/perl5
+    # vendorarch lies inside vendorlib, so move it out first
+    move $d$(perl -MConfig -e 'print $Config{vendorarch}') $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
+    move $d$(perl -MConfig -e 'print $Config{vendorlib}') $d/usr/share/perl5
     for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))'); do
         move $d$site $d/usr/lib/python3/dist-packages
     done
