@@ -26,6 +26,6 @@ log() { echo "$(date +%T) $*" >&2; }
 
 # tsvget FILE KEY [FIELD]: rows (or one field) whose first column is exactly KEY; fails if none
 # (grep -P "^$name\t" breaks on names like libsigc++-2.0)
-tsvget() { awk -F'\t' -v k="$2" -v f="${3:-0}" '$1 == k { print (f ? $f : $0); n++ } END { exit !n }' "$1"; }
+tsvget() { awk -F'\t' -v k="$2" -v f="${3:-0}" '$1 "" == k { print (f ? $f : $0); n++ } END { exit !n }' "$1"; }
 
 verify_sha256() { echo "$2  $1" | sha256sum -c --quiet - ; }
