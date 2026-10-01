@@ -86,7 +86,8 @@ push @out, "%global debian_build_options $o{build_options}" if $o{build_options}
 push @out, "%global debian_patches @patches" if @patches;
 push @out, "Name:           $src", "Version:        $version", "Release:        0";
 push @out, "Epoch:          $epoch" if $epoch;
-push @out, "Summary:        " . summary($main->{Description}), "License:        " . license(), "URL:            $home" x !!length($home);
+push @out, "Summary:        " . summary($main->{Description}), "License:        " . license();
+push @out, "URL:            $home" if length $home;
 my $i = 0;
 push @out, sprintf("Source%d:        %s/%s/%s", $i++, $ENV{mirror} // 'http://ftp.gwdg.de/pub/linux/debian/debian', $pooldir, $_) for @sources;
 $i = 0; push @out, sprintf("Patch%d:         %s", $i++, $_) for @patches;
