@@ -1297,6 +1297,7 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-rpm-macros
 %{_rpmmacrodir}/macros.debian
 /usr/lib/debian-compat
+%dir %{_sysconfdir}/dpkg
 %dir %{_sysconfdir}/dpkg/origins
 %config %{_sysconfdir}/dpkg/origins/debian
 %dir /usr/share/python3
