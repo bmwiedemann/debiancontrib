@@ -64,3 +64,16 @@
 ^rubygems-integration$
 ^glx-alternatives$
 ^qtchooser$
+# Debian-specific configuration handling
+^ucf$
+^ssl-cert$
+^update-inetd$
+# patent-encumbered codecs / DRM circumvention that openSUSE deliberately leaves to Packman
+^x264$
+^x265$
+^libde265$
+^libaacs$
+^libbdplus$
+^libdvdcss$
+^vo-aacenc$
+^faac$

@@ -20,11 +20,13 @@ tsv::read_tsv("$cache/debian-files.tsv", sub { push @{$debfiles{$_[1]}}, $_[0] i
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
+my %have = map { chomp; split /\t/ } grep { !/^#/ && /\S/ } do { open(my $h, '<', "$FindBin::RealBin/exceptions/have") or die; <$h> };
 my (@res, @audit, %count);
 tsv::read_tsv("$cache/debian-sources.tsv", sub {
     my ($name, $ver, $comp, $sec, $prio, $dir, $files, $bins, $home) = @_;
     my ($status, $ev);
-    if ($src{lc $name}) { ($status, $ev) = ('have-name', join(' ', @{$src{lc $name}})) }
+    if ($have{$name}) { ($status, $ev) = ('have-manual', $have{$name}) }
+    elsif ($src{lc $name}) { ($status, $ev) = ('have-name', join(' ', @{$src{lc $name}})) }
     elsif (my ($n, @o) = insrc($name)) { ($status, $ev) = ('have-norm', "$n @o") }
     elsif (length $home && $url{norm_url($home)}) { ($status, $ev) = ('have-url', "$home = @{$url{norm_url($home)}}[0]") }
     else {

@@ -1,0 +1,7 @@
+# Debian source<TAB>openSUSE source  - equivalents the name heuristics of match miss (verified by hand)
+kwallet-pam	pam_kwallet6
+plasma5support	plasma5support6
+phonon-backend-vlc	phonon-vlc-qt6
+libxfont	libXfont2
+fonts-android	google-droid-fonts
+sidplay-libs	libsidplay1
