@@ -45,3 +45,9 @@ Debian-only names in `data/depmap.ignore`, then `commit=1 pushcompat`.
 `localbuild` runs rpmbuild inside the `tumbleweed` distrobox, with `out/rpms`
 registered as a plaindir repo so debian-compat resolves; `install=1` installs
 the results there (needed once for debian-compat).
+
+## Project config quirks
+`data/prjconf` holds the OBS project configuration (`osc meta prjconf -F data/prjconf $prj`).
+Besides switching rpmlint off it carries `Ignore:` lines for Slowroll inconsistencies that
+would otherwise make packages unresolvable (e.g. `Ignore: emacs:mailutils`). `exceptions/notes`
+collects structural findings per package.
