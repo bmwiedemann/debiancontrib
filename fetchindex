@@ -12,7 +12,12 @@ get() { # URL DEST
     fresh "$2" && return 0
     mkdir -p "$(dirname "$2")"
     log "fetch $1"
-    wget -q -O "$2.tmp" "$1" && mv "$2.tmp" "$2"
+    # local mtime, so fresh() measures our download age, not the server's
+    if wget -q --no-use-server-timestamps -O "$2.tmp" "$1"; then mv "$2.tmp" "$2"; return; fi
+    rm -f "$2.tmp"
+    if [ -e "$2" ]; then log "download failed, keeping the old $2: $1" # e.g. repomd ahead of the mirror
+    else die "download failed: $1"
+    fi
 }
 # getrepo BASEURL DESTDIR TYPE...: fetch repodata files by type via repomd.xml
 getrepo() {
