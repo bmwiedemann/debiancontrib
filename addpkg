@@ -27,7 +27,9 @@ for src in "$@"; do
     deb2spec $src $x/extracted > $pkgdir/$src.spec.new || die "$src: deb2spec failed"
     ver=$(grep '^%global debian_version' $pkgdir/$src.spec.new | cut -d' ' -f3)
     oldver=$(grep '^%global debian_version' $pkgdir/$src.spec 2>/dev/null | cut -d' ' -f3)
-    if cmp -s $pkgdir/$src.spec $pkgdir/$src.spec.new && [ "$force" != 1 ]; then
+    patchdiff=0 # a changed override patch alone is reason to update too
+    for p in $top/overrides/$src/*.patch; do [ -e "$p" ] && ! cmp -s "$p" $pkgdir/${p##*/} && patchdiff=1; done
+    if cmp -s $pkgdir/$src.spec $pkgdir/$src.spec.new && [ "$force" != 1 ] && [ $patchdiff = 0 ]; then
         rm $pkgdir/$src.spec.new; log "$src: unchanged ($ver)"; continue
     fi
     mv $pkgdir/$src.spec.new $pkgdir/$src.spec
@@ -39,7 +41,7 @@ for src in "$@"; do
     done)
     for f in $newfiles; do cp -p $cache/pool/$src/$f $pkgdir/$f; done
     for p in $top/overrides/$src/*.patch; do [ -e "$p" ] && cp -p "$p" $pkgdir/; done
-    if [ "$update" != 1 ]; then msg="Initial package of Debian $src $ver"
+    if [ "$update" != 1 ]; then msg="Initial package of Debian $src $ver"; rm -f $pkgdir/$src.changes # re-staging: one entry
     elif [ "$oldver" = "$ver" ]; then msg="Regenerate spec for Debian version $ver"
     else msg="Update to Debian version $ver"; fi
     echo "- $msg" | changesadd $pkgdir/$src.changes
