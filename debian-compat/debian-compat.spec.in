@@ -131,8 +131,6 @@ ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{bu
 mkdir -p %{buildroot}%{_bindir}
 for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 ln -s gawk %{buildroot}%{_bindir}/mawk
-/usr/share/misc/config.guess
-/usr/share/misc/config.sub
 # Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
 mkdir -p %{buildroot}/usr/share/misc
 for f in config.guess config.sub; do ln -s ../$(basename $(dirname $(ls -d /usr/share/automake-*/$f | tail -1)))/$f %{buildroot}/usr/share/misc/$f; done
@@ -167,6 +165,8 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-compat-toolchain
 %{_bindir}/x86_64-linux-gnu-*
 %{_bindir}/mawk
+/usr/share/misc/config.guess
+/usr/share/misc/config.sub
 
 %files -n debian-compat-sensible-utils
 %{_bindir}/sensible-*
