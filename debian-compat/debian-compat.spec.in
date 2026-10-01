@@ -29,6 +29,7 @@ Source2:        relocate.map
 Source3:        owned-dirs
 Source4:        dh_install
 Source5:        py3versions
+BuildRequires:  automake
 BuildRequires:  binutils
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -72,6 +73,7 @@ Symlinks for programs that hard-code Debian multiarch, python or perl paths.
 
 %package -n debian-compat-toolchain
 Summary:        Debian triplet-prefixed names for the openSUSE toolchain
+Requires:       automake
 Requires:       binutils
 Requires:       gcc
 Requires:       gcc-c++
@@ -111,7 +113,7 @@ install -Dm644 %{SOURCE0} %{buildroot}%{_rpmmacrodir}/macros.debian
 install -Dm755 %{SOURCE1} %{buildroot}/usr/lib/debian-compat/debian-install
 install -m644 %{SOURCE2} %{SOURCE3} %{buildroot}/usr/lib/debian-compat/
 mkdir -p %{buildroot}/usr/lib/debian-compat/bin
-for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_builddeb dh_strip dh_dwz dh_compress dh_installdeb dh_strip_nondeterminism dh_buildinfo; do
+for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_builddeb dh_strip dh_dwz dh_compress dh_installdeb dh_strip_nondeterminism dh_buildinfo dh_perl; do
     printf '#!/bin/sh\necho "debian-compat: skipping ${0##*/} $*" >&2\n' > %{buildroot}/usr/lib/debian-compat/bin/$s
     chmod 755 %{buildroot}/usr/lib/debian-compat/bin/$s
 done
@@ -129,6 +131,11 @@ ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{bu
 mkdir -p %{buildroot}%{_bindir}
 for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 ln -s gawk %{buildroot}%{_bindir}/mawk
+/usr/share/misc/config.guess
+/usr/share/misc/config.sub
+# Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
+mkdir -p %{buildroot}/usr/share/misc
+for f in config.guess config.sub; do ln -s ../$(basename $(dirname $(ls -d /usr/share/automake-*/$f | tail -1)))/$f %{buildroot}/usr/share/misc/$f; done
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
