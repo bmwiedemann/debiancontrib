@@ -16,7 +16,7 @@ for src in "$@"; do
     x=$cache/pool/$src/x; rm -rf $x; mkdir -p $x
     (cd $x && dpkg-source --no-check --skip-patches -x ../*.dsc extracted >/dev/null) || die "$src: dpkg-source -x failed"
     pkgdir=$obs/$src
-    if osc_api "source/$prj/$src" >/dev/null 2>&1 && osc_api "source/$prj/$src" | grep -q '<entry '; then
+    if osc_api "source/$prj/$src" 2>/dev/null | grep -q '<entry '; then
         [ -d $pkgdir/.osc ] || (cd $obs && osc co -l 2000000 $src >/dev/null) || die "osc co $src failed"
         (cd $pkgdir && osc up -l 2000000 >/dev/null) || die "osc up $src failed"
         update=1
