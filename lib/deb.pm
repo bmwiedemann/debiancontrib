@@ -64,7 +64,11 @@ sub normalize_name($) {
     my %c = ($n => 1);
     my @rules = (
         [qr/^lib(.*)-perl$/, 'perl-$1'],
+        [qr/^(.*)t64$/, '$1'],
+        [qr/^lib(.*)-dev$/, 'lib$1-devel'],
+        [qr/^(.*)-dev$/, '$1-devel'],
         [qr/^ruby-(.*)/, 'rubygem-$1'],
+        [qr/^lib(.*)-ruby$/, 'rubygem-$1'], # same rule as zypper-aptitude's apt-packagemap.d
         [qr/^node-(.*)/, 'nodejs-$1'],
         [qr/^fonts-(.*)/, '$1-fonts'],
         [qr/^php-(.*)/, 'php8-$1'],

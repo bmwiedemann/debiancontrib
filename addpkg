@@ -1,0 +1,49 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [commit=1] [force=1] addpkg SRCNAME...  - create or update OBS packages from Debian sources
+# commit=0 (default) prepares $obs/SRCNAME and prints what osc ci would send
+. "$(dirname "$0")/lib.sh"
+: ${force:=0}
+[ $# -gt 0 ] || die "usage: addpkg SRCNAME..."
+[ -d $obs/.osc ] || (cd $obs && osc init $prj) || die "osc init failed"
+for src in "$@"; do
+    status=$(grep -P "^$src\t" $cache/match.tsv | cut -f2)
+    case "$status" in
+        missing|'') ;;
+        *) [ "$force" = 1 ] || { log "$src: openSUSE already has it ($status), use force=1"; continue; } ;;
+    esac
+    debget $src || exit 1
+    x=$cache/pool/$src/x; rm -rf $x; mkdir -p $x
+    (cd $x && dpkg-source --no-check --skip-patches -x ../*.dsc extracted >/dev/null) || die "$src: dpkg-source -x failed"
+    pkgdir=$obs/$src
+    if osc_api "source/$prj/$src" >/dev/null 2>&1 && osc_api "source/$prj/$src" | grep -q '<entry '; then
+        [ -d $pkgdir/.osc ] || (cd $obs && osc co -l 2000000 $src >/dev/null) || die "osc co $src failed"
+        (cd $pkgdir && osc up -l 2000000 >/dev/null) || die "osc up $src failed"
+        update=1
+    else
+        [ -d $pkgdir/.osc ] || (cd $obs && osc mkpac $src >/dev/null) || die "osc mkpac $src failed"
+        update=0
+    fi
+    deb2spec $src $x/extracted > $pkgdir/$src.spec.new || die "$src: deb2spec failed"
+    ver=$(grep '^%global debian_version' $pkgdir/$src.spec.new | cut -d' ' -f3)
+    if [ -e $pkgdir/$src.spec ] && cmp -s $pkgdir/$src.spec $pkgdir/$src.spec.new && [ "$force" != 1 ]; then
+        rm $pkgdir/$src.spec.new; log "$src: unchanged ($ver)"; continue
+    fi
+    mv $pkgdir/$src.spec.new $pkgdir/$src.spec
+    # sources: drop old files, add current ones
+    newfiles=$(grep -P "^$src\t" $cache/debian-sources.tsv | cut -f7 | tr ';' '\n' | cut -d: -f1)
+    (cd $pkgdir && for f in $(osc ls -u . 2>/dev/null; ls); do
+        case "$f" in *.spec|*.changes|*.patch|_*|.osc) continue;; esac
+        echo "$newfiles" | grep -qx "$f" || { osc rm -f "$f" 2>/dev/null || rm -f "$f"; }
+    done)
+    for f in $newfiles; do cp -p $cache/pool/$src/$f $pkgdir/$f; done
+    for p in $top/overrides/$src/*.patch; do [ -e "$p" ] && cp -p "$p" $pkgdir/; done
+    if [ "$update" = 1 ]; then msg="Update to Debian version $ver"; else msg="Initial package of Debian $src $ver"; fi
+    echo "- $msg" | changesadd $pkgdir/$src.changes
+    (cd $pkgdir && osc addremove >/dev/null 2>&1; osc status | grep -v '^?' )
+    if [ "$commit" = 1 ]; then
+        (cd $pkgdir && osc ci --skip-local-service-run -m "$msg" >/dev/null) && log "$src: committed ($msg)" || die "$src: osc ci failed"
+    else
+        log "$src: prepared in $pkgdir ($msg); commit=1 to send"
+    fi
+done

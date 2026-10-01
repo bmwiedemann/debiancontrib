@@ -1,0 +1,13 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: changesadd FILE.changes < entry-text   - prepend a .changes entry with the canonical header
+. "$(dirname "$0")/lib.sh"
+f=$1; [ -n "$f" ] || die "usage: changesadd FILE.changes < text"
+{
+    echo "-------------------------------------------------------------------"
+    echo "$(LC_ALL=C date -u "+%a %b %e %T UTC %Y") - $author"
+    echo
+    cat
+    echo
+    [ -e "$f" ] && cat "$f"
+} > "$f.new" && mv "$f.new" "$f"

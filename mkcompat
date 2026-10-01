@@ -1,0 +1,61 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: mkcompat  - regenerate debian-compat/debian-compat.spec from data/depmap for every
+# Debian name in data/compat-seed or referenced by obs/*/*.spec; unmapped names go to out/unmapped.txt
+use strict; use warnings;
+use FindBin; use lib "$FindBin::RealBin/lib";
+use tsv;
+use POSIX qw(strftime);
+
+my $top = $FindBin::RealBin;
+my $obs = $ENV{obs} // "$top/obs";
+my $out = $ENV{out} // "$top/out";
+
+my (%map, %ignore, %need, %ours);
+tsv::read_tsv("$top/data/depmap", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap";
+tsv::read_tsv("$top/data/depmap.manual", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap.manual";
+tsv::read_tsv("$top/data/depmap.ignore", sub { $ignore{$_[0]} = 1 });
+tsv::read_tsv("$top/data/compat-seed", sub { $need{$_[0]} = 'seed' });
+for my $spec (glob("$obs/*/*.spec")) {
+    next if $spec =~ m{/debian-compat/};
+    (my $pkg = $spec) =~ s{.*/}{};
+    open(my $fh, '<', $spec) or die;
+    while (<$fh>) {
+        if (/^Provides:\s*deb\(([^)]+)\)/) { $ours{$1} = $pkg }
+        elsif (/^(?:Build)?(?:Requires|Recommends|Suggests)(?:\(\w+\))?:\s*deb\(([^)]+)\)/) { $need{$1} //= $pkg }
+    }
+    close $fh;
+}
+my (@stanzas, @unmapped);
+for my $n (sort keys %need) {
+    next if $ignore{$n};
+    if ($ours{$n}) { print STDERR "skip $n: provided by our $ours{$n}\n" if $need{$n} eq 'seed'; next }
+    unless ($map{$n}) { push @unmapped, "$n\t$need{$n}"; next }
+    (my $sub = $n) =~ s/[^A-Za-z0-9._+-]/-/g;
+    push @stanzas, join("\n", "%package -n debian-compat-$sub",
+        "Summary:        Debian compatibility: $n -> " . join(' ', @{$map{$n}}),
+        "Provides:       deb($n)",
+        (map { "Requires:       $_" } @{$map{$n}}),
+        "BuildArch:      noarch", "",
+        "%description -n debian-compat-$sub",
+        "Pulls in the openSUSE packages providing what Debian's $n provides.", "",
+        "%files -n debian-compat-$sub", "");
+}
+open(my $u, '>', "$out/unmapped.txt") or die; print $u "$_\n" for @unmapped; close $u;
+my $specfile = "$top/debian-compat/debian-compat.spec";
+my $tmpl = do { local $/; open(my $t, '<', "$specfile.in") or die; <$t> };
+my $body = join("\n", @stanzas);
+$tmpl =~ s/\@MAPPINGS\@/$body/;
+$tmpl =~ s/\@YEAR\@/strftime('%Y', gmtime)/e;
+# keep the version unless the content changed
+my $version = strftime('%Y%m%d', gmtime);
+if (-e $specfile) {
+    my $old = do { local $/; open(my $o, '<', $specfile) or die; <$o> };
+    my ($oldv) = $old =~ /^Version:\s*(\S+)/m;
+    (my $oldbody = $old) =~ s/^Version:.*$//m;
+    (my $newbody = $tmpl) =~ s/^Version:.*$//m;
+    $version = $oldv if $oldbody eq $newbody;
+}
+$tmpl =~ s/\@VERSION\@/$version/;
+open(my $s, '>', $specfile) or die; print $s $tmpl; close $s;
+printf STDERR "%d mapped subpackages, %d unmapped (out/unmapped.txt), version %s\n", scalar @stanzas, scalar @unmapped, $version;

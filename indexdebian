@@ -6,18 +6,21 @@ use FindBin; use lib "$FindBin::RealBin/lib";
 use deb qw(read_index);
 use tsv;
 use Dpkg::Control;
+use Dpkg::Version;
 
 my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
 my @comps = split ' ', $ENV{components} // 'main contrib';
 push @comps, 'non-free' if ($ENV{nonfree} // 0) eq '1';
 
-my (@src, @bin, @files);
+my (@src, @bin, @files, %best);
 for my $c (@comps) {
     my $idx = read_index("xzcat $cache/debian/$c/Sources.xz |", CTRL_INDEX_SRC);
     for my $k ($idx->get_keys()) {
         my $s = $idx->get_by_key($k);
         my @f = map { s/^\s+//; my @p = split ' '; "$p[2]:$p[1]:$p[0]" } grep /\S/, split /\n/, $s->{'Checksums-Sha256'} // '';
         my @b = map { s/\s+//gr } split /,/, $s->{Binary} // '';
+        next if $best{$s->{Package}} && Dpkg::Version::version_compare($best{$s->{Package}}, $s->{Version}) >= 0;
+        $best{$s->{Package}} = $s->{Version};
         push @src, [$s->{Package}, $s->{Version}, $c, $s->{Section} // '', $s->{Priority} // '',
             $s->{Directory}, join(';', @f), join(',', @b), $s->{Homepage} // '',
             join(', ', grep { defined && length } map { $s->{$_} } qw(Build-Depends Build-Depends-Indep Build-Depends-Arch)),
@@ -39,6 +42,8 @@ for my $c (@comps) {
         push @files, ["/$path", $_] for map { s{.*/}{}r } split /,/, $pkgs;
     }
 }
+my %keep = map { $_->[0] => $_ } grep { $_->[1] eq $best{$_->[0]} } @src;
+@src = sort { $a->[0] cmp $b->[0] } values %keep;
 tsv::write_tsv("$cache/debian-sources.tsv", \@src);
 tsv::write_tsv("$cache/debian-binaries.tsv", \@bin);
 tsv::write_tsv("$cache/debian-files.tsv", \@files);

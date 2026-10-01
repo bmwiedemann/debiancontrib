@@ -1,0 +1,118 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: debian-install BUILDROOT   (in the Debian source dir, after debian/rules binary)
+# copies debian/<pkg>/ trees into BUILDROOT with openSUSE paths and writes ../rpmfiles/<pkg>
+use strict; use warnings;
+use File::Find;
+use File::Path qw(make_path);
+use File::Basename;
+use File::Copy;
+use Dpkg::Control::Info;
+
+my $root = shift or die "usage: $0 BUILDROOT\n";
+my $compat = '/usr/lib/debian-compat';
+my $listdir = '../rpmfiles';
+my @pkgs = map { chomp; $_ } qx(dh_listpackages);
+die "dh_listpackages found nothing\n" unless @pkgs;
+my %arch = map { $_->{Package} => $_->{Architecture} } Dpkg::Control::Info->new()->get_packages;
+
+sub cmd($) { my $o = qx($_[0] 2>/dev/null); chomp $o; return length $o ? $o : undef }
+my %var = (libdir => '/usr/lib64');
+$var{perl_vendorlib} = cmd(q(perl -MConfig -e 'print $Config{vendorlib}'));
+$var{perl_vendorarch} = cmd(q(perl -MConfig -e 'print $Config{vendorarch}'));
+$var{python3_sitelib} = cmd(q(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"))'));
+$var{python3_sitearch} = cmd(q(python3 -c 'import sysconfig; print(sysconfig.get_path("platlib"))'));
+$var{rb_vendorlibdir} = cmd(q(ruby -e 'puts RbConfig::CONFIG["vendorlibdir"]'));
+$var{rb_vendorarchdir} = cmd(q(ruby -e 'puts RbConfig::CONFIG["vendorarchdir"]'));
+
+my @rules;
+open(my $fh, '<', "$compat/relocate.map") or die "$compat/relocate.map: $!";
+while (<$fh>) {
+    chomp; next if /^#/ || !/\S/;
+    my ($re, $rep) = split /\t/;
+    push @rules, $re eq 'DROP' ? [qr/$rep/, undef] : [qr/$re/, $rep];
+}
+close $fh;
+my %fsdir = map { chomp; $_ => 1 } qx(rpm -ql filesystem);
+my @owned = map { chomp; $_ } grep { !/^#/ && /\S/ } do { open(my $o, '<', "$compat/owned-dirs") or die; <$o> };
+
+# relocate("/usr/lib/x86_64-linux-gnu/libfoo.so.1", $isarch) -> new path, or undef to drop
+sub relocate($$) {
+    my ($path, $isarch) = @_;
+    for my $r (@rules) {
+        my ($re, $rep) = @$r;
+        next unless $path =~ $re;
+        return undef unless defined $rep;
+        my @cap = ($1, $2);
+        my $pre = substr($path, 0, $-[0]);
+        my $post = substr($path, $+[0]);
+        $rep =~ s/\$(\d)/$cap[$1-1]/g;
+        $rep =~ s/%\{python3_sitepkgs\}/$isarch ? '%{python3_sitearch}' : '%{python3_sitelib}'/e;
+        $rep =~ s/%\{(\w+)\}/$var{$1} \/\/ die "cannot relocate $path: $1 unknown (interpreter not installed?)\n"/ge;
+        return "$pre$rep$post";
+    }
+    return $path;
+}
+
+my (%owner, @warn);
+make_path($listdir);
+for my $pkg (@pkgs) {
+    my $tree = "debian/$pkg";
+    unless (-d $tree) { push @warn, "no $tree built"; next }
+    my $isarch = ($arch{$pkg} // 'any') ne 'all';
+    my (@entries, %dirs, @list);
+    find({ no_chdir => 1, wanted => sub { push @entries, $File::Find::name unless $_ eq $tree } }, $tree);
+    for my $e (sort @entries) {
+        (my $src = $e) =~ s/^\Q$tree\E//;
+        my $dst = relocate($src, $isarch);
+        next unless defined $dst;
+        die "$pkg: $dst still has the Debian multiarch path\n" if $dst =~ m{^/usr/lib/x86_64-linux-gnu/};
+        if (-l $e) {
+            my $t = readlink $e;
+            $t = relocate($t, $isarch) // next if $t =~ m{^/};
+            make_path($root . dirname($dst));
+            unlink "$root$dst";
+            symlink($t, "$root$dst") or die "symlink $root$dst: $!";
+            $dirs{$_} = 1 for parents($dst);
+            push @list, $dst;
+        } elsif (-d $e) {
+            $dirs{$_} = 1 for ($dst, parents($dst));
+            make_path("$root$dst");
+        } else {
+            if ($owner{$dst}) { push @warn, "$pkg: $dst already installed by $owner{$dst}"; next }
+            $owner{$dst} = $pkg;
+            make_path($root . dirname($dst));
+            copy($e, "$root$dst") or die "copy $e: $!";
+            chmod((stat $e)[2] & 07777, "$root$dst");
+            if ($dst =~ m{^/usr/(lib64/pkgconfig|share/pkgconfig|lib64/cmake|bin/[^/]*-config$)} && -T "$root$dst") {
+                local ($^I, @ARGV) = ('', "$root$dst");
+                while (<>) { s{/usr/lib/x86_64-linux-gnu}{/usr/lib64}g; print }
+            }
+            $dirs{$_} = 1 for parents($dst);
+            push @list, $dst;
+        }
+    }
+    open(my $lf, '>', "$listdir/$pkg") or die;
+    for my $d (sort keys %dirs) {
+        next if $fsdir{$d} || $d eq '/' || grep { $d eq $_ || index($d, "$_/") == 0 } @owned;
+        print $lf "%dir $d\n";
+    }
+    for my $f (@list) {
+        my $pre = '';
+        $pre = '%config(noreplace) ' if $f =~ m{^/etc/};
+        $pre = '%license ' if $f eq "/usr/share/doc/packages/$pkg/copyright";
+        $f =~ s/\.gz$// if $f =~ m{^/usr/share/(man|info)/};
+        $f .= '*' if $f =~ m{^/usr/share/(man/man\w+/|info/)[^/]+$};
+        $f = qq("$f") if $f =~ /[\s"']/;
+        print $lf "$pre$f\n";
+    }
+    close $lf;
+    for my $s (qw(preinst postinst prerm postrm)) {
+        push @warn, "$pkg: maintainer script debian/$pkg.$s is ignored" if -e "debian/$pkg.$s";
+        push @warn, "$pkg: maintainer script debian/$s is ignored" if @pkgs == 1 && -e "debian/$s";
+    }
+}
+my $n = grep { -f "$root$_" && -B _ && do { local $/; open(my $b, '<', "$root$_"); <$b> =~ /x86_64-linux-gnu/ } } keys %owner;
+push @warn, "$n binaries still contain the string x86_64-linux-gnu (debian-compat-filesystem symlink covers it)" if $n;
+print STDERR "debian-install: $_\n" for @warn;
+sub parents { my $p = shift; my @r; while (($p = dirname($p)) ne '/') { push @r, $p } return @r }

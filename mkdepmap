@@ -1,0 +1,60 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: mkdepmap  - map Debian binary package names to openSUSE provides into data/depmap
+# methods: name, norm (normalized name), pc (pkgconfig), so (soname), perl, python, ruby, node, lua, file (owner of /usr/bin files)
+use strict; use warnings;
+use FindBin; use lib "$FindBin::RealBin/lib";
+use deb qw(normalize_name);
+use tsv;
+
+my $top = $FindBin::RealBin;
+my $cache = $ENV{cache} // "$top/cache";
+
+my (%prov, %pkg, %file, %lcprov);  # slowroll only: that is what the build root resolves against
+tsv::read_tsv("$cache/suse-provides.tsv", sub { return unless $_[2] eq 'slowroll'; $prov{$_[0]} //= $_[1]; $pkg{$_[1]} = 1; $lcprov{lc $_[0]} //= $_[0] if $_[0] !~ m{[/(]} });
+tsv::read_tsv("$cache/suse-files.tsv", sub { $file{$_[0]} = $_[1] });
+my %debfiles;
+tsv::read_tsv("$cache/debian-files.tsv", sub { push @{$debfiles{$_[1]}}, $_[0] });
+my %lcpkg = map { lc($_) => $_ } keys %pkg;
+my @pysite = sort keys %{{ map { m{^(/usr/lib(?:64)?/python3[^/]*/site-packages)/} ? ($1 => 1) : () } keys %file }};
+
+sub vote(@) { # owners -> the owner of most files, if it owns most of them
+    my %c; $c{$_}++ for grep { defined } @_;
+    my ($best) = sort { $c{$b} <=> $c{$a} || $a cmp $b } keys %c or return;
+    return $c{$best} * 2 >= @_ ? $best : ();
+}
+sub bymethod($$) {
+    my ($n, $files) = @_;
+    return ('name', $n) if $pkg{$n} || $prov{$n};
+    for my $c (normalize_name($n)) { return ('norm', $lcpkg{$c} // $lcprov{$c}) if ($lcpkg{$c} || $lcprov{$c}) && $c ne lc $n }
+    my @pc = map { m{/pkgconfig/([^/]+)\.pc$} ? "pkgconfig($1)" : () } @$files;
+    if (@pc) { my @hit = grep { $prov{$_} } @pc; return ('pc', @hit) if @hit }
+    my @bin = map { m{^/usr/s?bin/} ? $file{$_} : () } @$files;
+    if (@bin) { my $o = vote(@bin); return ('file', $o) if $o }
+    my @so = map { m{^/usr/lib/x86_64-linux-gnu/([^/]+\.so\.[^/]+)$} ? "$1()(64bit)" : () } @$files;
+    if (@so) { my @hit = sort keys %{{ map { $_ => 1 } grep { $prov{$_} } @so }}; return ('so', @hit) if @hit }
+    my @pm = map { m{^/usr/(?:share/perl5|lib/x86_64-linux-gnu/perl5/[^/]+)/(.+)\.pm$} ? 'perl(' . ($1 =~ s{/}{::}gr) . ')' : () } @$files;
+    if (@pm) { my $o = vote(map { $prov{$_} } @pm); return ('perl', $o) if $o }
+    my @py = map { m{^/usr/lib/python3/dist-packages/([^/]+?)/?$} ? $1 : m{^/usr/lib/python3/dist-packages/([^/]+)\.py$} ? "$1.py" : () } @$files;
+    if (@py) {
+        my @owners = map { my $m = $_; my @o = map { $file{$_} } grep { $file{$_} } map { "$_/$m" } @pysite; @o ? $o[0] : undef } grep { !/\.(dist|egg)-info$/ && !/^__pycache__$/ } @py;
+        my $o = vote(@owners); return ('python', $o) if $o;
+    }
+    my @rb = map { m{^/usr/lib/ruby/vendor_ruby/([^/]+)} ? $1 : () } @$files;
+    if (@rb && $n =~ /^ruby-(.*)/) { my $g = "rubygem($1)"; return ('ruby', $g) if $prov{$g} }
+    if ($n =~ /^node-(.*)/) { my $g = "npm($1)"; return ('node', $g) if $prov{$g} }
+    my @inc = map { m{^/usr/include/} ? $file{$_} : () } @$files;
+    if (@inc) { my $o = vote(@inc); return ('include', $o) if $o }
+    return;
+}
+
+my (@rows, %count);
+tsv::read_tsv("$cache/debian-binaries.tsv", sub {
+    my ($n, $source, $ver, $arch) = @_;
+    my ($m, @t) = bymethod($n, $debfiles{$n} // []) or return;
+    $count{$m}++;
+    push @rows, [$n, join(',', @t), $m];
+});
+@rows = sort { $a->[0] cmp $b->[0] } @rows;
+tsv::write_tsv("$top/data/depmap", \@rows);
+printf STDERR "%d mapped: %s\n", scalar @rows, join(' ', map { "$_=$count{$_}" } sort keys %count);

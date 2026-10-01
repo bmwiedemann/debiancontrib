@@ -1,3 +1,3 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# usage: source setup   (puts the scripts on PATH)
+# usage: source setup.sh   (puts the scripts on PATH)
 export PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd):$PATH"

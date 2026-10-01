@@ -1,0 +1,6 @@
+# build-dependency regex<TAB>ecosystem   (sources matching are skipped unless ecosystems= lists them)
+\b(cargo|dh-cargo|rustc|librust-)	rust
+\b(dh-golang|golang-)	go
+\b(ghc|haskell-devscripts|libghc-)	haskell
+\b(dh-r|r-base-dev|r-cran-|r-bioc-)	r
+\b(ocaml|dh-ocaml)	ocaml

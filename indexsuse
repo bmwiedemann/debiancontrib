@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: indexsuse  - parse openSUSE repodata + devel project lists from $cache into cache/suse-*.tsv
+use strict; use warnings;
+use FindBin; use lib "$FindBin::RealBin/lib";
+use tsv;
+
+my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
+my (@src, @bin, @prov, @files);
+my %seenprov;
+
+# primary.xml: one package per block, createrepo writes one tag per line
+sub primary($$$) {
+    my ($file, $origin, $issrc) = @_;
+    open(my $fh, "zstd -dc $file |") or die "$file: $!";
+    my (%p, $inprov);
+    while (<$fh>) {
+        if (m{^\s*<package type=}) { %p = (); $inprov = 0 }
+        elsif (m{^\s*<name>([^<]+)</name>}) { $p{name} = $1 }
+        elsif (m{^\s*<arch>([^<]+)</arch>}) { $p{arch} = $1 }
+        elsif (m{^\s*<version epoch="(\d+)" ver="([^"]+)" rel="([^"]+)"}) { $p{ver} = ($1 ? "$1:" : '') . "$2-$3" }
+        elsif (m{^\s*<url>([^<]*)</url>}) { $p{url} = $1 }
+        elsif (m{<rpm:sourcerpm>(.+?)-[^-]+-[^-]+\.src\.rpm</rpm:sourcerpm>}) { $p{source} = $1 }
+        elsif (m{<rpm:provides>}) { $inprov = 1 }
+        elsif (m{</rpm:provides>}) { $inprov = 0 }
+        elsif ($inprov && m{<rpm:entry name="([^"]+)"}) { push @{$p{prov}}, $1 }
+        elsif (m{^\s*<file>([^<]+)</file>}) { push @{$p{prov}}, $1 }
+        elsif (m{^\s*</package>}) {
+            $p{url} =~ s/&amp;/&/g if defined $p{url};
+            if ($issrc) { push @src, [$p{name}, $p{ver}, $p{url} // '', $origin] }
+            else {
+                push @bin, [$p{name}, $p{source} // '', $p{ver}, $p{arch}, $origin];
+                for my $pr ($p{name}, @{$p{prov} // []}) {
+                    push @prov, [$pr, $p{name}, $origin] unless $seenprov{"$origin\0$pr\0$p{name}"}++;
+                }
+            }
+        }
+    }
+    close $fh;
+}
+
+for my $r (qw(slowroll tumbleweed)) {
+    primary("$cache/suse/$r/src/primary.xml.zst", $r, 1);
+    primary("$cache/suse/$r/oss/primary.xml.zst", $r, 0);
+}
+for my $l (sort glob("$cache/devel/*.list")) {
+    my ($prj) = $l =~ m{/([^/]+)\.list$};
+    open(my $fh, '<', $l) or die;
+    while (<$fh>) { chomp; next if /^_|:/; push @src, [$_, '', '', "devel:$prj"] }
+    close $fh;
+}
+
+# filelists.xml: only paths useful for matching and dependency mapping
+open(my $fh, "zstd -dc $cache/suse/slowroll/oss/filelists.xml.zst |") or die;
+my $pkg;
+while (<$fh>) {
+    if (m{^<package .*name="([^"]+)".*arch="([^"]+)"}) { $pkg = $2 eq 'i586' ? undef : $1 }
+    elsif ($pkg && m{^\s*<file>([^<]+)</file>}) {
+        my $f = $1;
+        push @files, [$f, $pkg] if $f =~ m{^/usr/(s?bin/|lib64/[^/]+\.so|lib/[^/]+\.so|lib64/pkgconfig/|share/pkgconfig/|include/|lib/perl5/|lib64/perl5/|lib64?/python3[^/]*/site-packages/[^/]+/?$|lib64?/python3[^/]*/site-packages/[^/]+\.py$|share/fonts/|lib64?/ruby/|lib/node_modules/[^/]+/package\.json$|share/lua/|lib64/lua/)};
+    }
+}
+close $fh;
+
+tsv::write_tsv("$cache/suse-sources.tsv", \@src);
+tsv::write_tsv("$cache/suse-binaries.tsv", \@bin);
+tsv::write_tsv("$cache/suse-provides.tsv", \@prov);
+tsv::write_tsv("$cache/suse-files.tsv", \@files);
+printf "%d sources, %d binaries, %d provides, %d files\n", scalar @src, scalar @bin, scalar @prov, scalar @files;

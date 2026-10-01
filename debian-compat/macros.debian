@@ -1,0 +1,32 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# rpm macros for building Debian source packages through debhelper
+# a spec only needs: %prep %debian_prep / %build %debian_build / %install %debian_install
+%debian_compatdir /usr/lib/debian-compat
+%debian_srcdir src
+
+%debian_prep \
+%setup -q -c -T \
+dpkg-source --no-check -x %{SOURCE0} %{debian_srcdir} \
+cd %{debian_srcdir} \
+for p in %{?debian_patches}; do patch -p1 < %{_sourcedir}/$p; done
+
+%debian_env \
+export PATH=%{debian_compatdir}/bin:$PATH \
+export DEB_RULES_REQUIRES_ROOT=no \
+export DEB_BUILD_OPTIONS="%{?debian_nocheck:nocheck }parallel=%{?_smp_build_ncpus}%{!?_smp_build_ncpus:1} %{?debian_build_options}" \
+export DEB_CFLAGS_APPEND="%{optflags}" DEB_CXXFLAGS_APPEND="%{optflags}" \
+export SOURCE_DATE_EPOCH=$(dpkg-parsechangelog -STimestamp) \
+export LC_ALL=C.UTF-8 \
+export HOME=$PWD/.home; mkdir -p $HOME \
+eval "$(dpkg-architecture -a amd64 -t x86_64-linux-gnu -f -s 2>/dev/null)"
+
+%debian_build \
+cd %{debian_srcdir} \
+%debian_env \
+debian/rules build \
+debian/rules binary
+
+%debian_install \
+cd %{debian_srcdir} \
+%debian_env \
+%{debian_compatdir}/debian-install %{buildroot}

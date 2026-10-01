@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [ready=1] [top=N] [maxsize=BYTES] [ecosystems=rust,go] candidates
+# ranks Debian sources openSUSE lacks by popcon and lists their unresolved build dependencies
+# writes out/candidates.tsv: rank inst source version origsize nunresolved unresolved section
+use strict; use warnings;
+use FindBin; use lib "$FindBin::RealBin/lib";
+use deb qw(dep_names);
+use tsv;
+
+my $top = $FindBin::RealBin;
+my $cache = $ENV{cache} // "$top/cache";
+my $out = $ENV{out} // "$top/out";
+my %eco = map { $_ => 1 } split /,/, $ENV{ecosystems} // '';
+my $maxsize = $ENV{maxsize} // 0;
+
+my @block = map { chomp; qr/$_/ } grep { !/^#/ && /\S/ } do { open(my $f, '<', "$top/exceptions/blocklist") or die; <$f> };
+my @ecos = map { chomp; [split /\t/] } grep { !/^#/ && /\S/ } do { open(my $f, '<', "$top/exceptions/ecosystems") or die; <$f> };
+my %rank; my %inst;
+open(my $pf, '<', "$cache/popcon/by_inst") or die;
+while (<$pf>) { my ($r, $n, $i) = split; $rank{$n} = $r, $inst{$n} = $i if defined $r && $r =~ /^\d+$/ }
+my %known; # Debian names that resolve: depmap, ignore list, our own packages
+for my $f ("$top/data/depmap", "$top/data/depmap.manual", "$top/data/depmap.ignore") {
+    tsv::read_tsv($f, sub { $known{$_[0]} = 1 }) if -e $f;
+}
+tsv::read_tsv("$cache/project-provides.tsv", sub { $known{$_[0]} = 1 }) if -e "$cache/project-provides.tsv";
+my %missing;
+tsv::read_tsv("$cache/match.tsv", sub { $missing{$_[0]} = 1 if $_[1] eq 'missing' });
+
+my @rows;
+tsv::read_tsv("$cache/debian-sources.tsv", sub {
+    my ($name, $ver, $comp, $sec, $prio, $dir, $files, $bins, $home, $bd) = @_;
+    return unless $missing{$name};
+    return if grep { $name =~ $_ } @block;
+    for (@ecos) { return if $bd =~ /$_->[0]/ && !$eco{$_->[1]} }
+    my $size = 0; $size += $_ for map { (split /:/)[1] } split /;/, $files;
+    return if $maxsize && $size > $maxsize;
+    my @unres = grep { !$known{$_} } dep_names($bd, build => 1);
+    return if $ENV{ready} && @unres;
+    push @rows, [$rank{$name} // 999999, $inst{$name} // 0, $name, $ver, $size, scalar @unres, join(',', @unres), $sec];
+});
+@rows = sort { $a->[0] <=> $b->[0] } @rows;
+tsv::write_tsv("$out/candidates.tsv", \@rows);
+printf STDERR "%d candidates\n", scalar @rows;
+if (my $n = $ENV{top}) { printf "%6s %-30s %-16s %3d %s\n", @$_[0,2,3,5], substr($_->[6], 0, 60) for @rows[0 .. ($n > @rows ? $#rows : $n - 1)] }

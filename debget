@@ -1,0 +1,16 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: debget SRCNAME  - download .dsc and tarballs of a Debian source into $cache/pool/SRCNAME and verify sha256
+. "$(dirname "$0")/lib.sh"
+src=$1; [ -n "$src" ] || die "usage: debget SRCNAME"
+line=$(grep -P "^$src\t" $cache/debian-sources.tsv) || die "$src not in debian-sources.tsv (run fetchindex + indexdebian)"
+dir=$(echo "$line" | cut -f6); files=$(echo "$line" | cut -f7)
+d=$cache/pool/$src; mkdir -p $d
+echo "$files" | tr ';' '\n' | while IFS=: read -r name size sha; do
+    [ -n "$name" ] || continue
+    if ! [ -s "$d/$name" ] || ! verify_sha256 "$d/$name" "$sha" 2>/dev/null; then
+        log "fetch $name"
+        wget -q -O "$d/$name.tmp" "$mirror/$dir/$name" && mv "$d/$name.tmp" "$d/$name" || die "download of $name failed"
+        verify_sha256 "$d/$name" "$sha" || die "checksum mismatch for $name"
+    fi
+done
