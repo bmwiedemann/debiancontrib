@@ -1,5 +1,7 @@
 # rpmlint stays off while the package set is being bootstrapped
 Support: !rpmlint-Factory !rpmlint-mini !rpmlint-Factory-strict
+# Slowroll inconsistency: mailutils needs guile = 3.0.9 but 3.0.11 is shipped; emacs is only needed for byte-compiling
+Ignore: emacs:mailutils
 Macros:
 %debian_nocheck 1
 :Macros
