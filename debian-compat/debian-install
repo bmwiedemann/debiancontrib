@@ -15,7 +15,9 @@ my $compat = '/usr/lib/debian-compat';
 my $listdir = '../rpmfiles';
 my @pkgs = map { chomp; $_ } qx(dh_listpackages);
 die "dh_listpackages found nothing\n" unless @pkgs;
-my %arch = map { $_->{Package} => $_->{Architecture} } Dpkg::Control::Info->new()->get_packages;
+my @ctrl = Dpkg::Control::Info->new()->get_packages;
+my %arch = map { $_->{Package} => $_->{Architecture} } @ctrl;
+my $mainpkg = $ctrl[0]{Package}; # debhelper's main package: first in debian/control, even if not built
 
 sub cmd($) { my $o = qx($_[0] 2>/dev/null); chomp $o; return length $o ? $o : undef }
 my %var = (libdir => '/usr/lib64');
@@ -119,7 +121,7 @@ for my $pkg (@pkgs) {
     close $lf;
     for my $s (qw(preinst postinst prerm postrm)) {
         push @warn, "$pkg: maintainer script debian/$pkg.$s is ignored" if -e "debian/$pkg.$s";
-        push @warn, "$pkg: maintainer script debian/$s is ignored" if $pkg eq $pkgs[0] && -e "debian/$s"; # debhelper gives unprefixed files to the first package
+        push @warn, "$pkg: maintainer script debian/$s is ignored" if $pkg eq $mainpkg && -e "debian/$s"; # debhelper gives unprefixed files to the main package
     }
 }
 my $n = grep { -f "$root$_" && -B _ && do { local $/; open(my $b, '<', "$root$_"); <$b> =~ /x86_64-linux-gnu/ } } keys %owner;
