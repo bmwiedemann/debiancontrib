@@ -29,6 +29,11 @@ tsv::read_tsv("$cache/debian-nfiles.tsv", sub { $nfiles{$_[0]} = $_[1] });
 my (%binsrc, %bindeps);
 my %binsec;
 tsv::read_tsv("$cache/debian-binaries.tsv", sub { $binsrc{$_[0]} //= $_[1]; $bindeps{$_[0]} //= "$_[6], $_[7]"; $binsec{$_[0]} //= $_[4] });
+# AppStream component IDs (org.kde.spectacle, CorsixTH ...) are chosen upstream and shared by both distributions
+sub asid($) { lc($_[0]) =~ s/\.desktop$//r }
+my (%suseas, %debas); # ID -> openSUSE package; Debian source -> [IDs]
+tsv::read_tsv("$cache/suse-appstream.tsv", sub { $suseas{asid($_[0])} //= $_[1] }) if -e "$cache/suse-appstream.tsv";
+tsv::read_tsv("$cache/debian-appstream.tsv", sub { push @{$debas{$binsrc{$_[1]}}}, asid($_[0]) if $binsrc{$_[1]} }) if -e "$cache/debian-appstream.tsv";
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
@@ -42,6 +47,7 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
     elsif ($src{lc $name}) { ($status, $ev) = ('have-name', join(' ', @{$src{lc $name}})) }
     elsif (my ($n, @o) = insrc($name)) { ($status, $ev) = ('have-norm', "$n @o") }
     elsif (length $home && $url{norm_url($home)}) { ($status, $ev) = ('have-url', "$home = @{$url{norm_url($home)}}[0]") }
+    elsif (my @as = grep { $suseas{$_} } @{$debas{$name} // []}) { ($status, $ev) = ('have-appstream', join(',', map { "$_=$suseas{$_}" } @as)) }
     else {
         my ($orig) = $files =~ /(?:^|;)([^;:]+?)_[^;:]*\.orig\.tar[^;:]*:/;
         if ($orig && (my ($n2, @o2) = insrc($orig))) { ($status, $ev) = ('have-tarball', "$orig -> $n2 @o2") }
@@ -97,7 +103,7 @@ for (my $changed = 1; $changed;) {
 for (@res) {
     pop @$_;
     $count{$_->[1]}++;
-    push @audit, $_ if $_->[1] =~ /^have-(url|binary|files|meta)$/ || $_->[2] =~ /^weak/;
+    push @audit, $_ if $_->[1] =~ /^have-(url|appstream|binary|files|meta)$/ || $_->[2] =~ /^weak/;
 }
 # our own packages that now look like duplicates of something openSUSE has
 my %ours;

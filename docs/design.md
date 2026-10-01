@@ -59,7 +59,9 @@ files. Unmapped names stay `deb(x)` and show up as unresolvable in OBS;
 ## Finding candidates
 `match` marks a Debian source as present in openSUSE if `exceptions/have`
 lists it (hand-verified equivalents like kwallet-pam -> pam_kwallet6), or the
-source name (also normalized), the Homepage, the orig tarball name, enough of
+source name (also normalized), the Homepage, an AppStream component ID
+(DEP-11 vs repodata appdata.xml, e.g. com.corsixth.corsixth -> CorsixTH), the
+orig tarball name, enough of
 its binary package names (directly or via depmap; -dev/-common/-data binaries
 do not count) or its files match Slowroll, Tumbleweed or any Factory
 devel project. Files are compared as distro-neutral keys (`file_key` in

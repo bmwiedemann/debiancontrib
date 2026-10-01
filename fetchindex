@@ -36,13 +36,14 @@ for c in $components; do
     get $mirror/dists/$dist/$c/binary-amd64/Packages.xz $d/Packages.xz
     get $mirror/dists/$dist/$c/Contents-amd64.gz $d/Contents-amd64.gz
     get $mirror/dists/$dist/$c/Contents-all.gz $d/Contents-all.gz
+    get $mirror/dists/$dist/$c/dep11/Components-amd64.yml.gz $d/Components-amd64.yml.gz
 done
 get https://popcon.debian.org/source/by_inst $cache/popcon/by_inst
 
 getrepo https://download.opensuse.org/source/slowroll/repo/oss $cache/suse/slowroll/src primary
-getrepo https://download.opensuse.org/slowroll/repo/oss $cache/suse/slowroll/oss primary filelists
+getrepo https://download.opensuse.org/slowroll/repo/oss $cache/suse/slowroll/oss primary filelists appdata
 getrepo https://download.opensuse.org/source/tumbleweed/repo/oss $cache/suse/tumbleweed/src primary
-getrepo https://download.opensuse.org/tumbleweed/repo/oss $cache/suse/tumbleweed/oss primary
+getrepo https://download.opensuse.org/tumbleweed/repo/oss $cache/suse/tumbleweed/oss primary appdata
 
 f=$cache/obs/factory-search.xml
 if ! fresh $f; then

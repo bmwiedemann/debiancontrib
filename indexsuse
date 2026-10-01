@@ -6,7 +6,7 @@ use FindBin; use lib "$FindBin::RealBin/lib";
 use tsv;
 
 my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
-my (@src, @bin, @prov, @files);
+my (@src, @bin, @prov, @files, @appstream);
 my %seenprov;
 
 # primary.xml: one package per block, createrepo writes one tag per line
@@ -50,6 +50,21 @@ for my $l (sort glob("$cache/devel/*.list")) {
     close $fh;
 }
 
+# appdata.xml: AppStream component ID -> package
+for my $r (qw(slowroll tumbleweed)) {
+    my $f = "$cache/suse/$r/oss/appdata.xml.gz";
+    next unless -e $f;
+    open(my $fh, "gzip -cd $f |") or die "$f: $!";
+    my ($id, $pkg);
+    while (<$fh>) {
+        if (/<component\b/) { ($id, $pkg) = () }
+        elsif (m{^\s{4}<id>([^<]+)</id>}) { $id = $1 }
+        elsif (m{^\s{4}<pkgname>([^<]+)</pkgname>}) { $pkg = $1 }
+        elsif (m{</component>} && $id && $pkg) { push @appstream, [$id, $pkg, $r] }
+    }
+    close $fh;
+}
+
 # filelists.xml: only paths useful for matching and dependency mapping
 open(my $fh, "zstd -dc $cache/suse/slowroll/oss/filelists.xml.zst |") or die;
 my $pkg;
@@ -66,4 +81,5 @@ tsv::write_tsv("$cache/suse-sources.tsv", \@src);
 tsv::write_tsv("$cache/suse-binaries.tsv", \@bin);
 tsv::write_tsv("$cache/suse-provides.tsv", \@prov);
 tsv::write_tsv("$cache/suse-files.tsv", \@files);
+tsv::write_tsv("$cache/suse-appstream.tsv", \@appstream);
 printf "%d sources, %d binaries, %d provides, %d files\n", scalar @src, scalar @bin, scalar @prov, scalar @files;

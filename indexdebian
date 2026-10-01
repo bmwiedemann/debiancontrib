@@ -12,7 +12,7 @@ my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
 my @comps = split ' ', $ENV{components} // 'main contrib';
 push @comps, 'non-free' if ($ENV{nonfree} // 0) eq '1';
 
-my (@src, @bin, @files, %best, %nfiles);
+my (@src, @bin, @files, %best, %nfiles, @appstream);
 for my $c (@comps) {
     my $idx = read_index("xzcat $cache/debian/$c/Sources.xz |", CTRL_INDEX_SRC);
     for my $k ($idx->get_keys()) {
@@ -34,6 +34,18 @@ for my $c (@comps) {
         push @bin, [$p->{Package}, $source, $p->{Version}, $p->{Architecture}, $p->{Section} // '',
             ($p->{Provides} // '') =~ s/\s+/ /gr, ($p->{Depends} // '') =~ s/\s+/ /gr, ($p->{'Pre-Depends'} // '') =~ s/\s+/ /gr];
     }
+    # DEP-11 AppStream metadata: component ID -> binary package, one YAML document per component
+    if (-e "$cache/debian/$c/Components-amd64.yml.gz") {
+        open(my $fh, "gzip -cd $cache/debian/$c/Components-amd64.yml.gz |") or die;
+        my ($id, $pkg) = ('', '');
+        while (<$fh>) {
+            if (/^---/) { push @appstream, [$id, $pkg] if $id && $pkg; ($id, $pkg) = ('', '') }
+            elsif (/^ID: "?([^"\s]+)/) { $id = $1 }
+            elsif (/^Package: "?([^"\s]+)/) { $pkg = $1 }
+        }
+        push @appstream, [$id, $pkg] if $id && $pkg;
+        close $fh;
+    }
     # Contents: only paths useful for matching and dependency mapping
     for my $a (qw(amd64 all)) {
     open(my $fh, "gzip -cd $cache/debian/$c/Contents-$a.gz |") or die;
@@ -50,5 +62,6 @@ my %keep = map { $_->[0] => $_ } grep { $_->[1] eq $best{$_->[0]} } @src;
 tsv::write_tsv("$cache/debian-sources.tsv", \@src);
 tsv::write_tsv("$cache/debian-binaries.tsv", \@bin);
 tsv::write_tsv("$cache/debian-files.tsv", \@files);
+tsv::write_tsv("$cache/debian-appstream.tsv", \@appstream);
 tsv::write_tsv("$cache/debian-nfiles.tsv", [map { [$_, $nfiles{$_}] } sort keys %nfiles]); # binary -> number of files outside /usr/share/{doc,lintian,bug}
 printf "%d sources, %d binaries, %d files\n", scalar @src, scalar @bin, scalar @files;
