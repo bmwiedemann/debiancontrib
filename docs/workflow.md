@@ -10,7 +10,7 @@ to OBS unless `commit=1`.
 
 ## Pick and add packages
 
-    ready=1 top=40 candidates          # zero unresolved build deps, by popcon
+    ready=1 limit=40 candidates          # zero unresolved build deps, by popcon
     showunresolvable local             # which mappings would unblock most
     addpkg foo bar                     # stage obs/foo, obs/bar
     localbuild obs/foo                 # optional local test (distrobox tumbleweed)

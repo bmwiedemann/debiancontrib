@@ -4,9 +4,9 @@
 # default: from OBS unresolvable packages of $prj; local: from out/candidates.tsv unresolved build dependencies
 . "$(dirname "$0")/lib.sh"
 if [ "$1" = local ]; then
-    cut -f7 $out/candidates.tsv | tr ',' '\n' | grep . | sort | uniq -c | sort -rn | head -${top:-40}
+    cut -f7 $out/candidates.tsv | tr ',' '\n' | grep . | sort | uniq -c | sort -rn | head -${limit:-40}
     exit
 fi
 osc_api "build/$prj/_result?repository=$repo&arch=$arch&view=status&code=unresolvable" |
     grep -o '<details>[^<]*</details>' | sed 's/<[^>]*>//g' | tr ',' '\n' |
-    grep -o 'nothing provides deb([^)]*)' | sed 's/nothing provides //' | sort | uniq -c | sort -rn | tee $out/unresolvable.txt | head -${top:-40}
+    grep -o 'nothing provides deb([^)]*)' | sed 's/nothing provides //' | sort | uniq -c | sort -rn | tee $out/unresolvable.txt | head -${limit:-40}

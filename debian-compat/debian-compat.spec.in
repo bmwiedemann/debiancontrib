@@ -27,7 +27,11 @@ Source0:        macros.debian
 Source1:        debian-install
 Source2:        relocate.map
 Source3:        owned-dirs
+BuildRequires:  binutils
+BuildRequires:  gcc
+BuildRequires:  gcc-c++
 BuildRequires:  perl
+BuildRequires:  pkgconf-pkg-config
 BuildRequires:  python-rpm-macros
 BuildRequires:  python3-base
 BuildArch:      noarch
@@ -42,6 +46,7 @@ openSUSE packages providing the same content.
 Summary:        rpm macros to build Debian sources with debhelper
 Requires:       debhelper
 Requires:       debian-compat-filesystem
+Requires:       debian-compat-toolchain
 Requires:       dh-autoreconf
 Requires:       dpkg
 Requires:       patch
@@ -58,6 +63,16 @@ Provides:       deb(debian-compat-filesystem)
 
 %description filesystem
 Symlinks for programs that hard-code Debian multiarch, python or perl paths.
+
+%package -n debian-compat-toolchain
+Summary:        Debian triplet-prefixed names for the openSUSE toolchain
+Requires:       binutils
+Requires:       gcc
+Requires:       gcc-c++
+Requires:       pkgconf-pkg-config
+
+%description -n debian-compat-toolchain
+x86_64-linux-gnu-gcc and friends, as Debian build systems expect them.
 
 %package -n debian-compat-sensible-utils
 Summary:        Debian compatibility: sensible-utils
@@ -100,7 +115,7 @@ ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/us
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
 # Debian ships triplet-prefixed toolchain names
 mkdir -p %{buildroot}%{_bindir}
-for t in gcc g++ cpp gfortran gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd ld.gold nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
+for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -123,10 +138,12 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu
-%{_bindir}/x86_64-linux-gnu-*
 %dir /usr/lib/python3
 /usr/lib/python3/dist-packages
 /usr/share/perl5
+
+%files -n debian-compat-toolchain
+%{_bindir}/x86_64-linux-gnu-*
 
 %files -n debian-compat-sensible-utils
 %{_bindir}/sensible-*

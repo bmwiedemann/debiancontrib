@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # SPDX-License-Identifier: GPL-2.0-or-later
-# usage: [ready=1] [top=N] [maxsize=BYTES] [ecosystems=rust,go] candidates
+# usage: [ready=1] [limit=N] [maxsize=BYTES] [ecosystems=rust,go] candidates
 # ranks Debian sources openSUSE lacks by popcon and lists their unresolved build dependencies
 # writes out/candidates.tsv: rank inst source version origsize nunresolved unresolved section
 use strict; use warnings;
@@ -42,4 +42,4 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
 @rows = sort { $a->[0] <=> $b->[0] } @rows;
 tsv::write_tsv("$out/candidates.tsv", \@rows);
 printf STDERR "%d candidates\n", scalar @rows;
-if (my $n = $ENV{top}) { printf "%6s %-30s %-16s %3d %s\n", @$_[0,2,3,5], substr($_->[6], 0, 60) for @rows[0 .. ($n > @rows ? $#rows : $n - 1)] }
+if (my $n = $ENV{limit}) { printf "%6s %-30s %-16s %3d %s\n", @$_[0,2,3,5], substr($_->[6], 0, 60) for @rows[0 .. ($n > @rows ? $#rows : $n - 1)] }

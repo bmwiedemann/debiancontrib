@@ -14,7 +14,7 @@ Slowroll or their devel projects are packaged (home: projects are ignored).
     indexdebian; indexsuse # parse them into cache/*.tsv
     match                  # which Debian sources does openSUSE already have?
     mkdepmap               # Debian package name -> openSUSE provides (data/depmap)
-    ready=1 top=30 candidates   # best next packages by popcon
+    ready=1 limit=30 candidates   # best next packages by popcon
     addpkg netcat          # stage obs/netcat (spec, sources, .changes)
     localbuild obs/netcat  # rpmbuild in the tumbleweed distrobox
     commit=1 addpkg netcat # commit to OBS
