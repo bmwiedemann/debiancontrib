@@ -77,3 +77,6 @@
 ^libdvdcss$
 ^vo-aacenc$
 ^faac$
+# Debian-specific build/packaging infrastructure
+^autotools-dev$
+^postgresql-common$

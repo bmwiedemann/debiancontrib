@@ -10,3 +10,10 @@ fonts-freefont	gnu-free-fonts
 pupnp	libupnp
 fonts-quicksand	paglinawan-quicksand-fonts
 opencascade	occt
+wxwidgets3.2	wxWidgets-3_2
+fonts-font-awesome	fontawesome-fonts
+bsd-mailx	mailx
+pyatspi	python-atspi
+gnome-colors	gnome-colors-icon-theme
+steam-installer	steam
+libhdf4	hdf
