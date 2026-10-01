@@ -4,3 +4,4 @@ distro-info: needs distro-info-data at runtime (was blocklisted, now packaged); 
 python3-*: ${python3:Depends} substvars are dropped, so python runtime dependencies are missing from the rpm (dh_python3 computes them at Debian build time)
 netcat: update-alternatives from postinst is ignored, so /usr/bin/nc is not provided
 dh-elpa: Slowroll's mailutils wants guile = 3.0.9 while 3.0.11 is shipped; worked around with `Ignore: emacs:mailutils` in data/prjconf
+ann: ann_test.cpp fails to compile with openSUSE's g++ (setw(directive): char* vs std::_Setw); needs an upstream patch, skipped
