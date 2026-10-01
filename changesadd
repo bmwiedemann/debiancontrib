@@ -9,5 +9,5 @@ f=$1; [ -n "$f" ] || die "usage: changesadd FILE.changes < text"
     echo
     cat
     echo
-    [ -e "$f" ] && cat "$f"
+    if [ -e "$f" ]; then cat "$f"; fi
 } > "$f.new" && mv "$f.new" "$f"

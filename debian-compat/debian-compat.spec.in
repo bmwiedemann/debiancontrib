@@ -62,10 +62,11 @@ Symlinks for programs that hard-code Debian multiarch, python or perl paths.
 %package -n debian-compat-sensible-utils
 Summary:        Debian compatibility: sensible-utils
 Provides:       deb(sensible-utils)
+Requires:       dpkg
 BuildArch:      noarch
 
 %description -n debian-compat-sensible-utils
-sensible-editor, sensible-pager and sensible-browser wrappers.
+sensible-pager and sensible-browser wrappers (sensible-editor comes with dpkg).
 
 %package -n debian-compat-init-system-helpers
 Summary:        Debian compatibility: init-system-helpers
@@ -99,10 +100,6 @@ ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/us
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
-cat > %{buildroot}%{_bindir}/sensible-editor <<'SH'
-#!/bin/sh
-exec ${VISUAL:-${EDITOR:-vim}} "$@"
-SH
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
 #!/bin/sh
 exec ${PAGER:-less} "$@"

@@ -18,6 +18,7 @@ top=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 export sloguard=${sloguard-$prj} # osc.sh refuses writes outside this project
 verbose=-s . "$oscsh"
 export PERL5LIB=$top/lib${PERL5LIB:+:$PERL5LIB}
+export PATH=$top:$PATH
 mkdir -p "$cache" "$obs" "$out"
 
 die() { echo "${0##*/}: $*" >&2; exit 1; }

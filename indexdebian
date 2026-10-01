@@ -35,11 +35,13 @@ for my $c (@comps) {
             ($p->{Provides} // '') =~ s/\s+/ /gr, ($p->{Depends} // '') =~ s/\s+/ /gr, ($p->{'Pre-Depends'} // '') =~ s/\s+/ /gr];
     }
     # Contents: only paths useful for matching and dependency mapping
-    open(my $fh, "gzip -cd $cache/debian/$c/Contents-amd64.gz |") or die;
+    for my $a (qw(amd64 all)) {
+    open(my $fh, "gzip -cd $cache/debian/$c/Contents-$a.gz |") or die;
     while (<$fh>) {
         my ($path, $pkgs) = /^(\S+)\s+(\S+)$/ or next;
         next unless $path =~ m{^usr/(s?bin/|lib/x86_64-linux-gnu/[^/]+\.so|lib/x86_64-linux-gnu/pkgconfig/|share/pkgconfig/|include/|share/perl5/|lib/x86_64-linux-gnu/perl5/|lib/python3/dist-packages/[^/]+/?$|lib/python3/dist-packages/[^/]+\.py$|share/fonts/|lib/ruby/vendor_ruby/[^/]+|share/nodejs/[^/]+/package\.json$|share/lua/|lib/x86_64-linux-gnu/lua/)};
         push @files, ["/$path", $_] for map { s{.*/}{}r } split /,/, $pkgs;
+    }
     }
 }
 my %keep = map { $_->[0] => $_ } grep { $_->[1] eq $best{$_->[0]} } @src;

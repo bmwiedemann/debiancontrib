@@ -12,7 +12,7 @@ my $cache = $ENV{cache} // "$top/cache";
 
 my (%prov, %pkg, %file, %lcprov);  # slowroll only: that is what the build root resolves against
 tsv::read_tsv("$cache/suse-provides.tsv", sub { return unless $_[2] eq 'slowroll'; $prov{$_[0]} //= $_[1]; $pkg{$_[1]} = 1; $lcprov{lc $_[0]} //= $_[0] if $_[0] !~ m{[/(]} });
-tsv::read_tsv("$cache/suse-files.tsv", sub { $file{$_[0]} = $_[1] });
+tsv::read_tsv("$cache/suse-files.tsv", sub { $file{$_[0]} = $_[1] if !$file{$_[0]} || $file{$_[0]} =~ /-(mini|stage1|bootstrap)/ });
 my %debfiles;
 tsv::read_tsv("$cache/debian-files.tsv", sub { push @{$debfiles{$_[1]}}, $_[0] });
 my %lcpkg = map { lc($_) => $_ } keys %pkg;
@@ -20,12 +20,13 @@ my @pysite = sort keys %{{ map { m{^(/usr/lib(?:64)?/python3[^/]*/site-packages)
 
 sub vote(@) { # owners -> the owner of most files, if it owns most of them
     my %c; $c{$_}++ for grep { defined } @_;
-    my ($best) = sort { $c{$b} <=> $c{$a} || $a cmp $b } keys %c or return;
+    my ($best) = sort { $c{$b} <=> $c{$a} || !!($a =~ /-(mini|stage1|bootstrap)/) <=> !!($b =~ /-(mini|stage1|bootstrap)/) || $a cmp $b } keys %c or return;
     return $c{$best} * 2 >= @_ ? $best : ();
 }
 sub bymethod($$) {
     my ($n, $files) = @_;
     return ('name', $n) if $pkg{$n} || $prov{$n};
+    return ('case', $lcpkg{lc $n} // $lcprov{lc $n}) if $lcpkg{lc $n} || $lcprov{lc $n};
     for my $c (normalize_name($n)) { return ('norm', $lcpkg{$c} // $lcprov{$c}) if ($lcpkg{$c} || $lcprov{$c}) && $c ne lc $n }
     my @pc = map { m{/pkgconfig/([^/]+)\.pc$} ? "pkgconfig($1)" : () } @$files;
     if (@pc) { my @hit = grep { $prov{$_} } @pc; return ('pc', @hit) if @hit }

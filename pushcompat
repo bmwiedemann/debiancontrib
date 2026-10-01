@@ -1,0 +1,23 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [commit=1] pushcompat  - regenerate debian-compat and stage it in $obs/debian-compat (commit=1 sends it)
+. "$(dirname "$0")/lib.sh"
+set -e
+$top/mkcompat
+[ -d $obs/.osc ] || (cd $obs && osc init $prj)
+d=$obs/debian-compat
+if [ ! -d $d/.osc ]; then
+    if osc_api "source/$prj/debian-compat" 2>/dev/null | grep -q '<entry '; then (cd $obs && osc co debian-compat >/dev/null)
+    else (cd $obs && osc mkpac debian-compat >/dev/null); fi
+fi
+cp -p $top/debian-compat/debian-compat.spec $top/debian-compat/macros.debian $top/debian-compat/debian-install $top/data/relocate.map $top/data/owned-dirs $d/
+cd $d
+ver=$(grep '^Version:' debian-compat.spec | awk '{print $2}')
+n=$(grep -c '^%package' debian-compat.spec)
+if [ -z "$(osc status)" ]; then log "debian-compat: unchanged"; exit 0; fi
+osc addremove >/dev/null
+msg="Update debian-compat to $ver ($n subpackages)"
+[ -e debian-compat.changes ] || msg="Initial debian-compat $ver ($n subpackages)"
+echo "- $msg" | changesadd debian-compat.changes
+osc status
+if [ "$commit" = 1 ]; then osc ci --skip-local-service-run -m "$msg" >/dev/null && log "committed: $msg"; else log "commit=1 to send"; fi

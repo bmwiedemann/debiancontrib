@@ -1,0 +1,24 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [install=1] localbuild PKGDIR  - rpmbuild a package dir inside the tumbleweed distrobox, rpms land in $out/rpms
+# $out/rpms is registered as a plaindir repo in the distrobox, so earlier results (debian-compat) resolve as build deps;
+# install=1 also installs the resulting packages there
+. "$(dirname "$0")/lib.sh"
+: ${box:=tumbleweed}
+: ${install:=0}
+d=$(cd "$1" 2>/dev/null && pwd) || die "usage: localbuild PKGDIR"
+spec=$(ls $d/*.spec | head -1)
+mkdir -p $out/rpms $out/rpmbuild
+distrobox enter $box -- bash -c "
+set -e
+zypper lr debiancontrib-local >/dev/null 2>&1 || sudo -n zypper -n ar --no-gpgcheck -t plaindir -p 50 $out/rpms debiancontrib-local >/dev/null
+sudo -n zypper -n ref debiancontrib-local >/dev/null
+br=\$(rpmspec -q --buildrequires $spec | sed 's/ .*//' | grep -v '^rpmlib')
+[ -z \"\$br\" ] || sudo -n zypper -n in --no-recommends \$br >/dev/null || { echo 'build dependency install failed'; exit 1; }
+rpmbuild --define '_topdir $out/rpmbuild' --define '_sourcedir $d' --define '_rpmdir $out/rpms' --define '_srcrpmdir $out/rpms' -ba $spec > $out/localbuild.log 2>&1 || { tail -60 $out/localbuild.log; exit 1; }
+grep -E '^(Wrote|debian-install|debian-compat):' $out/localbuild.log
+if [ '$install' = 1 ]; then
+    sudo -n zypper -n ref debiancontrib-local >/dev/null
+    sudo -n zypper -n in --no-recommends --allow-unsigned-rpm --force-resolution \$(rpmspec -q --qf '%{NAME}\n' $spec | grep -v debuginfo) >/dev/null && echo installed
+fi
+"

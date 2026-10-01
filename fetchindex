@@ -30,6 +30,7 @@ for c in $components; do
     get $mirror/dists/$dist/$c/source/Sources.xz $d/Sources.xz
     get $mirror/dists/$dist/$c/binary-amd64/Packages.xz $d/Packages.xz
     get $mirror/dists/$dist/$c/Contents-amd64.gz $d/Contents-amd64.gz
+    get $mirror/dists/$dist/$c/Contents-all.gz $d/Contents-all.gz
 done
 get https://popcon.debian.org/source/by_inst $cache/popcon/by_inst
 

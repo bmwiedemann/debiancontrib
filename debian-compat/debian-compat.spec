@@ -62,10 +62,11 @@ Symlinks for programs that hard-code Debian multiarch, python or perl paths.
 %package -n debian-compat-sensible-utils
 Summary:        Debian compatibility: sensible-utils
 Provides:       deb(sensible-utils)
+Requires:       dpkg
 BuildArch:      noarch
 
 %description -n debian-compat-sensible-utils
-sensible-editor, sensible-pager and sensible-browser wrappers.
+sensible-pager and sensible-browser wrappers (sensible-editor comes with dpkg).
 
 %package -n debian-compat-init-system-helpers
 Summary:        Debian compatibility: init-system-helpers
@@ -109,6 +110,17 @@ Pulls in the openSUSE packages providing what Debian's automake provides.
 
 %files -n debian-compat-automake
 
+%package -n debian-compat-autopoint
+Summary:        Debian compatibility: autopoint -> gettext-tools
+Provides:       deb(autopoint)
+Requires:       gettext-tools
+BuildArch:      noarch
+
+%description -n debian-compat-autopoint
+Pulls in the openSUSE packages providing what Debian's autopoint provides.
+
+%files -n debian-compat-autopoint
+
 %package -n debian-compat-bison
 Summary:        Debian compatibility: bison -> bison
 Provides:       deb(bison)
@@ -131,6 +143,28 @@ Pulls in the openSUSE packages providing what Debian's cmake provides.
 
 %files -n debian-compat-cmake
 
+%package -n debian-compat-default-jdk
+Summary:        Debian compatibility: default-jdk -> java-devel
+Provides:       deb(default-jdk)
+Requires:       java-devel
+BuildArch:      noarch
+
+%description -n debian-compat-default-jdk
+Pulls in the openSUSE packages providing what Debian's default-jdk provides.
+
+%files -n debian-compat-default-jdk
+
+%package -n debian-compat-default-jre
+Summary:        Debian compatibility: default-jre -> java
+Provides:       deb(default-jre)
+Requires:       java
+BuildArch:      noarch
+
+%description -n debian-compat-default-jre
+Pulls in the openSUSE packages providing what Debian's default-jre provides.
+
+%files -n debian-compat-default-jre
+
 %package -n debian-compat-dh-autoreconf
 Summary:        Debian compatibility: dh-autoreconf -> dh-autoreconf
 Provides:       deb(dh-autoreconf)
@@ -141,6 +175,28 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's dh-autoreconf provides.
 
 %files -n debian-compat-dh-autoreconf
+
+%package -n debian-compat-docbook-xml
+Summary:        Debian compatibility: docbook-xml -> docbook_4
+Provides:       deb(docbook-xml)
+Requires:       docbook_4
+BuildArch:      noarch
+
+%description -n debian-compat-docbook-xml
+Pulls in the openSUSE packages providing what Debian's docbook-xml provides.
+
+%files -n debian-compat-docbook-xml
+
+%package -n debian-compat-docbook-xsl
+Summary:        Debian compatibility: docbook-xsl -> docbook-xsl-stylesheets
+Provides:       deb(docbook-xsl)
+Requires:       docbook-xsl-stylesheets
+BuildArch:      noarch
+
+%description -n debian-compat-docbook-xsl
+Pulls in the openSUSE packages providing what Debian's docbook-xsl provides.
+
+%files -n debian-compat-docbook-xsl
 
 %package -n debian-compat-flex
 Summary:        Debian compatibility: flex -> flex
@@ -185,6 +241,21 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libcurl4-openssl-dev provides.
 
 %files -n debian-compat-libcurl4-openssl-dev
+
+%package -n debian-compat-libglib2.0-dev
+Summary:        Debian compatibility: libglib2.0-dev -> pkgconfig(glib-2.0) pkgconfig(gio-2.0) pkgconfig(gobject-2.0) pkgconfig(gmodule-2.0) pkgconfig(gthread-2.0)
+Provides:       deb(libglib2.0-dev)
+Requires:       pkgconfig(glib-2.0)
+Requires:       pkgconfig(gio-2.0)
+Requires:       pkgconfig(gobject-2.0)
+Requires:       pkgconfig(gmodule-2.0)
+Requires:       pkgconfig(gthread-2.0)
+BuildArch:      noarch
+
+%description -n debian-compat-libglib2.0-dev
+Pulls in the openSUSE packages providing what Debian's libglib2.0-dev provides.
+
+%files -n debian-compat-libglib2.0-dev
 
 %package -n debian-compat-libgtk-3-dev
 Summary:        Debian compatibility: libgtk-3-dev -> pkgconfig(gdk-3.0) pkgconfig(gdk-broadway-3.0) pkgconfig(gdk-wayland-3.0) pkgconfig(gdk-x11-3.0) pkgconfig(gtk+-3.0) pkgconfig(gtk+-broadway-3.0) pkgconfig(gtk+-unix-print-3.0) pkgconfig(gtk+-wayland-3.0) pkgconfig(gtk+-x11-3.0)
@@ -430,6 +501,28 @@ Pulls in the openSUSE packages providing what Debian's python3 provides.
 
 %files -n debian-compat-python3
 
+%package -n debian-compat-python3-all
+Summary:        Debian compatibility: python3-all -> python3
+Provides:       deb(python3-all)
+Requires:       python3
+BuildArch:      noarch
+
+%description -n debian-compat-python3-all
+Pulls in the openSUSE packages providing what Debian's python3-all provides.
+
+%files -n debian-compat-python3-all
+
+%package -n debian-compat-python3-all-dev
+Summary:        Debian compatibility: python3-all-dev -> python3-devel
+Provides:       deb(python3-all-dev)
+Requires:       python3-devel
+BuildArch:      noarch
+
+%description -n debian-compat-python3-all-dev
+Pulls in the openSUSE packages providing what Debian's python3-all-dev provides.
+
+%files -n debian-compat-python3-all-dev
+
 %package -n debian-compat-python3-dev
 Summary:        Debian compatibility: python3-dev -> python3-devel
 Provides:       deb(python3-dev)
@@ -451,6 +544,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's python3-setuptools provides.
 
 %files -n debian-compat-python3-setuptools
+
+%package -n debian-compat-python3-sphinx
+Summary:        Debian compatibility: python3-sphinx -> python3-Sphinx
+Provides:       deb(python3-sphinx)
+Requires:       python3-Sphinx
+BuildArch:      noarch
+
+%description -n debian-compat-python3-sphinx
+Pulls in the openSUSE packages providing what Debian's python3-sphinx provides.
+
+%files -n debian-compat-python3-sphinx
 
 %package -n debian-compat-quilt
 Summary:        Debian compatibility: quilt -> quilt
@@ -529,10 +633,6 @@ ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/us
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
-cat > %{buildroot}%{_bindir}/sensible-editor <<'SH'
-#!/bin/sh
-exec ${VISUAL:-${EDITOR:-vim}} "$@"
-SH
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
 #!/bin/sh
 exec ${PAGER:-less} "$@"
