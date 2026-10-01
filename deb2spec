@@ -101,6 +101,7 @@ for my $p (@pkgs) {
     my @l;
     push @l, "BuildArch:      noarch" if $p->{Architecture} eq 'all' && !$ismain && grep { $_->{Architecture} ne 'all' } @pkgs;
     push @l, "Provides:       deb($n) = %{version}";
+    push @l, "Provides:       deb(src:$src) = $debver" if $p == $main && !$ismain;
     push @l, map { "Provides:       deb($_)" } dep_names($p->{Provides});
     push @l, map { "Requires:       $_" } deps(join(', ', grep { defined } $p->{'Pre-Depends'}, $p->{Depends}), 0);
     push @l, map { "Requires:       $_" } split /,/, $o{"extra_requires_$n"} // '';
