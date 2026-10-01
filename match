@@ -4,7 +4,7 @@
 # writes cache/match.tsv (source, status, evidence) and out/match-audit.tsv for the weaker matches
 use strict; use warnings;
 use FindBin; use lib "$FindBin::RealBin/lib";
-use deb qw(normalize_name norm_url file_key);
+use deb qw(normalize_name norm_url file_key dep_names);
 use tsv;
 
 my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
@@ -23,6 +23,10 @@ my %depmap; # Debian binary -> openSUSE package, from mkdepmap's per-binary heur
 tsv::read_tsv("$FindBin::RealBin/data/depmap", sub { $depmap{$_[0]} = $_[1] });
 my %debfiles; # binary -> {file_key}
 tsv::read_tsv("$cache/debian-files.tsv", sub { my $k = file_key($_[0]); $debfiles{$_[1]}{$k} = 1 if $k });
+my %nfiles; # binary -> files outside /usr/share/doc; metapackages and transitional packages have none
+tsv::read_tsv("$cache/debian-nfiles.tsv", sub { $nfiles{$_[0]} = $_[1] });
+my (%binsrc, %bindeps);
+tsv::read_tsv("$cache/debian-binaries.tsv", sub { $binsrc{$_[0]} //= $_[1]; $bindeps{$_[0]} //= "$_[6], $_[7]" });
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
@@ -61,10 +65,23 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
             else { ($status, $ev) = ('missing', '') }
         }
     }
-    $count{$status}++;
-    push @res, [$name, $status, $ev];
-    push @audit, [$name, $status, $ev] if $status =~ /^have-(url|binary|files)$/ || $ev =~ /^weak/;
+    push @res, [$name, $status, $ev, $bins];
 });
+# metapackages / transitional packages (no files beyond /usr/share/doc) whose dependencies openSUSE already has
+my %st = map { $_->[0] => $_->[1] } @res;
+for my $r (grep { $_->[1] eq 'missing' } @res) {
+    my @b = grep { !/-(doc|dbg|dbgsym|udeb)$/ } split /,/, $r->[3];
+    next if !@b || grep { $nfiles{$_} || !exists $bindeps{$_} } @b; # not built on amd64 counts as unknown
+    my %own = map { $_ => 1 } @b;
+    my @d = grep { !$own{$_} } map { dep_names($bindeps{$_} // '') } @b;
+    my @ok = grep { my $d = $_; ($binsrc{$d} && ($st{$binsrc{$d}} // '') =~ /^have-/) || $depmap{$d} || grep { $bin{$_} } normalize_name($d) } @d;
+    @$r[1, 2] = ('have-meta', scalar(@ok) . "/" . scalar(@d) . " deps: " . join(',', @ok[0..($#ok > 4 ? 4 : $#ok)])) if @d && @ok * 2 >= @d;
+}
+for (@res) {
+    pop @$_;
+    $count{$_->[1]}++;
+    push @audit, $_ if $_->[1] =~ /^have-(url|binary|files|meta)$/ || $_->[2] =~ /^weak/;
+}
 tsv::write_tsv("$cache/match.tsv", \@res);
 tsv::write_tsv("$out/match-audit.tsv", \@audit);
 print map { sprintf "%-12s %d\n", $_, $count{$_} } sort keys %count;
