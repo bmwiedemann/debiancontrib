@@ -59,12 +59,12 @@ files. Unmapped names stay `deb(x)` and show up as unresolvable in OBS;
 ## Finding candidates
 `match` marks a Debian source as present in openSUSE if `exceptions/have`
 lists it (hand-verified equivalents like kwallet-pam -> pam_kwallet6), or the
-source name (also normalized), the Homepage, an AppStream component ID
-(DEP-11 vs repodata appdata.xml, e.g. com.corsixth.corsixth -> CorsixTH), the
-orig tarball name, enough of
+source name (also normalized), the Homepage, the orig tarball name, enough of
 its binary package names (directly or via depmap; -dev/-common/-data binaries
-do not count) or its files match Slowroll, Tumbleweed or any Factory
-devel project. Files are compared as distro-neutral keys (`file_key` in
+do not count), its files or an AppStream component ID (DEP-11 vs repodata
+appdata.xml, e.g. com.corsixth.corsixth -> CorsixTH; IDs that several Debian
+sources share, like forks, are ignored) match Slowroll, Tumbleweed or any
+Factory devel project. Files are compared as distro-neutral keys (`file_key` in
 lib/deb.pm: command, font file, soname, .pc and header names, perl/python/lua
 module paths), so google-caladea-fonts is found for fonts-crosextra-caladea by
 its Caladea-*.ttf. Fonts also match by family name (at least 8 characters;

@@ -33,7 +33,9 @@ tsv::read_tsv("$cache/debian-binaries.tsv", sub { $binsrc{$_[0]} //= $_[1]; $bin
 sub asid($) { lc($_[0]) =~ s/\.desktop$//r }
 my (%suseas, %debas); # ID -> openSUSE package; Debian source -> [IDs]
 tsv::read_tsv("$cache/suse-appstream.tsv", sub { $suseas{asid($_[0])} //= $_[1] }) if -e "$cache/suse-appstream.tsv";
-tsv::read_tsv("$cache/debian-appstream.tsv", sub { push @{$debas{$binsrc{$_[1]}}}, asid($_[0]) if $binsrc{$_[1]} }) if -e "$cache/debian-appstream.tsv";
+my %assrc; # ID -> Debian sources; an ID that forks share (wsjtx, wsjtx-improved) says nothing
+tsv::read_tsv("$cache/debian-appstream.tsv", sub { $assrc{asid($_[0])}{$binsrc{$_[1]}} = 1 if $binsrc{$_[1]} }) if -e "$cache/debian-appstream.tsv";
+for my $id (keys %assrc) { my @s = keys %{$assrc{$id}}; push @{$debas{$s[0]}}, $id if @s == 1 }
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
@@ -47,7 +49,6 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
     elsif ($src{lc $name}) { ($status, $ev) = ('have-name', join(' ', @{$src{lc $name}})) }
     elsif (my ($n, @o) = insrc($name)) { ($status, $ev) = ('have-norm', "$n @o") }
     elsif (length $home && $url{norm_url($home)}) { ($status, $ev) = ('have-url', "$home = @{$url{norm_url($home)}}[0]") }
-    elsif (my @as = grep { $suseas{$_} } @{$debas{$name} // []}) { ($status, $ev) = ('have-appstream', join(',', map { "$_=$suseas{$_}" } @as)) }
     else {
         my ($orig) = $files =~ /(?:^|;)([^;:]+?)_[^;:]*\.orig\.tar[^;:]*:/;
         if ($orig && (my ($n2, @o2) = insrc($orig))) { ($status, $ev) = ('have-tarball', "$orig -> $n2 @o2") }
@@ -77,6 +78,7 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
                 my @p = sort { $fpkg{$b} <=> $fpkg{$a} || $a cmp $b } keys %fpkg; splice @p, 3;
                 ($status, $ev) = ('have-files', join(',', @p) . " " . scalar(@fhit) . "/" . scalar(@bf) . " e.g. $fhit[0]");
             }
+            elsif (my @as = sort grep { $suseas{$_} } @{$debas{$name} // []}) { ($status, $ev) = ('have-appstream', join(',', map { "$_=$suseas{$_}" } @as)) }
             elsif (@hit) { ($status, $ev) = ('missing', "weak: binaries @hit of " . scalar(@b)) }
             else { ($status, $ev) = ('missing', '') }
         }
