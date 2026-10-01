@@ -62,7 +62,7 @@ sub debvercmp($$) { return version_compare($_[0], $_[1]) }
 # Debian source/binary name -> lowercase candidate openSUSE names
 sub normalize_name($) {
     my $n = lc shift;
-    my %c = ($n => 1);
+    my @c = ($n); my %c = ($n => 1); # in rule order, so callers taking the first hit are deterministic
     my @rules = (
         [qr/^lib(.*)-perl$/, 'perl-$1'],
         [qr/^(.*)t64$/, '$1'],
@@ -98,9 +98,9 @@ sub normalize_name($) {
     );
     for my $r (@rules) {
         my ($re, $rep) = @$r;
-        if ($n =~ $re) { my @cap = ($1, $2); (my $x = $rep) =~ s/\$(\d)/$cap[$1-1] \/\/ ''/ge; $c{$x} = 1 }
+        if ($n =~ $re) { my @cap = ($1, $2); (my $x = $rep) =~ s/\$(\d)/$cap[$1-1] \/\/ ''/ge; push @c, $x unless $c{$x}++ }
     }
-    return keys %c;
+    return @c;
 }
 
 # file path (Debian or openSUSE layout) -> distro-neutral key, or nothing for paths that say little:
