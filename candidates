@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # SPDX-License-Identifier: GPL-2.0-or-later
 # usage: [ready=1] [limit=N] [maxsize=BYTES] [ecosystems=rust,go] candidates
-# ranks Debian sources openSUSE lacks by popcon and lists their unresolved build dependencies
+# ranks Debian sources openSUSE lacks by popcon and lists their unresolved build (and run:) dependencies
 # writes out/candidates.tsv: rank inst source version origsize nunresolved unresolved section
 use strict; use warnings;
 use FindBin; use lib "$FindBin::RealBin/lib";
@@ -27,6 +27,13 @@ tsv::read_tsv("$cache/project-provides.tsv", sub { $known{$_[0]} = 1 }) if -e "$
 my %missing;
 tsv::read_tsv("$cache/match.tsv", sub { $missing{$_[0]} = 1 if $_[1] eq 'missing' });
 
+my (%sib, %rdeps); # per source: names its own binaries provide, and their runtime dependencies
+tsv::read_tsv("$cache/debian-binaries.tsv", sub {
+    my ($bin, $src, $ver, $arch, $sec, $prov, $dep, $pre) = @_;
+    return unless $missing{$src};
+    $sib{$src}{$bin} = 1; $sib{$src}{$_} = 1 for dep_names($prov);
+    push @{$rdeps{$src}}, dep_names("$dep, $pre");
+});
 my @rows;
 tsv::read_tsv("$cache/debian-sources.tsv", sub {
     my ($name, $ver, $comp, $sec, $prio, $dir, $files, $bins, $home, $bd) = @_;
@@ -36,6 +43,8 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
     my $size = 0; $size += $_ for map { (split /:/)[1] } split /;/, $files;
     return if $maxsize && $size > $maxsize;
     my @unres = grep { !$known{$_} } dep_names($bd, build => 1);
+    my %seen = map { $_ => 1 } @unres;
+    push @unres, map { "run:$_" } grep { !$known{$_} && !$sib{$name}{$_} && !$seen{$_}++ } @{$rdeps{$name} // []};
     return if $ENV{ready} && @unres;
     push @rows, [$rank{$name} // 999999, $inst{$name} // 0, $name, $ver, $size, scalar @unres, join(',', @unres), $sec];
 });
