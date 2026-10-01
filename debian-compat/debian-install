@@ -119,7 +119,7 @@ for my $pkg (@pkgs) {
     close $lf;
     for my $s (qw(preinst postinst prerm postrm)) {
         push @warn, "$pkg: maintainer script debian/$pkg.$s is ignored" if -e "debian/$pkg.$s";
-        push @warn, "$pkg: maintainer script debian/$s is ignored" if @pkgs == 1 && -e "debian/$s";
+        push @warn, "$pkg: maintainer script debian/$s is ignored" if $pkg eq $pkgs[0] && -e "debian/$s"; # debhelper gives unprefixed files to the first package
     }
 }
 my $n = grep { -f "$root$_" && -B _ && do { local $/; open(my $b, '<', "$root$_"); <$b> =~ /x86_64-linux-gnu/ } } keys %owner;
