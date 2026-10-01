@@ -4,3 +4,4 @@
 \b(ghc|haskell-devscripts|libghc-)	haskell
 \b(dh-r|r-base-dev|r-cran-|r-bioc-)	r
 \b(ocaml|dh-ocaml)	ocaml
+\b(dh-nodejs|pkg-js-tools|dh-sequence-nodejs)	node
