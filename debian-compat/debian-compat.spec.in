@@ -133,7 +133,10 @@ for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump
 ln -s gawk %{buildroot}%{_bindir}/mawk
 # Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
 mkdir -p %{buildroot}/usr/share/misc
-for f in config.guess config.sub; do ln -s ../$(basename $(dirname $(ls -d /usr/share/automake-*/$f | tail -1)))/$f %{buildroot}/usr/share/misc/$f; done
+for f in config.guess config.sub; do install -m755 $(ls -d /usr/share/automake-*/$f | tail -1) %{buildroot}/usr/share/misc/$f; done
+# dpkg-vendor must answer Debian (DEB_VENDOR is set by %%debian_env)
+mkdir -p %{buildroot}%{_sysconfdir}/dpkg/origins
+printf 'Vendor: Debian\nVendor-URL: https://www.debian.org/\nBugs: debbugs://bugs.debian.org\n' > %{buildroot}%{_sysconfdir}/dpkg/origins/debian
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -153,6 +156,8 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-rpm-macros
 %{_rpmmacrodir}/macros.debian
 /usr/lib/debian-compat
+%dir %{_sysconfdir}/dpkg/origins
+%config %{_sysconfdir}/dpkg/origins/debian
 %dir /usr/share/python3
 /usr/share/python3/debian_defaults
 

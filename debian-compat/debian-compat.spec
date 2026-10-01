@@ -28,6 +28,8 @@ Source1:        debian-install
 Source2:        relocate.map
 Source3:        owned-dirs
 Source4:        dh_install
+Source5:        py3versions
+BuildRequires:  automake
 BuildRequires:  binutils
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -71,6 +73,7 @@ Symlinks for programs that hard-code Debian multiarch, python or perl paths.
 
 %package -n debian-compat-toolchain
 Summary:        Debian triplet-prefixed names for the openSUSE toolchain
+Requires:       automake
 Requires:       binutils
 Requires:       gcc
 Requires:       gcc-c++
@@ -219,6 +222,28 @@ Pulls in the openSUSE packages providing what Debian's dh-autoreconf provides.
 
 %files -n debian-compat-dh-autoreconf
 
+%package -n debian-compat-docbook
+Summary:        Debian compatibility: docbook -> docbook
+Provides:       deb(docbook)
+Requires:       docbook
+BuildArch:      noarch
+
+%description -n debian-compat-docbook
+Pulls in the openSUSE packages providing what Debian's docbook provides.
+
+%files -n debian-compat-docbook
+
+%package -n debian-compat-docbook-utils
+Summary:        Debian compatibility: docbook-utils -> docbook-utils
+Provides:       deb(docbook-utils)
+Requires:       docbook-utils
+BuildArch:      noarch
+
+%description -n debian-compat-docbook-utils
+Pulls in the openSUSE packages providing what Debian's docbook-utils provides.
+
+%files -n debian-compat-docbook-utils
+
 %package -n debian-compat-docbook-xml
 Summary:        Debian compatibility: docbook-xml -> docbook_4
 Provides:       deb(docbook-xml)
@@ -296,6 +321,17 @@ Pulls in the openSUSE packages providing what Debian's gettext provides.
 
 %files -n debian-compat-gettext
 
+%package -n debian-compat-ghostscript
+Summary:        Debian compatibility: ghostscript -> ghostscript
+Provides:       deb(ghostscript)
+Requires:       ghostscript
+BuildArch:      noarch
+
+%description -n debian-compat-ghostscript
+Pulls in the openSUSE packages providing what Debian's ghostscript provides.
+
+%files -n debian-compat-ghostscript
+
 %package -n debian-compat-git-buildpackage
 Summary:        Debian compatibility: git-buildpackage -> git-buildpackage
 Provides:       deb(git-buildpackage)
@@ -317,6 +353,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's help2man provides.
 
 %files -n debian-compat-help2man
+
+%package -n debian-compat-libalgorithm-diff-perl
+Summary:        Debian compatibility: libalgorithm-diff-perl -> perl-Algorithm-Diff
+Provides:       deb(libalgorithm-diff-perl)
+Requires:       perl-Algorithm-Diff
+BuildArch:      noarch
+
+%description -n debian-compat-libalgorithm-diff-perl
+Pulls in the openSUSE packages providing what Debian's libalgorithm-diff-perl provides.
+
+%files -n debian-compat-libalgorithm-diff-perl
 
 %package -n debian-compat-libarchive-zip-perl
 Summary:        Debian compatibility: libarchive-zip-perl -> perl-Archive-Zip
@@ -409,6 +456,30 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libglib2.0-dev provides.
 
 %files -n debian-compat-libglib2.0-dev
+
+%package -n debian-compat-libgmp-dev
+Summary:        Debian compatibility: libgmp-dev -> pkgconfig(gmp) pkgconfig(gmpxx)
+Provides:       deb(libgmp-dev)
+Requires:       pkgconfig(gmp)
+Requires:       pkgconfig(gmpxx)
+BuildArch:      noarch
+
+%description -n debian-compat-libgmp-dev
+Pulls in the openSUSE packages providing what Debian's libgmp-dev provides.
+
+%files -n debian-compat-libgmp-dev
+
+%package -n debian-compat-libgnutls28-dev
+Summary:        Debian compatibility: libgnutls28-dev -> pkgconfig(gnutls-dane) pkgconfig(gnutls)
+Provides:       deb(libgnutls28-dev)
+Requires:       pkgconfig(gnutls-dane)
+Requires:       pkgconfig(gnutls)
+BuildArch:      noarch
+
+%description -n debian-compat-libgnutls28-dev
+Pulls in the openSUSE packages providing what Debian's libgnutls28-dev provides.
+
+%files -n debian-compat-libgnutls28-dev
 
 %package -n debian-compat-libgtk-3-dev
 Summary:        Debian compatibility: libgtk-3-dev -> pkgconfig(gdk-3.0) pkgconfig(gdk-broadway-3.0) pkgconfig(gdk-wayland-3.0) pkgconfig(gdk-x11-3.0) pkgconfig(gtk+-3.0) pkgconfig(gtk+-broadway-3.0) pkgconfig(gtk+-unix-print-3.0) pkgconfig(gtk+-wayland-3.0) pkgconfig(gtk+-x11-3.0)
@@ -516,6 +587,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libmime-tools-perl provides.
 
 %files -n debian-compat-libmime-tools-perl
+
+%package -n debian-compat-libmodule-build-perl
+Summary:        Debian compatibility: libmodule-build-perl -> perl-Module-Build
+Provides:       deb(libmodule-build-perl)
+Requires:       perl-Module-Build
+BuildArch:      noarch
+
+%description -n debian-compat-libmodule-build-perl
+Pulls in the openSUSE packages providing what Debian's libmodule-build-perl provides.
+
+%files -n debian-compat-libmodule-build-perl
 
 %package -n debian-compat-libncurses-dev
 Summary:        Debian compatibility: libncurses-dev -> pkgconfig(form) pkgconfig(formw) pkgconfig(menu) pkgconfig(menuw) pkgconfig(ncurses++) pkgconfig(ncurses++w) pkgconfig(ncurses) pkgconfig(ncursesw) pkgconfig(panel) pkgconfig(panelw) pkgconfig(tic) pkgconfig(tinfo)
@@ -764,6 +846,17 @@ Pulls in the openSUSE packages providing what Debian's lua5.5 provides.
 
 %files -n debian-compat-lua5.5
 
+%package -n debian-compat-make
+Summary:        Debian compatibility: make -> make
+Provides:       deb(make)
+Requires:       make
+BuildArch:      noarch
+
+%description -n debian-compat-make
+Pulls in the openSUSE packages providing what Debian's make provides.
+
+%files -n debian-compat-make
+
 %package -n debian-compat-meson
 Summary:        Debian compatibility: meson -> meson
 Provides:       deb(meson)
@@ -774,6 +867,18 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's meson provides.
 
 %files -n debian-compat-meson
+
+%package -n debian-compat-nettle-dev
+Summary:        Debian compatibility: nettle-dev -> pkgconfig(hogweed) pkgconfig(nettle)
+Provides:       deb(nettle-dev)
+Requires:       pkgconfig(hogweed)
+Requires:       pkgconfig(nettle)
+BuildArch:      noarch
+
+%description -n debian-compat-nettle-dev
+Pulls in the openSUSE packages providing what Debian's nettle-dev provides.
+
+%files -n debian-compat-nettle-dev
 
 %package -n debian-compat-ninja-build
 Summary:        Debian compatibility: ninja-build -> ninja
@@ -807,6 +912,28 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's perl provides.
 
 %files -n debian-compat-perl
+
+%package -n debian-compat-perl-tk
+Summary:        Debian compatibility: perl-tk -> perl-Tk
+Provides:       deb(perl-tk)
+Requires:       perl-Tk
+BuildArch:      noarch
+
+%description -n debian-compat-perl-tk
+Pulls in the openSUSE packages providing what Debian's perl-tk provides.
+
+%files -n debian-compat-perl-tk
+
+%package -n debian-compat-perl-xs-dev
+Summary:        Debian compatibility: perl-xs-dev -> perl
+Provides:       deb(perl-xs-dev)
+Requires:       perl
+BuildArch:      noarch
+
+%description -n debian-compat-perl-xs-dev
+Pulls in the openSUSE packages providing what Debian's perl-xs-dev provides.
+
+%files -n debian-compat-perl-xs-dev
 
 %package -n debian-compat-pkg-config
 Summary:        Debian compatibility: pkg-config -> pkg-config
@@ -1028,6 +1155,17 @@ Pulls in the openSUSE packages providing what Debian's ruby provides.
 
 %files -n debian-compat-ruby
 
+%package -n debian-compat-ruby-all-dev
+Summary:        Debian compatibility: ruby-all-dev -> ruby-devel
+Provides:       deb(ruby-all-dev)
+Requires:       ruby-devel
+BuildArch:      noarch
+
+%description -n debian-compat-ruby-all-dev
+Pulls in the openSUSE packages providing what Debian's ruby-all-dev provides.
+
+%files -n debian-compat-ruby-all-dev
+
 %package -n debian-compat-ruby-minitest
 Summary:        Debian compatibility: ruby-minitest -> ruby4.0
 Provides:       deb(ruby-minitest)
@@ -1049,6 +1187,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's ruby-test-unit provides.
 
 %files -n debian-compat-ruby-test-unit
+
+%package -n debian-compat-shunit2
+Summary:        Debian compatibility: shunit2 -> shunit2
+Provides:       deb(shunit2)
+Requires:       shunit2
+BuildArch:      noarch
+
+%description -n debian-compat-shunit2
+Pulls in the openSUSE packages providing what Debian's shunit2 provides.
+
+%files -n debian-compat-shunit2
 
 %package -n debian-compat-texinfo
 Summary:        Debian compatibility: texinfo -> texinfo
@@ -1105,11 +1254,15 @@ install -Dm644 %{SOURCE0} %{buildroot}%{_rpmmacrodir}/macros.debian
 install -Dm755 %{SOURCE1} %{buildroot}/usr/lib/debian-compat/debian-install
 install -m644 %{SOURCE2} %{SOURCE3} %{buildroot}/usr/lib/debian-compat/
 mkdir -p %{buildroot}/usr/lib/debian-compat/bin
-for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_builddeb dh_strip dh_dwz dh_compress dh_installdeb dh_strip_nondeterminism dh_buildinfo; do
+for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_builddeb dh_strip dh_dwz dh_compress dh_installdeb dh_strip_nondeterminism dh_buildinfo dh_perl; do
     printf '#!/bin/sh\necho "debian-compat: skipping ${0##*/} $*" >&2\n' > %{buildroot}/usr/lib/debian-compat/bin/$s
     chmod 755 %{buildroot}/usr/lib/debian-compat/bin/$s
 done
 install -m755 %{SOURCE4} %{buildroot}/usr/lib/debian-compat/bin/dh_install
+install -m755 %{SOURCE5} %{buildroot}/usr/lib/debian-compat/bin/py3versions
+# what Debian's python3-defaults ships for dh-python
+mkdir -p %{buildroot}/usr/share/python3
+printf '[DEFAULT]\ndefault-version = python%{python3_version}\nsupported-versions = python%{python3_version}\n' > %{buildroot}/usr/share/python3/debian_defaults
 # filesystem
 mkdir -p %{buildroot}/usr/lib/python3 %{buildroot}/usr/share
 ln -s ../lib64 %{buildroot}/usr/lib/x86_64-linux-gnu
@@ -1119,6 +1272,9 @@ ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{bu
 mkdir -p %{buildroot}%{_bindir}
 for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 ln -s gawk %{buildroot}%{_bindir}/mawk
+# Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
+mkdir -p %{buildroot}/usr/share/misc
+for f in config.guess config.sub; do ln -s ../$(basename $(dirname $(ls -d /usr/share/automake-*/$f | tail -1)))/$f %{buildroot}/usr/share/misc/$f; done
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
@@ -1138,6 +1294,8 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-rpm-macros
 %{_rpmmacrodir}/macros.debian
 /usr/lib/debian-compat
+%dir /usr/share/python3
+/usr/share/python3/debian_defaults
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu
@@ -1148,6 +1306,8 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %files -n debian-compat-toolchain
 %{_bindir}/x86_64-linux-gnu-*
 %{_bindir}/mawk
+/usr/share/misc/config.guess
+/usr/share/misc/config.sub
 
 %files -n debian-compat-sensible-utils
 %{_bindir}/sensible-*
