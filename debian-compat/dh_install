@@ -13,8 +13,11 @@ if [ -d $d ]; then
     v=$(perl -MConfig -e 'print $Config{version}')
     vmaj=${v%.*}
     # vendorarch lies inside vendorlib, so move it out first
-    move $d$(perl -MConfig -e 'print $Config{vendorarch}') $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
-    move $d$(perl -MConfig -e 'print $Config{vendorlib}') $d/usr/share/perl5
+    varch=$(perl -MConfig -e 'print $Config{vendorarch}')
+    vlib=$(perl -MConfig -e 'print $Config{vendorlib}')
+    [ -n "$varch" ] && [ -n "$vlib" ] || { echo "dh_install: perl reports no vendor paths" >&2; exit 1; }
+    move $d$varch $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
+    move $d$vlib $d/usr/share/perl5
     for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))'); do
         move $d$site $d/usr/lib/python3/dist-packages
     done
