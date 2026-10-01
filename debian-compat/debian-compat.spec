@@ -167,6 +167,17 @@ Pulls in the openSUSE packages providing what Debian's bsdextrautils provides.
 
 %files -n debian-compat-bsdextrautils
 
+%package -n debian-compat-chrpath
+Summary:        Debian compatibility: chrpath -> chrpath
+Provides:       deb(chrpath)
+Requires:       chrpath
+BuildArch:      noarch
+
+%description -n debian-compat-chrpath
+Pulls in the openSUSE packages providing what Debian's chrpath provides.
+
+%files -n debian-compat-chrpath
+
 %package -n debian-compat-cmake
 Summary:        Debian compatibility: cmake -> cmake
 Provides:       deb(cmake)
@@ -310,6 +321,17 @@ Pulls in the openSUSE packages providing what Debian's flit provides.
 
 %files -n debian-compat-flit
 
+%package -n debian-compat-fluid-soundfont-gm
+Summary:        Debian compatibility: fluid-soundfont-gm -> fluid-soundfont-gm
+Provides:       deb(fluid-soundfont-gm)
+Requires:       fluid-soundfont-gm
+BuildArch:      noarch
+
+%description -n debian-compat-fluid-soundfont-gm
+Pulls in the openSUSE packages providing what Debian's fluid-soundfont-gm provides.
+
+%files -n debian-compat-fluid-soundfont-gm
+
 %package -n debian-compat-gettext
 Summary:        Debian compatibility: gettext -> gettext
 Provides:       deb(gettext)
@@ -342,6 +364,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's git-buildpackage provides.
 
 %files -n debian-compat-git-buildpackage
+
+%package -n debian-compat-gnome-chess
+Summary:        Debian compatibility: gnome-chess -> gnome-chess
+Provides:       deb(gnome-chess)
+Requires:       gnome-chess
+BuildArch:      noarch
+
+%description -n debian-compat-gnome-chess
+Pulls in the openSUSE packages providing what Debian's gnome-chess provides.
+
+%files -n debian-compat-gnome-chess
 
 %package -n debian-compat-help2man
 Summary:        Debian compatibility: help2man -> help2man
@@ -419,6 +452,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libdpkg-perl provides.
 
 %files -n debian-compat-libdpkg-perl
+
+%package -n debian-compat-libexpat1-dev
+Summary:        Debian compatibility: libexpat1-dev -> pkgconfig(expat)
+Provides:       deb(libexpat1-dev)
+Requires:       pkgconfig(expat)
+BuildArch:      noarch
+
+%description -n debian-compat-libexpat1-dev
+Pulls in the openSUSE packages providing what Debian's libexpat1-dev provides.
+
+%files -n debian-compat-libexpat1-dev
 
 %package -n debian-compat-libfile-find-rule-perl
 Summary:        Debian compatibility: libfile-find-rule-perl -> perl-File-Find-Rule
@@ -846,6 +890,17 @@ Pulls in the openSUSE packages providing what Debian's lua5.5 provides.
 
 %files -n debian-compat-lua5.5
 
+%package -n debian-compat-m4
+Summary:        Debian compatibility: m4 -> m4
+Provides:       deb(m4)
+Requires:       m4
+BuildArch:      noarch
+
+%description -n debian-compat-m4
+Pulls in the openSUSE packages providing what Debian's m4 provides.
+
+%files -n debian-compat-m4
+
 %package -n debian-compat-make
 Summary:        Debian compatibility: make -> make
 Provides:       deb(make)
@@ -934,6 +989,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's perl-xs-dev provides.
 
 %files -n debian-compat-perl-xs-dev
+
+%package -n debian-compat-pgn-extract
+Summary:        Debian compatibility: pgn-extract -> pgn-extract
+Provides:       deb(pgn-extract)
+Requires:       pgn-extract
+BuildArch:      noarch
+
+%description -n debian-compat-pgn-extract
+Pulls in the openSUSE packages providing what Debian's pgn-extract provides.
+
+%files -n debian-compat-pgn-extract
 
 %package -n debian-compat-pkg-config
 Summary:        Debian compatibility: pkg-config -> pkg-config
