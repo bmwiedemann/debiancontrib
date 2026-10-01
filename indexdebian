@@ -1,0 +1,45 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: indexdebian  - parse Debian Sources/Packages/Contents from $cache into cache/debian-*.tsv
+use strict; use warnings;
+use FindBin; use lib "$FindBin::RealBin/lib";
+use deb qw(read_index);
+use tsv;
+use Dpkg::Control;
+
+my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
+my @comps = split ' ', $ENV{components} // 'main contrib';
+push @comps, 'non-free' if ($ENV{nonfree} // 0) eq '1';
+
+my (@src, @bin, @files);
+for my $c (@comps) {
+    my $idx = read_index("xzcat $cache/debian/$c/Sources.xz |", CTRL_INDEX_SRC);
+    for my $k ($idx->get_keys()) {
+        my $s = $idx->get_by_key($k);
+        my @f = map { s/^\s+//; my @p = split ' '; "$p[2]:$p[1]:$p[0]" } grep /\S/, split /\n/, $s->{'Checksums-Sha256'} // '';
+        my @b = map { s/\s+//gr } split /,/, $s->{Binary} // '';
+        push @src, [$s->{Package}, $s->{Version}, $c, $s->{Section} // '', $s->{Priority} // '',
+            $s->{Directory}, join(';', @f), join(',', @b), $s->{Homepage} // '',
+            join(', ', grep { defined && length } map { $s->{$_} } qw(Build-Depends Build-Depends-Indep Build-Depends-Arch)),
+            ($s->{Format} // '') =~ s/\s+/ /gr, $s->{'Vcs-Browser'} // ''];
+    }
+    $idx = read_index("xzcat $cache/debian/$c/Packages.xz |", CTRL_INDEX_PKG);
+    for my $k ($idx->get_keys()) {
+        my $p = $idx->get_by_key($k);
+        my $source = $p->{Source} // $p->{Package};
+        $source =~ s/\s.*//;
+        push @bin, [$p->{Package}, $source, $p->{Version}, $p->{Architecture}, $p->{Section} // '',
+            ($p->{Provides} // '') =~ s/\s+/ /gr, ($p->{Depends} // '') =~ s/\s+/ /gr, ($p->{'Pre-Depends'} // '') =~ s/\s+/ /gr];
+    }
+    # Contents: only paths useful for matching and dependency mapping
+    open(my $fh, "gzip -cd $cache/debian/$c/Contents-amd64.gz |") or die;
+    while (<$fh>) {
+        my ($path, $pkgs) = /^(\S+)\s+(\S+)$/ or next;
+        next unless $path =~ m{^usr/(s?bin/|lib/x86_64-linux-gnu/[^/]+\.so|lib/x86_64-linux-gnu/pkgconfig/|share/pkgconfig/|include/|share/perl5/|lib/x86_64-linux-gnu/perl5/|lib/python3/dist-packages/[^/]+/?$|lib/python3/dist-packages/[^/]+\.py$|share/fonts/|lib/ruby/vendor_ruby/[^/]+|share/nodejs/[^/]+/package\.json$|share/lua/|lib/x86_64-linux-gnu/lua/)};
+        push @files, ["/$path", $_] for map { s{.*/}{}r } split /,/, $pkgs;
+    }
+}
+tsv::write_tsv("$cache/debian-sources.tsv", \@src);
+tsv::write_tsv("$cache/debian-binaries.tsv", \@bin);
+tsv::write_tsv("$cache/debian-files.tsv", \@files);
+printf "%d sources, %d binaries, %d files\n", scalar @src, scalar @bin, scalar @files;

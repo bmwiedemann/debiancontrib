@@ -1,0 +1,5 @@
+# rpmlint stays off while the package set is being bootstrapped
+Support: !rpmlint-Factory !rpmlint-mini !rpmlint-Factory-strict
+Macros:
+%debian_nocheck 1
+:Macros

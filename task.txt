@@ -1,0 +1,9 @@
+I have a goal to provide a more comprehensive packageset to Slowroll users.
+Please package Debian packages for openSUSE Slowroll, if we don't have an equivalent in the distribution or devel repos.
+home: repos must be ignored.
+Find Debian packages via M=ftp.gwdg.de/pub/linux ; for p in main contrib non-free ; do ${wget} -x http://$M/debian/debian/dists/testing/$p/source/Sources.xz ; done
+Add a debian-compat package with many subpackages that have Provides+Requires, symlinks for when paths are different, so we need to patch as little as possible.
+Devise a way to have the .spec file only as a shim that forwards most work into Debian's build system, so that updates are simple.
+Script finding, adding + updating of packages.
+Packages get committed into home:bmwiedemannai:debiancontrib
+Tooling and docs get git commits in ~/git/debiancontrib

@@ -1,0 +1,9 @@
+<project name="home:bmwiedemannai:debiancontrib">
+  <title>Debian packages rebuilt for openSUSE Slowroll</title>
+  <description>Debian testing source packages built through debhelper with shim .spec files, bridged by debian-compat. Tooling: https://github.com/bmwiedemann/debiancontrib</description>
+  <person userid="bmwiedemannai" role="maintainer"/>
+  <repository name="openSUSE_Slowroll">
+    <path project="openSUSE:Slowroll" repository="standard"/>
+    <arch>x86_64</arch>
+  </repository>
+</project>

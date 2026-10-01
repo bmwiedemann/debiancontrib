@@ -1,0 +1,55 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [refresh=1] [maxage=86400] fetchindex
+# downloads Debian + openSUSE package indexes, popcon and devel project lists into $cache
+. "$(dirname "$0")/lib.sh"
+: ${refresh:=0}
+: ${maxage:=86400}
+set -eo pipefail
+
+fresh() { [ "$refresh" = 0 ] && [ -e "$1" ] && [ $(( $(date +%s) - $(stat -c %Y "$1") )) -lt "$maxage" ]; }
+get() { # URL DEST
+    fresh "$2" && return 0
+    mkdir -p "$(dirname "$2")"
+    log "fetch $1"
+    wget -q -O "$2.tmp" "$1" && mv "$2.tmp" "$2"
+}
+# getrepo BASEURL DESTDIR TYPE...: fetch repodata files by type via repomd.xml
+getrepo() {
+    local base=$1 dest=$2; shift 2
+    get "$base/repodata/repomd.xml" "$dest/repomd.xml"
+    for t in "$@"; do
+        local href=$(grep -o "href=\"repodata/[^\"]*-$t.xml[^\"]*\"" "$dest/repomd.xml" | head -1 | cut -d'"' -f2)
+        [ -n "$href" ] || die "no $t in $base"
+        get "$base/$href" "$dest/$t.xml.${href##*.}"
+    done
+}
+
+for c in $components; do
+    d=$cache/debian/$c
+    get $mirror/dists/$dist/$c/source/Sources.xz $d/Sources.xz
+    get $mirror/dists/$dist/$c/binary-amd64/Packages.xz $d/Packages.xz
+    get $mirror/dists/$dist/$c/Contents-amd64.gz $d/Contents-amd64.gz
+done
+get https://popcon.debian.org/source/by_inst $cache/popcon/by_inst
+
+getrepo https://download.opensuse.org/source/slowroll/repo/oss $cache/suse/slowroll/src primary
+getrepo https://download.opensuse.org/slowroll/repo/oss $cache/suse/slowroll/oss primary filelists
+getrepo https://download.opensuse.org/source/tumbleweed/repo/oss $cache/suse/tumbleweed/src primary
+getrepo https://download.opensuse.org/tumbleweed/repo/oss $cache/suse/tumbleweed/oss primary
+
+f=$cache/obs/factory-search.xml
+if ! fresh $f; then
+    log "fetch Factory package search"
+    mkdir -p $cache/obs
+    osc_api 'search/package?match=@project="openSUSE:Factory"' > $f.tmp && mv $f.tmp $f
+fi
+mkdir -p $cache/devel
+{ grep -o '<devel project="[^"]*"' $f | cut -d'"' -f2; cat $top/data/extraprojects 2>/dev/null; } | grep -v '^#' | sort -u |
+while read -r p; do
+    l=$cache/devel/$p.list
+    fresh $l && continue
+    log "fetch package list of $p"
+    osc_api "source/$p" | grep -o '<entry name="[^"]*"' | cut -d'"' -f2 > $l.tmp && [ -s $l.tmp ] && mv $l.tmp $l || log "empty list for $p"
+done
+log "fetchindex done"
