@@ -29,3 +29,6 @@ molly-guard	-
 rust-sequoia-chameleon-gnupg	-
 sox-ng	-
 quickjs-ng	-
+ccid	pcsc-ccid
+unicode-data	unicode-ucd
+seabios	qemu
