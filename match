@@ -15,6 +15,8 @@ tsv::read_tsv("$cache/suse-sources.tsv", sub { push @{$src{lc $_[0]}}, $_[3]; pu
 tsv::read_tsv("$cache/suse-provides.tsv", sub { $bin{lc $_[0]} //= $_[1] if $_[0] !~ m{^/|\(} });
 tsv::read_tsv("$cache/suse-binaries.tsv", sub { $bin{lc $_[0]} //= $_[0] });
 tsv::read_tsv("$cache/suse-files.tsv", sub { $file{$_[0]} = $_[1] if $_[0] =~ m{^/usr/s?bin/} });
+my %depmap; # Debian binary -> openSUSE package, from mkdepmap's per-binary heuristics (perl/python modules, sonames, .pc files ...)
+tsv::read_tsv("$FindBin::RealBin/data/depmap", sub { $depmap{$_[0]} = $_[1] });
 my %debfiles; # binary -> [/usr/bin paths]
 tsv::read_tsv("$cache/debian-files.tsv", sub { push @{$debfiles{$_[1]}}, $_[0] if $_[0] =~ m{^/usr/s?bin/} });
 
@@ -33,12 +35,12 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
         my ($orig) = $files =~ /(?:^|;)([^;:]+?)_[^;:]*\.orig\.tar[^;:]*:/;
         if ($orig && (my ($n2, @o2) = insrc($orig))) { ($status, $ev) = ('have-tarball', "$orig -> $n2 @o2") }
         else {
-            my @b = grep { !/-(doc|dbg|dbgsym|whl|udeb)$/ } split /,/, $bins;
-            @b = () unless @b;
-            my @hit = grep { my $b = $_; grep { $bin{$_} } normalize_name($b) } @b;
+            my @b = grep { !/-(doc|dbg|dbgsym|whl|udeb|dev|common|data|examples|bin|tools|utils)$/ } split /,/, $bins;
+            @b = grep { !/-(doc|dbg|dbgsym|whl|udeb)$/ } split /,/, $bins unless @b;
+            my @hit = grep { my $b = $_; $depmap{$b} || grep { $bin{$_} } normalize_name($b) } @b;
             my @bf = map { @{$debfiles{$_} // []} } @b;
             my @fhit = grep { $file{$_} } @bf;
-            if (@hit && (@hit * 2 >= @b || grep { $_ eq $name } @hit)) { ($status, $ev) = ('have-binary', join(',', @hit) . " of " . scalar(@b)) }
+            if (@hit && (@hit * 2 >= @b || grep { $_ eq $name } @hit)) { ($status, $ev) = ('have-binary', join(',', map { $depmap{$_} ? "$_=$depmap{$_}" : $_ } @hit) . " of " . scalar(@b)) }
             elsif (@fhit && @fhit * 2 >= @bf) { ($status, $ev) = ('have-files', join(',', @fhit[0..($#fhit > 2 ? 2 : $#fhit)]) . " " . scalar(@fhit) . "/" . scalar(@bf)) }
             elsif (@hit) { ($status, $ev) = ('missing', "weak: binaries @hit of " . scalar(@b)) }
             else { ($status, $ev) = ('missing', '') }
