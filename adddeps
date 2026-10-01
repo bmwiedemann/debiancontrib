@@ -1,0 +1,23 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# usage: [rounds=3] [commit=1] adddeps  - stage the Debian sources providing the deb() names that
+# staged specs need but neither depmap nor our packages provide (closure over out/unmapped.txt)
+. "$(dirname "$0")/lib.sh"
+: ${rounds:=3}
+for r in $(seq $rounds); do
+    mkcompat 2>/dev/null
+    [ -s $out/unmapped.txt ] || { log "nothing unmapped"; exit 0; }
+    srcs=$(cut -f1 $out/unmapped.txt | while read -r n; do
+        grep -P "^$n\t" $cache/debian-binaries.tsv | cut -f2 | head -1
+    done | sort -u | while read -r s; do
+        [ -n "$s" ] || continue
+        [ -e $obs/$s/$s.spec ] && continue
+        grep -q -E -f <(grep -v "^#" $top/exceptions/blocklist) <<<"$s" && { log "skip $s (blocklist)"; continue; }
+        echo $s
+    done)
+    [ -n "$srcs" ] || { log "round $r: unmapped names have no packageable source: $(cut -f1 $out/unmapped.txt | tr '\n' ' ')"; break; }
+    log "round $r: $srcs"
+    addpkg $srcs 2>&1 | grep -E 'prepared|committed|failed|already has' | tee -a $out/adddeps.log
+    grep -h 'already has it' $out/adddeps.log | sed 's/.* \([^ ]*\): openSUSE already has it (\(.*\)).*/\1 \2/' | sort -u > $out/wanted-from-devel.txt
+done
+mkcompat 2>&1 | tail -1

@@ -12,3 +12,9 @@ architecture-is-64-bit
 architecture-is-little-endian
 default-jdk-doc
 dpkg-dev-el
+apt-file
+autodep8
+debian-policy
+dctrl-tools
+binfmt-support
+pristine-tar

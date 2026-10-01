@@ -18,6 +18,7 @@ tsv::read_tsv("$top/overrides/$src.conf", sub { $o{$_[0]} = $_[1] }) if -e "$top
 my %ignore; tsv::read_tsv("$top/data/depmap.ignore", sub { $ignore{$_[0]} = 1 });
 my %lic; tsv::read_tsv("$top/data/licensemap", sub { $lic{$_[0]} = $_[1] });
 my @drop = split /,/, $o{drop_buildrequires} // '';
+my @dropreq = split /,/, $o{drop_requires} // '';
 my %prefer = map { $_ => 1 } split /,/, $o{prefer_alt} // '';
 my %skip = map { $_ => 1 } split /,/, $o{skip_binaries} // '';
 my $nocheck = $o{nocheck} // 1;
@@ -37,7 +38,8 @@ my %sibling = map { $_->{Package} => 1 } @pkgs;
 
 sub deps($$@) { # field value, build flag -> rpm dependency strings in the deb() namespace
     my ($v, $build, @extra) = @_;
-    my @n = grep { !$ignore{$_} && !grep { $_ eq $_[0] } @drop } dep_names($v, build => $build, nocheck => $nocheck, prefer => \%prefer);
+    my @d = $build ? @drop : @dropreq;
+    my @n = grep { my $x = $_; !$ignore{$x} && !grep { $_ eq $x } @d } dep_names($v, build => $build, nocheck => $nocheck, prefer => \%prefer);
     return map { $sibling{$_} ? "deb($_) = %{version}" : "deb($_)" } @n;
 }
 sub license() {

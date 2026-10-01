@@ -44,10 +44,14 @@ openSUSE packages providing the same content.
 
 %package -n debian-rpm-macros
 Summary:        rpm macros to build Debian sources with debhelper
+Requires:       autoconf
+Requires:       automake
 Requires:       debhelper
 Requires:       debian-compat-filesystem
 Requires:       debian-compat-toolchain
 Requires:       dh-autoreconf
+Requires:       gettext-tools
+Requires:       libtool
 Requires:       dpkg
 Requires:       patch
 Requires:       perl

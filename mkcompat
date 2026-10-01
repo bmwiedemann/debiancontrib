@@ -16,6 +16,10 @@ tsv::read_tsv("$top/data/depmap", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -
 tsv::read_tsv("$top/data/depmap.manual", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap.manual";
 tsv::read_tsv("$top/data/depmap.ignore", sub { $ignore{$_[0]} = 1 });
 tsv::read_tsv("$top/data/compat-seed", sub { $need{$_[0]} = 'seed' });
+# names provided by debian-compat itself (extras in the template)
+open(my $tf, "<", "$top/debian-compat/debian-compat.spec.in") or die;
+while (<$tf>) { $ours{$1} = "debian-compat" if /^Provides:\s*deb\(([^)]+)\)/ }
+close $tf;
 for my $spec (glob("$obs/*/*.spec")) {
     next if $spec =~ m{/debian-compat/};
     (my $pkg = $spec) =~ s{.*/}{};

@@ -19,7 +19,7 @@ to OBS unless `commit=1`.
 
 `addpkg` refuses sources that `match` found in openSUSE (`force=1` overrides).
 Per-package knobs go to `overrides/<src>.conf` (nocheck, extra_buildrequires,
-drop_buildrequires, extra_requires_<bin>, build_options, prefer_alt,
+drop_buildrequires, drop_requires, extra_requires_<bin>, build_options, prefer_alt,
 skip_binaries, needsroot) and patches to `overrides/<src>/*.patch`; they are
 applied on every regeneration.
 

@@ -14,7 +14,7 @@ for p in %{?debian_patches}; do patch -p1 < %{_sourcedir}/$p; done
 export PATH=%{debian_compatdir}/bin:$PATH \
 export DEB_RULES_REQUIRES_ROOT=no \
 export DEB_BUILD_OPTIONS="%{?debian_nocheck:nocheck }parallel=%{?_smp_build_ncpus}%{!?_smp_build_ncpus:1} %{?debian_build_options}" \
-export DEB_CFLAGS_APPEND="%{optflags}" DEB_CXXFLAGS_APPEND="%{optflags}" \
+export DEB_CFLAGS_APPEND="$(echo %{optflags} | sed s/-Werror=return-type//)" DEB_CXXFLAGS_APPEND="$DEB_CFLAGS_APPEND" \
 export SOURCE_DATE_EPOCH=$(dpkg-parsechangelog -STimestamp) \
 export LC_ALL=C.UTF-8 \
 export HOME=$PWD/.home; mkdir -p $HOME \
