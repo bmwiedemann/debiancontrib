@@ -38,6 +38,7 @@ my @rows;
 tsv::read_tsv("$cache/debian-sources.tsv", sub {
     my ($name, $ver, $comp, $sec, $prio, $dir, $files, $bins, $home, $bd) = @_;
     return unless $missing{$name};
+    return if $known{"src:$name"}; # already packaged here
     return if grep { $name =~ $_ } @block;
     for (@ecos) { return if $bd =~ /$_->[0]/ && !$eco{$_->[1]} }
     my $size = 0; $size += $_ for map { (split /:/)[1] } split /;/, $files;
