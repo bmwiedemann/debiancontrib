@@ -16,6 +16,8 @@ to OBS unless `commit=1`.
     localbuild obs/foo                 # optional local test (distrobox tumbleweed)
     commit=1 addpkg foo bar
     commit=1 pushcompat                # new deb() names referenced -> compat grows
+    adddeps                            # stage the Debian sources providing still-unmapped deb() names (closure)
+    buildlog                           # last error lines of every failed OBS build
 
 `addpkg` refuses sources that `match` found in openSUSE (`force=1` overrides).
 Per-package knobs go to `overrides/<src>.conf` (nocheck, extra_buildrequires,

@@ -70,3 +70,16 @@ packages provide.
 `Version` is the Debian upstream version (epoch -> Epoch, `-`/`:` -> `.`),
 `Release: 0`; the full Debian version is kept in `%global debian_version` and
 `Provides: deb(src:<name>) = <version>` for `updatepkg`.
+
+## Build environment details learned the hard way
+- Slowroll's %optflags carry `-Werror=return-type`; it is stripped before being appended to Debian's flags.
+- `dh_autoreconf` needs autoconf/automake/libtool/gettext-tools, so `debian-rpm-macros` requires them.
+- Debian-only build tools: `mawk` (symlink to gawk), `x86_64-linux-gnu-gcc` and friends (debian-compat-toolchain).
+- `debian/*.install` files hard-code `usr/share/perl5` and `usr/lib/python3/dist-packages`; the `dh_install`
+  wrapper in debian-compat links those names inside debian/tmp to where openSUSE's interpreters installed the files.
+- `%dir` entries are emitted for every directory not owned by a package in the build root (`rpm -qf`),
+  because OBS's post-build check rejects unowned directories.
+- Build-Depends under `<!nocheck>` are dropped; a few packages (gem2deb) use such tools in their rules
+  anyway, fixed with `extra_buildrequires` overrides.
+- Dependencies that exist only in a devel project are listed in out/wanted-from-devel.txt by adddeps;
+  they should be submitted to Factory/Slowroll rather than packaged here.

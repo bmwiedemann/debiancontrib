@@ -46,6 +46,8 @@ for my $n (sort keys %need) {
         "%files -n debian-compat-$sub", "");
 }
 open(my $u, '>', "$out/unmapped.txt") or die; print $u "$_\n" for @unmapped; close $u;
+my $cache = $ENV{cache} // "$top/cache";
+tsv::write_tsv("$cache/project-provides.tsv", [map { [$_, $ours{$_}] } sort keys %ours]);
 my $specfile = "$top/debian-compat/debian-compat.spec";
 my $tmpl = do { local $/; open(my $t, '<', "$specfile.in") or die; <$t> };
 my $body = join("\n", @stanzas);

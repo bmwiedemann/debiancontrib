@@ -21,6 +21,8 @@ Slowroll or their devel projects are packaged (home: projects are ignored).
     pushcompat             # regenerate + stage debian-compat (commit=1 to send)
     status                 # build state of the whole project
     showunresolvable       # most wanted missing deb() mappings
+    adddeps                # pull in Debian sources for unmapped dependencies
+    buildlog               # error summary of failed OBS builds
     updatepkg              # refresh packages whose Debian version moved on
 
 See docs/design.md for how it works and docs/workflow.md for the day-to-day loop.
