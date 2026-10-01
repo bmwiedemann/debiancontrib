@@ -1,0 +1,14 @@
+Description: take the directive buffer as an array reference: C++20 dropped operator>>(istream&, char*)
+Author: Bernhard M. Wiedemann <bwiedemann@suse.de>
+
+--- a/test/ann_test.cpp
++++ b/test/ann_test.cpp
+@@ -610,7 +610,7 @@
+ 
+ ANNbool getDirective(
+     istream		&in,			// input stream
+-    char		*directive)		// directive storage
++    char		(&directive)[STRING_LEN])	// directive storage (an array: C++20 has no operator>> for char*)
+ {
+     if (!skipComment(in))			// skip comments
+     	return ANNfalse;			// found eof along the way?
