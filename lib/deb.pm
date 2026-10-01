@@ -8,7 +8,7 @@ use Dpkg::Deps;
 use Dpkg::Index;
 use Dpkg::Version;
 use Exporter 'import';
-our @EXPORT_OK = qw(read_index read_control dep_names debver2rpm debvercmp normalize_name norm_url);
+our @EXPORT_OK = qw(read_index read_control dep_names debver2rpm debvercmp normalize_name norm_url file_key);
 
 # read_index("xzcat Sources.xz |", CTRL_INDEX_SRC) -> Dpkg::Index
 sub read_index($$) {
@@ -101,6 +101,21 @@ sub normalize_name($) {
         if ($n =~ $re) { my @cap = ($1, $2); (my $x = $rep) =~ s/\$(\d)/$cap[$1-1] \/\/ ''/ge; $c{$x} = 1 }
     }
     return keys %c;
+}
+
+# file path (Debian or openSUSE layout) -> distro-neutral key, or nothing for paths that say little:
+# command names, font/library/pkg-config file names, headers, perl/python/lua module paths
+sub file_key($) {
+    my $p = shift;
+    return "bin:$1" if $p =~ m{^/usr/s?bin/([^/]+)$};
+    return 'font:' . lc $1 if $p =~ m{^/usr/share/fonts/.*/([^/]+\.(?:ttf|otf|ttc|pfb|pfa|pcf(?:\.gz)?|bdf(?:\.gz)?|woff2?))$}i;
+    return "so:$1" if $p =~ m{^/usr/lib(?:64|/x86_64-linux-gnu)?/([^/]+\.so\.\d[^/]*)$};
+    return "pc:$1" if $p =~ m{/pkgconfig/([^/]+)\.pc$};
+    return "inc:$1" if $p =~ m{^/usr/include/(?:x86_64-linux-gnu/)?(.+\.h(?:h|pp|xx)?)$};
+    return "pm:$1" if $p =~ m{^/usr/(?:share/perl5|lib/x86_64-linux-gnu/perl5/[\d.]+|lib/perl5/(?:vendor_perl/)?[\d.]+(?:/x86_64-linux-thread-multi)?)/(.+\.pm)$};
+    return "py:$1" if $p =~ m{/(?:dist|site)-packages/([^/]+?)(?:/__init__)?\.py$};
+    return "lua:$1" if $p =~ m{^/usr/(?:share|lib64|lib/x86_64-linux-gnu)/lua/[\d.]+/(.+)$};
+    return;
 }
 
 sub norm_url($) {

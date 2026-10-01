@@ -4,7 +4,7 @@
 # writes cache/match.tsv (source, status, evidence) and out/match-audit.tsv for the weaker matches
 use strict; use warnings;
 use FindBin; use lib "$FindBin::RealBin/lib";
-use deb qw(normalize_name norm_url);
+use deb qw(normalize_name norm_url file_key);
 use tsv;
 
 my $cache = $ENV{cache} // "$FindBin::RealBin/cache";
@@ -14,11 +14,15 @@ my (%src, %url, %bin, %file);
 tsv::read_tsv("$cache/suse-sources.tsv", sub { push @{$src{lc $_[0]}}, $_[3]; push @{$url{norm_url($_[2])}}, $_[0] if $_[2] =~ m{^https?://[^/]+/.} });
 tsv::read_tsv("$cache/suse-provides.tsv", sub { $bin{lc $_[0]} //= $_[1] if $_[0] !~ m{^/|\(} });
 tsv::read_tsv("$cache/suse-binaries.tsv", sub { $bin{lc $_[0]} //= $_[0] });
-tsv::read_tsv("$cache/suse-files.tsv", sub { $file{$_[0]} = $_[1] if $_[0] =~ m{^/usr/s?bin/} });
+tsv::read_tsv("$cache/suse-files.tsv", sub { my $k = file_key($_[0]); $file{$k} //= $_[1] if $k && $_[1] !~ /-32bit$/ });
+# font family = file name up to the style, as prefixes: Debian's NotoSansCJK-Bold.ttc is openSUSE's NotoSansCJKjp-VF.otf
+sub fontfam($) { $_[0] =~ /^font:([a-z0-9]+)/ ? $1 : '' }
+my %fam;
+for my $k (grep { /^font:/ } keys %file) { my $f = fontfam($k); $fam{substr($f, 0, $_)} //= $file{$k} for 8 .. length $f }
 my %depmap; # Debian binary -> openSUSE package, from mkdepmap's per-binary heuristics (perl/python modules, sonames, .pc files ...)
 tsv::read_tsv("$FindBin::RealBin/data/depmap", sub { $depmap{$_[0]} = $_[1] });
-my %debfiles; # binary -> [/usr/bin paths]
-tsv::read_tsv("$cache/debian-files.tsv", sub { push @{$debfiles{$_[1]}}, $_[0] if $_[0] =~ m{^/usr/s?bin/} });
+my %debfiles; # binary -> {file_key}
+tsv::read_tsv("$cache/debian-files.tsv", sub { my $k = file_key($_[0]); $debfiles{$_[1]}{$k} = 1 if $k });
 
 sub insrc($) { my @c = normalize_name($_[0]); for (@c) { return ($_, @{$src{$_}}) if $src{$_} } return }
 
@@ -38,10 +42,21 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
             my @b = grep { !/-(doc|dbg|dbgsym|whl|udeb|dev|common|data|examples|bin|tools|utils)$/ } split /,/, $bins;
             @b = grep { !/-(doc|dbg|dbgsym|whl|udeb)$/ } split /,/, $bins unless @b;
             my @hit = grep { my $b = $_; $depmap{$b} || grep { $bin{$_} } normalize_name($b) } @b;
-            my @bf = map { @{$debfiles{$_} // []} } @b;
-            my @fhit = grep { $file{$_} } @bf;
+            my %bf = map { %{$debfiles{$_} // {}} } grep { !/-(doc|dbg|dbgsym|udeb)$/ } split /,/, $bins;
+            my @bf = sort keys %bf;
+            my (%ftot, %fok, %fsrc); # per key class (bin, font, so, inc ...), so -dev headers laid out differently do not outvote matching commands
+            for (@bf) {
+                my ($c) = /^(\w+):/; $ftot{$c}++;
+                my $p = $file{$_} // ($c eq 'font' ? $fam{fontfam($_)} : undef) or next;
+                $fsrc{$_} = $p; push @{$fok{$c}}, $_;
+            }
+            # one command name or header (memdump, notify, db.h) is too common to decide on; one font/module/soname is not
+            my %okc = map { $_ => 1 } grep { $fok{$_} && @{$fok{$_}} * 2 >= $ftot{$_} && (@{$fok{$_}} >= 2 || !/^(bin|inc|pc)$/) } keys %ftot;
+            my @fhit = map { @{$fok{$_}} } sort keys %okc;
+            @bf = grep { my ($c) = /^(\w+):/; $okc{$c} } @bf;
+            my %fpkg; $fpkg{$fsrc{$_}}++ for @fhit;
             if (@hit && (@hit * 2 >= @b || grep { $_ eq $name } @hit)) { ($status, $ev) = ('have-binary', join(',', map { $depmap{$_} ? "$_=$depmap{$_}" : $_ } @hit) . " of " . scalar(@b)) }
-            elsif (@fhit && @fhit * 2 >= @bf) { ($status, $ev) = ('have-files', join(',', @fhit[0..($#fhit > 2 ? 2 : $#fhit)]) . " " . scalar(@fhit) . "/" . scalar(@bf)) }
+            elsif (@fhit) { ($status, $ev) = ('have-files', join(',', (sort { $fpkg{$b} <=> $fpkg{$a} || $a cmp $b } keys %fpkg)[0..(keys %fpkg > 3 ? 2 : keys(%fpkg) - 1)]) . " " . scalar(@fhit) . "/" . scalar(@bf) . " e.g. $fhit[0]") }
             elsif (@hit) { ($status, $ev) = ('missing', "weak: binaries @hit of " . scalar(@b)) }
             else { ($status, $ev) = ('missing', '') }
         }

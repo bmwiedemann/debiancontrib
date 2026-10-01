@@ -61,8 +61,13 @@ files. Unmapped names stay `deb(x)` and show up as unresolvable in OBS;
 lists it (hand-verified equivalents like kwallet-pam -> pam_kwallet6), or the
 source name (also normalized), the Homepage, the orig tarball name, enough of
 its binary package names (directly or via depmap; -dev/-common/-data binaries
-do not count) or its /usr/bin files match Slowroll, Tumbleweed or any Factory
-devel project. `candidates` ranks the rest by popcon, drops `exceptions/blocklist`
+do not count) or its files match Slowroll, Tumbleweed or any Factory
+devel project. Files are compared as distro-neutral keys (`file_key` in
+lib/deb.pm: command, font file, soname, .pc and header names, perl/python/lua
+module paths), so google-caladea-fonts is found for fonts-crosextra-caladea by
+its Caladea-*.ttf (fonts also by family name prefix, for .ttc vs .otf). Half
+of the keys of one class must exist in openSUSE, and
+at least two for commands, headers and .pc files, which are too generic alone. `candidates` ranks the rest by popcon, drops `exceptions/blocklist`
 (Debian infrastructure, kernel, firmware, patent-encumbered codecs) and the ecosystems in
 `exceptions/ecosystems` (rust, go, haskell, R, ocaml unless `ecosystems=`
 enables them) and counts build dependencies that neither depmap nor our own
