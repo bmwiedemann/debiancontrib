@@ -36,7 +36,7 @@ sub bymethod($$) {
     if (@so) { my @hit = sort keys %{{ map { $_ => 1 } grep { $prov{$_} } @so }}; return ('so', @hit) if @hit }
     my @pm = map { m{^/usr/(?:share/perl5|lib/x86_64-linux-gnu/perl5/[^/]+)/(.+)\.pm$} ? 'perl(' . ($1 =~ s{/}{::}gr) . ')' : () } @$files;
     if (@pm) { my $o = vote(map { $prov{$_} } @pm); return ('perl', $o) if $o }
-    my @py = map { m{^/usr/lib/python3/dist-packages/([^/]+?)/?$} ? $1 : m{^/usr/lib/python3/dist-packages/([^/]+)\.py$} ? "$1.py" : () } @$files;
+    my @py = map { m{^/usr/lib/python3/dist-packages/([^/]+/__init__\.py|[^/]+\.py)$} ? $1 : () } @$files;
     if (@py) {
         my @owners = map { my $m = $_; my @o = map { $file{$_} } grep { $file{$_} } map { "$_/$m" } @pysite; @o ? $o[0] : undef } grep { !/\.(dist|egg)-info$/ && !/^__pycache__$/ } @py;
         my $o = vote(@owners); return ('python', $o) if $o;

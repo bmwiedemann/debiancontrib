@@ -39,7 +39,7 @@ for my $c (@comps) {
     open(my $fh, "gzip -cd $cache/debian/$c/Contents-$a.gz |") or die;
     while (<$fh>) {
         my ($path, $pkgs) = /^(\S+)\s+(\S+)$/ or next;
-        next unless $path =~ m{^usr/(s?bin/|lib/x86_64-linux-gnu/[^/]+\.so|lib/x86_64-linux-gnu/pkgconfig/|share/pkgconfig/|include/|share/perl5/|lib/x86_64-linux-gnu/perl5/|lib/python3/dist-packages/[^/]+/?$|lib/python3/dist-packages/[^/]+\.py$|share/fonts/|lib/ruby/vendor_ruby/[^/]+|share/nodejs/[^/]+/package\.json$|share/lua/|lib/x86_64-linux-gnu/lua/)};
+        next unless $path =~ m{^usr/(s?bin/|lib/x86_64-linux-gnu/[^/]+\.so|lib/x86_64-linux-gnu/pkgconfig/|share/pkgconfig/|include/|share/perl5/|lib/x86_64-linux-gnu/perl5/|lib/python3/dist-packages/[^/]+/__init__\.py$|lib/python3/dist-packages/[^/]+\.py$|share/fonts/|lib/ruby/vendor_ruby/[^/]+|share/nodejs/[^/]+/package\.json$|share/lua/|lib/x86_64-linux-gnu/lua/)};
         push @files, ["/$path", $_] for map { s{.*/}{}r } split /,/, $pkgs;
     }
     }

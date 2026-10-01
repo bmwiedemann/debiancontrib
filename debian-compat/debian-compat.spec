@@ -147,6 +147,17 @@ Pulls in the openSUSE packages providing what Debian's bison provides.
 
 %files -n debian-compat-bison
 
+%package -n debian-compat-bsdextrautils
+Summary:        Debian compatibility: bsdextrautils -> util-linux
+Provides:       deb(bsdextrautils)
+Requires:       util-linux
+BuildArch:      noarch
+
+%description -n debian-compat-bsdextrautils
+Pulls in the openSUSE packages providing what Debian's bsdextrautils provides.
+
+%files -n debian-compat-bsdextrautils
+
 %package -n debian-compat-cmake
 Summary:        Debian compatibility: cmake -> cmake
 Provides:       deb(cmake)
@@ -179,6 +190,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's default-jre provides.
 
 %files -n debian-compat-default-jre
+
+%package -n debian-compat-devscripts
+Summary:        Debian compatibility: devscripts -> devscripts
+Provides:       deb(devscripts)
+Requires:       devscripts
+BuildArch:      noarch
+
+%description -n debian-compat-devscripts
+Pulls in the openSUSE packages providing what Debian's devscripts provides.
+
+%files -n debian-compat-devscripts
 
 %package -n debian-compat-dh-autoreconf
 Summary:        Debian compatibility: dh-autoreconf -> dh-autoreconf
@@ -213,6 +235,28 @@ Pulls in the openSUSE packages providing what Debian's docbook-xsl provides.
 
 %files -n debian-compat-docbook-xsl
 
+%package -n debian-compat-emacs-nox
+Summary:        Debian compatibility: emacs-nox -> emacs-nox
+Provides:       deb(emacs-nox)
+Requires:       emacs-nox
+BuildArch:      noarch
+
+%description -n debian-compat-emacs-nox
+Pulls in the openSUSE packages providing what Debian's emacs-nox provides.
+
+%files -n debian-compat-emacs-nox
+
+%package -n debian-compat-fastjar
+Summary:        Debian compatibility: fastjar -> fastjar
+Provides:       deb(fastjar)
+Requires:       fastjar
+BuildArch:      noarch
+
+%description -n debian-compat-fastjar
+Pulls in the openSUSE packages providing what Debian's fastjar provides.
+
+%files -n debian-compat-fastjar
+
 %package -n debian-compat-flex
 Summary:        Debian compatibility: flex -> flex
 Provides:       deb(flex)
@@ -223,6 +267,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's flex provides.
 
 %files -n debian-compat-flex
+
+%package -n debian-compat-flit
+Summary:        Debian compatibility: flit -> python313-flit
+Provides:       deb(flit)
+Requires:       python313-flit
+BuildArch:      noarch
+
+%description -n debian-compat-flit
+Pulls in the openSUSE packages providing what Debian's flit provides.
+
+%files -n debian-compat-flit
 
 %package -n debian-compat-gettext
 Summary:        Debian compatibility: gettext -> gettext
@@ -235,6 +290,17 @@ Pulls in the openSUSE packages providing what Debian's gettext provides.
 
 %files -n debian-compat-gettext
 
+%package -n debian-compat-git-buildpackage
+Summary:        Debian compatibility: git-buildpackage -> git-buildpackage
+Provides:       deb(git-buildpackage)
+Requires:       git-buildpackage
+BuildArch:      noarch
+
+%description -n debian-compat-git-buildpackage
+Pulls in the openSUSE packages providing what Debian's git-buildpackage provides.
+
+%files -n debian-compat-git-buildpackage
+
 %package -n debian-compat-help2man
 Summary:        Debian compatibility: help2man -> help2man
 Provides:       deb(help2man)
@@ -246,6 +312,39 @@ Pulls in the openSUSE packages providing what Debian's help2man provides.
 
 %files -n debian-compat-help2man
 
+%package -n debian-compat-libarchive-zip-perl
+Summary:        Debian compatibility: libarchive-zip-perl -> perl-Archive-Zip
+Provides:       deb(libarchive-zip-perl)
+Requires:       perl-Archive-Zip
+BuildArch:      noarch
+
+%description -n debian-compat-libarchive-zip-perl
+Pulls in the openSUSE packages providing what Debian's libarchive-zip-perl provides.
+
+%files -n debian-compat-libarchive-zip-perl
+
+%package -n debian-compat-libcache-cache-perl
+Summary:        Debian compatibility: libcache-cache-perl -> perl-Cache-Cache
+Provides:       deb(libcache-cache-perl)
+Requires:       perl-Cache-Cache
+BuildArch:      noarch
+
+%description -n debian-compat-libcache-cache-perl
+Pulls in the openSUSE packages providing what Debian's libcache-cache-perl provides.
+
+%files -n debian-compat-libcache-cache-perl
+
+%package -n debian-compat-libconfig-tiny-perl
+Summary:        Debian compatibility: libconfig-tiny-perl -> perl-Config-Tiny
+Provides:       deb(libconfig-tiny-perl)
+Requires:       perl-Config-Tiny
+BuildArch:      noarch
+
+%description -n debian-compat-libconfig-tiny-perl
+Pulls in the openSUSE packages providing what Debian's libconfig-tiny-perl provides.
+
+%files -n debian-compat-libconfig-tiny-perl
+
 %package -n debian-compat-libcurl4-openssl-dev
 Summary:        Debian compatibility: libcurl4-openssl-dev -> pkgconfig(libcurl)
 Provides:       deb(libcurl4-openssl-dev)
@@ -256,6 +355,39 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libcurl4-openssl-dev provides.
 
 %files -n debian-compat-libcurl4-openssl-dev
+
+%package -n debian-compat-libdpkg-perl
+Summary:        Debian compatibility: libdpkg-perl -> dpkg
+Provides:       deb(libdpkg-perl)
+Requires:       dpkg
+BuildArch:      noarch
+
+%description -n debian-compat-libdpkg-perl
+Pulls in the openSUSE packages providing what Debian's libdpkg-perl provides.
+
+%files -n debian-compat-libdpkg-perl
+
+%package -n debian-compat-libfile-find-rule-perl
+Summary:        Debian compatibility: libfile-find-rule-perl -> perl-File-Find-Rule
+Provides:       deb(libfile-find-rule-perl)
+Requires:       perl-File-Find-Rule
+BuildArch:      noarch
+
+%description -n debian-compat-libfile-find-rule-perl
+Pulls in the openSUSE packages providing what Debian's libfile-find-rule-perl provides.
+
+%files -n debian-compat-libfile-find-rule-perl
+
+%package -n debian-compat-libfile-which-perl
+Summary:        Debian compatibility: libfile-which-perl -> perl-File-Which
+Provides:       deb(libfile-which-perl)
+Requires:       perl-File-Which
+BuildArch:      noarch
+
+%description -n debian-compat-libfile-which-perl
+Pulls in the openSUSE packages providing what Debian's libfile-which-perl provides.
+
+%files -n debian-compat-libfile-which-perl
 
 %package -n debian-compat-libglib2.0-dev
 Summary:        Debian compatibility: libglib2.0-dev -> pkgconfig(glib-2.0) pkgconfig(gio-2.0) pkgconfig(gobject-2.0) pkgconfig(gmodule-2.0) pkgconfig(gthread-2.0)
@@ -271,6 +403,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libglib2.0-dev provides.
 
 %files -n debian-compat-libglib2.0-dev
+
+%package -n debian-compat-libgraph-perl
+Summary:        Debian compatibility: libgraph-perl -> perl-Graph
+Provides:       deb(libgraph-perl)
+Requires:       perl-Graph
+BuildArch:      noarch
+
+%description -n debian-compat-libgraph-perl
+Pulls in the openSUSE packages providing what Debian's libgraph-perl provides.
+
+%files -n debian-compat-libgraph-perl
 
 %package -n debian-compat-libgtk-3-dev
 Summary:        Debian compatibility: libgtk-3-dev -> pkgconfig(gdk-3.0) pkgconfig(gdk-broadway-3.0) pkgconfig(gdk-wayland-3.0) pkgconfig(gdk-x11-3.0) pkgconfig(gtk+-3.0) pkgconfig(gtk+-broadway-3.0) pkgconfig(gtk+-unix-print-3.0) pkgconfig(gtk+-wayland-3.0) pkgconfig(gtk+-x11-3.0)
@@ -291,6 +434,17 @@ Pulls in the openSUSE packages providing what Debian's libgtk-3-dev provides.
 
 %files -n debian-compat-libgtk-3-dev
 
+%package -n debian-compat-libipc-run-perl
+Summary:        Debian compatibility: libipc-run-perl -> perl-IPC-Run
+Provides:       deb(libipc-run-perl)
+Requires:       perl-IPC-Run
+BuildArch:      noarch
+
+%description -n debian-compat-libipc-run-perl
+Pulls in the openSUSE packages providing what Debian's libipc-run-perl provides.
+
+%files -n debian-compat-libipc-run-perl
+
 %package -n debian-compat-libjpeg-dev
 Summary:        Debian compatibility: libjpeg-dev -> libjpeg-devel
 Provides:       deb(libjpeg-dev)
@@ -301,6 +455,61 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libjpeg-dev provides.
 
 %files -n debian-compat-libjpeg-dev
+
+%package -n debian-compat-libjson-perl
+Summary:        Debian compatibility: libjson-perl -> perl-JSON
+Provides:       deb(libjson-perl)
+Requires:       perl-JSON
+BuildArch:      noarch
+
+%description -n debian-compat-libjson-perl
+Pulls in the openSUSE packages providing what Debian's libjson-perl provides.
+
+%files -n debian-compat-libjson-perl
+
+%package -n debian-compat-liblua5.3-dev
+Summary:        Debian compatibility: liblua5.3-dev -> pkgconfig(lua5.3)
+Provides:       deb(liblua5.3-dev)
+Requires:       pkgconfig(lua5.3)
+BuildArch:      noarch
+
+%description -n debian-compat-liblua5.3-dev
+Pulls in the openSUSE packages providing what Debian's liblua5.3-dev provides.
+
+%files -n debian-compat-liblua5.3-dev
+
+%package -n debian-compat-liblua5.4-dev
+Summary:        Debian compatibility: liblua5.4-dev -> pkgconfig(lua5.4)
+Provides:       deb(liblua5.4-dev)
+Requires:       pkgconfig(lua5.4)
+BuildArch:      noarch
+
+%description -n debian-compat-liblua5.4-dev
+Pulls in the openSUSE packages providing what Debian's liblua5.4-dev provides.
+
+%files -n debian-compat-liblua5.4-dev
+
+%package -n debian-compat-liblua5.5-dev
+Summary:        Debian compatibility: liblua5.5-dev -> pkgconfig(lua5.5)
+Provides:       deb(liblua5.5-dev)
+Requires:       pkgconfig(lua5.5)
+BuildArch:      noarch
+
+%description -n debian-compat-liblua5.5-dev
+Pulls in the openSUSE packages providing what Debian's liblua5.5-dev provides.
+
+%files -n debian-compat-liblua5.5-dev
+
+%package -n debian-compat-libmail-sendmail-perl
+Summary:        Debian compatibility: libmail-sendmail-perl -> perl-Mail-Sendmail
+Provides:       deb(libmail-sendmail-perl)
+Requires:       perl-Mail-Sendmail
+BuildArch:      noarch
+
+%description -n debian-compat-libmail-sendmail-perl
+Pulls in the openSUSE packages providing what Debian's libmail-sendmail-perl provides.
+
+%files -n debian-compat-libmail-sendmail-perl
 
 %package -n debian-compat-libmailtools-perl
 Summary:        Debian compatibility: libmailtools-perl -> perl-MailTools
@@ -360,6 +569,17 @@ Pulls in the openSUSE packages providing what Debian's libpcre2-dev provides.
 
 %files -n debian-compat-libpcre2-dev
 
+%package -n debian-compat-libpipeline-dev
+Summary:        Debian compatibility: libpipeline-dev -> libpipeline-devel
+Provides:       deb(libpipeline-dev)
+Requires:       libpipeline-devel
+BuildArch:      noarch
+
+%description -n debian-compat-libpipeline-dev
+Pulls in the openSUSE packages providing what Debian's libpipeline-dev provides.
+
+%files -n debian-compat-libpipeline-dev
+
 %package -n debian-compat-libpng-dev
 Summary:        Debian compatibility: libpng-dev -> libpng-devel
 Provides:       deb(libpng-dev)
@@ -371,6 +591,17 @@ Pulls in the openSUSE packages providing what Debian's libpng-dev provides.
 
 %files -n debian-compat-libpng-dev
 
+%package -n debian-compat-libpython3-stdlib
+Summary:        Debian compatibility: libpython3-stdlib -> python3
+Provides:       deb(libpython3-stdlib)
+Requires:       python3
+BuildArch:      noarch
+
+%description -n debian-compat-libpython3-stdlib
+Pulls in the openSUSE packages providing what Debian's libpython3-stdlib provides.
+
+%files -n debian-compat-libpython3-stdlib
+
 %package -n debian-compat-libreadline-dev
 Summary:        Debian compatibility: libreadline-dev -> pkgconfig(readline)
 Provides:       deb(libreadline-dev)
@@ -381,6 +612,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libreadline-dev provides.
 
 %files -n debian-compat-libreadline-dev
+
+%package -n debian-compat-libregexp-assemble-perl
+Summary:        Debian compatibility: libregexp-assemble-perl -> perl-Regexp-Assemble
+Provides:       deb(libregexp-assemble-perl)
+Requires:       perl-Regexp-Assemble
+BuildArch:      noarch
+
+%description -n debian-compat-libregexp-assemble-perl
+Pulls in the openSUSE packages providing what Debian's libregexp-assemble-perl provides.
+
+%files -n debian-compat-libregexp-assemble-perl
 
 %package -n debian-compat-libsqlite3-dev
 Summary:        Debian compatibility: libsqlite3-dev -> pkgconfig(sqlite3)
@@ -406,6 +648,39 @@ Pulls in the openSUSE packages providing what Debian's libssl-dev provides.
 
 %files -n debian-compat-libssl-dev
 
+%package -n debian-compat-libtest-perl-critic-perl
+Summary:        Debian compatibility: libtest-perl-critic-perl -> perl-Test-Perl-Critic
+Provides:       deb(libtest-perl-critic-perl)
+Requires:       perl-Test-Perl-Critic
+BuildArch:      noarch
+
+%description -n debian-compat-libtest-perl-critic-perl
+Pulls in the openSUSE packages providing what Debian's libtest-perl-critic-perl provides.
+
+%files -n debian-compat-libtest-perl-critic-perl
+
+%package -n debian-compat-libtest-strict-perl
+Summary:        Debian compatibility: libtest-strict-perl -> perl-Test-Strict
+Provides:       deb(libtest-strict-perl)
+Requires:       perl-Test-Strict
+BuildArch:      noarch
+
+%description -n debian-compat-libtest-strict-perl
+Pulls in the openSUSE packages providing what Debian's libtest-strict-perl provides.
+
+%files -n debian-compat-libtest-strict-perl
+
+%package -n debian-compat-libtext-glob-perl
+Summary:        Debian compatibility: libtext-glob-perl -> perl-Text-Glob
+Provides:       deb(libtext-glob-perl)
+Requires:       perl-Text-Glob
+BuildArch:      noarch
+
+%description -n debian-compat-libtext-glob-perl
+Pulls in the openSUSE packages providing what Debian's libtext-glob-perl provides.
+
+%files -n debian-compat-libtext-glob-perl
+
 %package -n debian-compat-libtool
 Summary:        Debian compatibility: libtool -> libtool
 Provides:       deb(libtool)
@@ -416,6 +691,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libtool provides.
 
 %files -n debian-compat-libtool
+
+%package -n debian-compat-libwww-perl
+Summary:        Debian compatibility: libwww-perl -> perl-libwww-perl
+Provides:       deb(libwww-perl)
+Requires:       perl-libwww-perl
+BuildArch:      noarch
+
+%description -n debian-compat-libwww-perl
+Pulls in the openSUSE packages providing what Debian's libwww-perl provides.
+
+%files -n debian-compat-libwww-perl
 
 %package -n debian-compat-libx11-dev
 Summary:        Debian compatibility: libx11-dev -> libX11-devel
@@ -439,6 +725,17 @@ Pulls in the openSUSE packages providing what Debian's libxml2-dev provides.
 
 %files -n debian-compat-libxml2-dev
 
+%package -n debian-compat-libyaml-perl
+Summary:        Debian compatibility: libyaml-perl -> perl-YAML
+Provides:       deb(libyaml-perl)
+Requires:       perl-YAML
+BuildArch:      noarch
+
+%description -n debian-compat-libyaml-perl
+Pulls in the openSUSE packages providing what Debian's libyaml-perl provides.
+
+%files -n debian-compat-libyaml-perl
+
 %package -n debian-compat-lsb-release
 Summary:        Debian compatibility: lsb-release -> lsb-release
 Provides:       deb(lsb-release)
@@ -450,6 +747,28 @@ Pulls in the openSUSE packages providing what Debian's lsb-release provides.
 
 %files -n debian-compat-lsb-release
 
+%package -n debian-compat-lua5.1
+Summary:        Debian compatibility: lua5.1 -> lua
+Provides:       deb(lua5.1)
+Requires:       lua
+BuildArch:      noarch
+
+%description -n debian-compat-lua5.1
+Pulls in the openSUSE packages providing what Debian's lua5.1 provides.
+
+%files -n debian-compat-lua5.1
+
+%package -n debian-compat-lua5.3
+Summary:        Debian compatibility: lua5.3 -> lua
+Provides:       deb(lua5.3)
+Requires:       lua
+BuildArch:      noarch
+
+%description -n debian-compat-lua5.3
+Pulls in the openSUSE packages providing what Debian's lua5.3 provides.
+
+%files -n debian-compat-lua5.3
+
 %package -n debian-compat-lua5.4
 Summary:        Debian compatibility: lua5.4 -> lua
 Provides:       deb(lua5.4)
@@ -460,6 +779,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's lua5.4 provides.
 
 %files -n debian-compat-lua5.4
+
+%package -n debian-compat-lua5.5
+Summary:        Debian compatibility: lua5.5 -> lua
+Provides:       deb(lua5.5)
+Requires:       lua
+BuildArch:      noarch
+
+%description -n debian-compat-lua5.5
+Pulls in the openSUSE packages providing what Debian's lua5.5 provides.
+
+%files -n debian-compat-lua5.5
 
 %package -n debian-compat-meson
 Summary:        Debian compatibility: meson -> meson
@@ -494,6 +824,17 @@ Pulls in the openSUSE packages providing what Debian's nodejs provides.
 
 %files -n debian-compat-nodejs
 
+%package -n debian-compat-npm
+Summary:        Debian compatibility: npm -> npm
+Provides:       deb(npm)
+Requires:       npm
+BuildArch:      noarch
+
+%description -n debian-compat-npm
+Pulls in the openSUSE packages providing what Debian's npm provides.
+
+%files -n debian-compat-npm
+
 %package -n debian-compat-perl
 Summary:        Debian compatibility: perl -> perl
 Provides:       deb(perl)
@@ -526,6 +867,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's pkgconf provides.
 
 %files -n debian-compat-pkgconf
+
+%package -n debian-compat-po4a
+Summary:        Debian compatibility: po4a -> po4a
+Provides:       deb(po4a)
+Requires:       po4a
+BuildArch:      noarch
+
+%description -n debian-compat-po4a
+Pulls in the openSUSE packages providing what Debian's po4a provides.
+
+%files -n debian-compat-po4a
 
 %package -n debian-compat-python3
 Summary:        Debian compatibility: python3 -> python3
@@ -560,6 +912,28 @@ Pulls in the openSUSE packages providing what Debian's python3-all-dev provides.
 
 %files -n debian-compat-python3-all-dev
 
+%package -n debian-compat-python3-build
+Summary:        Debian compatibility: python3-build -> python3-build
+Provides:       deb(python3-build)
+Requires:       python3-build
+BuildArch:      noarch
+
+%description -n debian-compat-python3-build
+Pulls in the openSUSE packages providing what Debian's python3-build provides.
+
+%files -n debian-compat-python3-build
+
+%package -n debian-compat-python3-debian
+Summary:        Debian compatibility: python3-debian -> python3-debian
+Provides:       deb(python3-debian)
+Requires:       python3-debian
+BuildArch:      noarch
+
+%description -n debian-compat-python3-debian
+Pulls in the openSUSE packages providing what Debian's python3-debian provides.
+
+%files -n debian-compat-python3-debian
+
 %package -n debian-compat-python3-dev
 Summary:        Debian compatibility: python3-dev -> python3-devel
 Provides:       deb(python3-dev)
@@ -570,6 +944,50 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's python3-dev provides.
 
 %files -n debian-compat-python3-dev
+
+%package -n debian-compat-python3-docutils
+Summary:        Debian compatibility: python3-docutils -> python3-docutils
+Provides:       deb(python3-docutils)
+Requires:       python3-docutils
+BuildArch:      noarch
+
+%description -n debian-compat-python3-docutils
+Pulls in the openSUSE packages providing what Debian's python3-docutils provides.
+
+%files -n debian-compat-python3-docutils
+
+%package -n debian-compat-python3-installer
+Summary:        Debian compatibility: python3-installer -> python3-installer
+Provides:       deb(python3-installer)
+Requires:       python3-installer
+BuildArch:      noarch
+
+%description -n debian-compat-python3-installer
+Pulls in the openSUSE packages providing what Debian's python3-installer provides.
+
+%files -n debian-compat-python3-installer
+
+%package -n debian-compat-python3-markdown
+Summary:        Debian compatibility: python3-markdown -> python3-Markdown
+Provides:       deb(python3-markdown)
+Requires:       python3-Markdown
+BuildArch:      noarch
+
+%description -n debian-compat-python3-markdown
+Pulls in the openSUSE packages providing what Debian's python3-markdown provides.
+
+%files -n debian-compat-python3-markdown
+
+%package -n debian-compat-python3-minimal
+Summary:        Debian compatibility: python3-minimal -> python3-base
+Provides:       deb(python3-minimal)
+Requires:       python3-base
+BuildArch:      noarch
+
+%description -n debian-compat-python3-minimal
+Pulls in the openSUSE packages providing what Debian's python3-minimal provides.
+
+%files -n debian-compat-python3-minimal
 
 %package -n debian-compat-python3-setuptools
 Summary:        Debian compatibility: python3-setuptools -> python3-setuptools
@@ -593,6 +1011,28 @@ Pulls in the openSUSE packages providing what Debian's python3-sphinx provides.
 
 %files -n debian-compat-python3-sphinx
 
+%package -n debian-compat-python3-wheel
+Summary:        Debian compatibility: python3-wheel -> python3-wheel
+Provides:       deb(python3-wheel)
+Requires:       python3-wheel
+BuildArch:      noarch
+
+%description -n debian-compat-python3-wheel
+Pulls in the openSUSE packages providing what Debian's python3-wheel provides.
+
+%files -n debian-compat-python3-wheel
+
+%package -n debian-compat-python3-yaml
+Summary:        Debian compatibility: python3-yaml -> python313-PyYAML
+Provides:       deb(python3-yaml)
+Requires:       python313-PyYAML
+BuildArch:      noarch
+
+%description -n debian-compat-python3-yaml
+Pulls in the openSUSE packages providing what Debian's python3-yaml provides.
+
+%files -n debian-compat-python3-yaml
+
 %package -n debian-compat-quilt
 Summary:        Debian compatibility: quilt -> quilt
 Provides:       deb(quilt)
@@ -603,6 +1043,28 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's quilt provides.
 
 %files -n debian-compat-quilt
+
+%package -n debian-compat-rake
+Summary:        Debian compatibility: rake -> ruby4.0
+Provides:       deb(rake)
+Requires:       ruby4.0
+BuildArch:      noarch
+
+%description -n debian-compat-rake
+Pulls in the openSUSE packages providing what Debian's rake provides.
+
+%files -n debian-compat-rake
+
+%package -n debian-compat-rollup
+Summary:        Debian compatibility: rollup -> rollup
+Provides:       deb(rollup)
+Requires:       rollup
+BuildArch:      noarch
+
+%description -n debian-compat-rollup
+Pulls in the openSUSE packages providing what Debian's rollup provides.
+
+%files -n debian-compat-rollup
 
 %package -n debian-compat-ruby
 Summary:        Debian compatibility: ruby -> ruby
@@ -615,6 +1077,28 @@ Pulls in the openSUSE packages providing what Debian's ruby provides.
 
 %files -n debian-compat-ruby
 
+%package -n debian-compat-ruby-minitest
+Summary:        Debian compatibility: ruby-minitest -> ruby4.0
+Provides:       deb(ruby-minitest)
+Requires:       ruby4.0
+BuildArch:      noarch
+
+%description -n debian-compat-ruby-minitest
+Pulls in the openSUSE packages providing what Debian's ruby-minitest provides.
+
+%files -n debian-compat-ruby-minitest
+
+%package -n debian-compat-ruby-test-unit
+Summary:        Debian compatibility: ruby-test-unit -> ruby4.0
+Provides:       deb(ruby-test-unit)
+Requires:       ruby4.0
+BuildArch:      noarch
+
+%description -n debian-compat-ruby-test-unit
+Pulls in the openSUSE packages providing what Debian's ruby-test-unit provides.
+
+%files -n debian-compat-ruby-test-unit
+
 %package -n debian-compat-texinfo
 Summary:        Debian compatibility: texinfo -> texinfo
 Provides:       deb(texinfo)
@@ -625,6 +1109,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's texinfo provides.
 
 %files -n debian-compat-texinfo
+
+%package -n debian-compat-txt2man
+Summary:        Debian compatibility: txt2man -> txt2man
+Provides:       deb(txt2man)
+Requires:       txt2man
+BuildArch:      noarch
+
+%description -n debian-compat-txt2man
+Pulls in the openSUSE packages providing what Debian's txt2man provides.
+
+%files -n debian-compat-txt2man
 
 %package -n debian-compat-xsltproc
 Summary:        Debian compatibility: xsltproc -> xsltproc

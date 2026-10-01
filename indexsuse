@@ -57,7 +57,7 @@ while (<$fh>) {
     if (m{^<package .*name="([^"]+)".*arch="([^"]+)"}) { $pkg = $2 eq 'i586' ? undef : $1 }
     elsif ($pkg && m{^\s*<file>([^<]+)</file>}) {
         my $f = $1;
-        push @files, [$f, $pkg] if $f =~ m{^/usr/(s?bin/|lib64/[^/]+\.so|lib/[^/]+\.so|lib64/pkgconfig/|share/pkgconfig/|include/|lib/perl5/|lib64/perl5/|lib64?/python3[^/]*/site-packages/[^/]+/?$|lib64?/python3[^/]*/site-packages/[^/]+\.py$|share/fonts/|lib64?/ruby/|lib/node_modules/[^/]+/package\.json$|share/lua/|lib64/lua/)};
+        push @files, [$f, $pkg] if $f =~ m{^/usr/(s?bin/|lib64/[^/]+\.so|lib/[^/]+\.so|lib64/pkgconfig/|share/pkgconfig/|include/|lib/perl5/|lib64/perl5/|lib64?/python3[^/]*/site-packages/[^/]+/__init__\.py$|lib64?/python3[^/]*/site-packages/[^/]+\.py$|share/fonts/|lib64?/ruby/|lib/node_modules/[^/]+/package\.json$|share/lua/|lib64/lua/)};
     }
 }
 close $fh;

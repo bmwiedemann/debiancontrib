@@ -1473,6 +1473,8 @@ fonts-kanjistrokeorders	fonts-KanjiStrokeOrders	case
 fonts-khmeros	khmeros-fonts	norm
 fonts-lato	lato-fonts	norm
 fonts-liberation	liberation-fonts	norm
+fonts-liberation-sans-narrow	liberation-fonts	norm
+fonts-liberation2	liberation-fonts	norm
 fonts-libertinus	libertinus-fonts	norm
 fonts-lxgw-wenkai	lxgw-wenkai-fonts	norm
 fonts-lyx	lyx-fonts	norm
@@ -3346,7 +3348,7 @@ libbrasero-media3-1	libbrasero-media3-1	name
 libbrasero-media3-dev	pkgconfig(libbrasero-burn3),pkgconfig(libbrasero-media3)	pc
 libbrlapi-dev	pkgconfig(brltty)	pc
 libbrlapi-java	brlapi-java	norm
-libbrlapi0.8	libbrlapi.so.0.8()(64bit)	so
+libbrlapi0.8	libbrlapi0_8	norm
 libbrotli-dev	libbrotli-devel	norm
 libbrotli1	libbrotlicommon.so.1()(64bit),libbrotlidec.so.1()(64bit),libbrotlienc.so.1()(64bit)	so
 libbrowser-open-perl	perl-Browser-Open	norm
@@ -3385,7 +3387,7 @@ libbusiness-issn-perl	perl-Business-ISSN	norm
 libbyte-buddy-java	byte-buddy	norm
 libbytesize-dev	libbytesize-devel	norm
 libbytesize1	libbytesize1	name
-libbz2-1.0	libbz2.so.1()(64bit)	so
+libbz2-1.0	libbz2-1	norm
 libbz2-dev	libbz2-devel	norm
 libbzip3-1	libbzip3-1	name
 libbzip3-dev	pkgconfig(bzip3)	pc
@@ -3437,7 +3439,7 @@ libcamel1.2-dev	pkgconfig(camel-1.2)	pc
 libcamera-dev	libcamera-devel	norm
 libcamera-ipa	libcamera-ipa	name
 libcamera-tools	libcamera-tools	name
-libcamera0.7	libcamera-base.so.0.7()(64bit),libcamera.so.0.7()(64bit)	so
+libcamera0.7	libcamera0_7	norm
 libcanary-stability-perl	perl-Canary-Stability	norm
 libcanberra-dev	libcanberra-devel	norm
 libcanberra-gtk-common-dev	libcanberra-devel	include
@@ -3693,7 +3695,7 @@ libcob4-dev	gnucobol	include
 libcob4t64	libcob4	norm
 libcob5-dev	gnucobol	include
 libcode-tidyall-perl	perl-Code-TidyAll	norm
-libcodec2-1.2	libcodec2.so.1.2()(64bit)	so
+libcodec2-1.2	libcodec2-1_2	norm
 libcodec2-dev	pkgconfig(codec2)	pc
 libcodemodel-java	codemodel	norm
 libcogl-dev	pkgconfig(cogl-1.0),pkgconfig(cogl-2.0-experimental),pkgconfig(cogl-gl-1.0),pkgconfig(cogl-path-1.0),pkgconfig(cogl-path-2.0-experimental)	pc
@@ -3865,7 +3867,7 @@ libcryptsetup12	libcryptsetup12	name
 libcryptx-perl	perl-CryptX	norm
 libcsnd-dev	csound-devel	include
 libcsnd6-6.0v5	libcsnd6.so.6.0()(64bit)	so
-libcsound64-6.0	libcsound64.so.6.0()(64bit)	so
+libcsound64-6.0	libcsound64-6_0	norm
 libcsound64-dev	csound-devel	include
 libcss-minifier-xs-perl	perl-CSS-Minifier-XS	norm
 libcss-parser-pp0v5	libcss_parser_pp.so.0()(64bit)	so
@@ -4132,6 +4134,7 @@ libdnf5-cli-dev	libdnf5-cli-devel	norm
 libdnf5-cli3	libdnf5-cli3	name
 libdnf5-dev	libdnf5-devel	norm
 libdnnl-dev	onednn-devel	include
+libdnnl3.6	libdnnl3	norm
 libdolphinvcs-dev	dolphin-devel	include
 libdolphinvcs6	libdolphinvcs6	name
 libdom4j-java	dom4j	norm
@@ -4589,7 +4592,7 @@ libflac++11	libFLAC++11	case
 libflac-dev	pkgconfig(flac++),pkgconfig(flac)	pc
 libflac14	libFLAC14	case
 libflann-dev	pkgconfig(flann)	pc
-libflann1.9	libflann.so.1.9()(64bit),libflann_cpp.so.1.9()(64bit)	so
+libflann1.9	libflann1_9	norm
 libflashrom-dev	pkgconfig(flashrom)	pc
 libflashrom1	libflashrom1	name
 libflatbuffers-dev	pkgconfig(flatbuffers)	pc
@@ -4862,7 +4865,7 @@ libgf2x3	libgf2x3	name
 libgfapi0	libgfapi0	name
 libgfchangelog0	libgfchangelog0	name
 libgflags-dev	pkgconfig(gflags)	pc
-libgflags2.2	libgflags.so.2.2()(64bit),libgflags_nothreads.so.2.2()(64bit)	so
+libgflags2.2	libgflags2_2	norm
 libgfortran5	libgfortran5	name
 libgfrpc0	libgfrpc0	name
 libgfxdr0	libgfxdr0	name
@@ -5711,10 +5714,10 @@ libgit-repository-perl	perl-Git-Repository	norm
 libgit-repository-plugin-log-perl	perl-Git-Repository-Plugin-Log	norm
 libgit-version-compare-perl	perl-Git-Version-Compare	norm
 libgit-wrapper-perl	perl-Git-Wrapper	norm
-libgit2-1.9	libgit2.so.1.9()(64bit)	so
+libgit2-1.9	libgit2-1_9	norm
 libgit2-dev	libgit2-devel	norm
 libgit2-experimental-dev	libgit2-experimental-devel	norm
-libgit2-experimental1.9	libgit2-experimental.so.1.9()(64bit)	so
+libgit2-experimental1.9	libgit2-experimental1_9	norm
 libgit2-glib-1.0-0	libgit2-glib-1.0.so.0()(64bit)	so
 libgit2-glib-1.0-dev	pkgconfig(libgit2-glib-1.0)	pc
 libgivaro-dev	pkgconfig(givaro)	pc
@@ -5725,6 +5728,7 @@ libgjs0	libgjs0	name
 libgl-dev	pkgconfig(gl)	pc
 libgl1	libGL.so.1()(64bit)	so
 libgl2ps-dev	gl2ps-devel	include
+libgl2ps1.4	libgl2ps1	norm
 libglaze-dev	glaze-devel	include
 libglbinding-dev	glbinding-devel	include
 libglbinding3	libglbinding3	name
@@ -5736,7 +5740,7 @@ libgles-dev	pkgconfig(glesv1_cm),pkgconfig(glesv2)	pc
 libgles1	libGLESv1_CM.so.1()(64bit)	so
 libgles2	libGLESv2.so.2()(64bit)	so
 libglew-dev	pkgconfig(glew)	pc
-libglew2.3	libGLEW.so.2.3()(64bit)	so
+libglew2.3	libGLEW2_3	norm
 libglewmx-dev	glew-devel	include
 libglfw3	libglfw3	name
 libglfw3-dev	pkgconfig(glfw3)	pc
@@ -5763,7 +5767,7 @@ libglu1-mesa-dev	pkgconfig(glu)	pc
 libglusterfs-dev	pkgconfig(glusterfs-api),pkgconfig(libgfchangelog)	pc
 libglusterfs0	libglusterfs0	name
 libglut-dev	pkgconfig(glut)	pc
-libglut3.12	libglut.so.3()(64bit)	so
+libglut3.12	libglut3	norm
 libglvnd-core-dev	pkgconfig(libglvnd)	pc
 libglvnd-dev	libglvnd-devel	norm
 libglvnd0	libglvnd0	name
@@ -5795,7 +5799,7 @@ libgmp-dev	pkgconfig(gmp),pkgconfig(gmpxx)	pc
 libgmp10	libgmp10	name
 libgmpxx4ldbl	libgmpxx.so.4()(64bit)	so
 libgmsh-dev	gmsh-devel	include
-libgmsh4.15	libgmsh.so.4.15()(64bit)	so
+libgmsh4.15	libgmsh4_15	norm
 libgnat-13	libgnat-13	name
 libgnat-14	libgnat-14	name
 libgnat-15	libgnat-15	name
@@ -5849,7 +5853,7 @@ libgnuradio-video-sdl3.10.12	libgnuradio-video-sdl.so.3.10.12()(64bit)	so
 libgnuradio-vocoder3.10.12	libgnuradio-vocoder.so.3.10.12()(64bit)	so
 libgnuradio-wavelet3.10.12	libgnuradio-wavelet.so.3.10.12()(64bit)	so
 libgnuradio-zeromq3.10.12	libgnuradio-zeromq.so.3.10.12()(64bit)	so
-libgnustep-base1.31	libgnustep-base.so.1.31()(64bit)	so
+libgnustep-base1.31	libgnustep-base1_31	norm
 libgnutls-dane0t64	libgnutls-dane0	norm
 libgnutls28-dev	pkgconfig(gnutls-dane),pkgconfig(gnutls)	pc
 libgnutls30t64	libgnutls30	norm
@@ -6328,6 +6332,7 @@ libimobiledevice-utils	imobiledevice-tools	file
 libimport-into-perl	perl-Import-Into	norm
 libimporter-perl	perl-Importer	norm
 libinchi-bin	inchi	file
+libinchi1.07	libinchi1	norm
 libincidenceeditor-dev	incidenceeditor-devel	include
 libindi-dev	libindi-devel	norm
 libindi-plugins	libindi-plugins	name
@@ -7377,7 +7382,7 @@ liblunar-date-doc	lunar-date-doc	norm
 liblur-dev	pkgconfig(liblur)	pc
 liblur3	liblur3	name
 liblvm2-dev	lvm2-devel	include
-liblvm2cmd2.03	liblvm2cmd.so.2.03()(64bit)	so
+liblvm2cmd2.03	liblvm2cmd2_03	norm
 liblwp-mediatypes-perl	perl-LWP-MediaTypes	norm
 liblwp-online-perl	perl-LWP-Online	norm
 liblwp-protocol-https-perl	perl-LWP-Protocol-https	norm
@@ -8010,7 +8015,7 @@ libnetty-java	netty	norm
 libnetty-tcnative-java	netty-tcnative	norm
 libnetwork-ipv4addr-perl	perl-Net-IPv4Addr	file
 libnewt-dev	pkgconfig(libnewt)	pc
-libnewt0.52	libnewt.so.0.52()(64bit)	so
+libnewt0.52	libnewt0_52	norm
 libnextcloudsync-dev	libnextcloudsync-devel	norm
 libnextcloudsync0t64	libnextcloudsync0	norm
 libnfc-bin	libnfc-tools	file
@@ -8220,6 +8225,7 @@ libondselsolver1	libOndselSolver.so.1()(64bit)	so
 libonig-dev	pkgconfig(oniguruma)	pc
 libonig5	libonig5	name
 libonnxruntime-dev	pkgconfig(libonnxruntime)	pc
+libonnxruntime1.23	libonnxruntime1	norm
 liboop-dev	liboop-devel	norm
 liboop4t64	liboop4	norm
 libopamgt-dev	libopamgt-devel	norm
@@ -8234,7 +8240,7 @@ libopenblas0	libopenblas0	name
 libopencc-data	opencc-data	norm
 libopencc-dev	pkgconfig(opencc)	pc
 libopencolorio-dev	pkgconfig(OpenColorIO)	pc
-libopencolorio2.5	libOpenColorIO.so.2.5()(64bit)	so
+libopencolorio2.5	libOpenColorIO2_5	norm
 libopenconnect-dev	pkgconfig(openconnect)	pc
 libopenconnect5	libopenconnect5	name
 libopencore-amrnb-dev	pkgconfig(opencore-amrnb)	pc
@@ -8313,7 +8319,7 @@ liborc-0.4-0t64	liborc-0.4.so.0()(64bit),liborc-test-0.4.so.0()(64bit)	so
 liborc-0.4-dev	pkgconfig(orc-0.4)	pc
 liborc-0.4-dev-bin	orc	file
 liborcania-dev	pkgconfig(liborcania)	pc
-liborcania2.3	liborcania.so.2.3()(64bit)	so
+liborcania2.3	liborcania2_3	norm
 liborcus-0.21-0	liborcus-0.21.so.0()(64bit)	so
 liborcus-bin	liborcus-tools	file
 liborcus-dev	liborcus-devel	norm
@@ -8403,7 +8409,7 @@ libpadwalker-perl	perl-PadWalker	norm
 libpagemaker-0.0-0	libpagemaker-0.0.so.0()(64bit)	so
 libpagemaker-dev	libpagemaker-devel	norm
 libpaho-mqtt-dev	libpaho-mqtt-devel	norm
-libpaho-mqtt1.3	libpaho-mqtt3a.so.1()(64bit),libpaho-mqtt3as.so.1()(64bit),libpaho-mqtt3c.so.1()(64bit),libpaho-mqtt3cs.so.1()(64bit)	so
+libpaho-mqtt1.3	libpaho-mqtt1	norm
 libpam-doc	pam-doc	norm
 libpam-fscrypt	pam-fscrypt	norm
 libpam-google-authenticator	pam-google-authenticator	norm
@@ -8694,6 +8700,7 @@ libpolyclipping22	libpolyclipping22	name
 libpolylib-dev	pkgconfig(polylibgmp)	pc
 libpolymake-dev	polymake-devel	file
 libpolymake-dev-common	polymake-devel	include
+libpolymake4.15	libpolymake4_15	norm
 libpoppler-cpp-dev	pkgconfig(poppler-cpp)	pc
 libpoppler-cpp3	libpoppler-cpp3	name
 libpoppler-dev	libpoppler-devel	norm
@@ -8816,6 +8823,7 @@ libpwquality-dev	libpwquality-devel	norm
 libpwquality-tools	libpwquality-tools	name
 libpwquality1	libpwquality1	name
 libpyside6-dev	pkgconfig(pyside6)	pc
+libpyside6-py3-6.10	python313-pyside6	python
 libpython3-dev	pkgconfig(python3-embed),pkgconfig(python3)	pc
 libpython3.13	libpython3.13.so.1.0()(64bit)	so
 libpython3.13-dev	pkgconfig(python-3.13-embed),pkgconfig(python-3.13)	pc
@@ -9110,9 +9118,9 @@ libqtermwidget6-2	libqtermwidget6-2	name
 libqtilitools-dev	qtilitools	file
 libquadmath0	libquadmath0	name
 libquantum-superpositions-perl	perl-Quantum-Superpositions	norm
-libquazip1-qt5-1.7	libquazip1-qt5.so.1.7()(64bit)	so
+libquazip1-qt5-1.7	libquazip1-qt5-1_7	norm
 libquazip1-qt5-dev	pkgconfig(quazip1-qt5)	pc
-libquazip1-qt6-1.7	libquazip1-qt6.so.1.7()(64bit)	so
+libquazip1-qt6-1.7	libquazip1-qt6-1_7	norm
 libquazip1-qt6-dev	pkgconfig(quazip1-qt6)	pc
 libquickcharts1	libQuickCharts.so.1()(64bit)	so
 libquickchartscontrols1	libQuickChartsControls.so.1()(64bit)	so
@@ -9122,7 +9130,7 @@ libquicktime2	libquicktime	norm
 libquorum-dev	pkgconfig(libquorum)	pc
 libquorum5	libquorum.so.5()(64bit)	so
 libquotient-dev	pkgconfig(QuotientQt6)	pc
-libquotientqt6-0.9	libQuotientQt6.so.0.9()(64bit)	so
+libquotientqt6-0.9	libQuotientQt6-0_9	norm
 libquvi-0.9-dev	pkgconfig(libquvi-0.9)	pc
 libquvi-scripts-0.9	pkgconfig(libquvi-scripts-0.9)	pc
 libqwt-qt5-6.3	libqwt-qt5.so.6.3()(64bit)	so
@@ -9150,7 +9158,7 @@ libraqm0	libraqm0	name
 librasqal3-dev	pkgconfig(rasqal)	pc
 librasqal3t64	librasqal3	norm
 librav1e-dev	pkgconfig(rav1e)	pc
-librav1e0.8	librav1e.so.0.8()(64bit)	so
+librav1e0.8	librav1e0_8	norm
 libraven0	libraven0	name
 libraw-bin	libraw-tools	file
 libraw-dev	libraw-devel	norm
@@ -9794,6 +9802,7 @@ libsharp0	libsharp0	name
 libsharpyuv-dev	pkgconfig(libsharpyuv)	pc
 libsharpyuv0	libsharpyuv0	name
 libshiboken6-dev	pkgconfig(shiboken6)	pc
+libshiboken6-py3-6.10	python313-shiboken6	python
 libshibsp-dev	pkgconfig(shibsp-lite),pkgconfig(shibsp)	pc
 libshibsp12	libshibsp12	name
 libshine-dev	libshine-devel	norm
@@ -9856,7 +9865,7 @@ libslf4j-java	slf4j	norm
 libslirp-dev	libslirp-devel	norm
 libslirp0	libslirp0	name
 libslopy-dev	slop-devel	include
-libslopy7.7	libslopy.so.7.7()(64bit)	so
+libslopy7.7	libslopy7_7	norm
 libslurm-dev	slurm-devel	include
 libslurm-perl	perl-slurm	norm
 libsm-dev	libSM-devel	norm
@@ -9886,7 +9895,7 @@ libsnappy1v5	libsnappy.so.1()(64bit)	so
 libsndfile1	libsndfile1	name
 libsndfile1-dev	pkgconfig(sndfile)	pc
 libsndio-dev	pkgconfig(sndio)	pc
-libsndio7.0	libsndio.so.7()(64bit)	so
+libsndio7.0	libsndio7	norm
 libsnmp-dev	pkgconfig(netsnmp-agent),pkgconfig(netsnmp)	pc
 libsnmp-perl	perl-SNMP	norm
 libsnmp45	libsnmp45	name
@@ -10492,7 +10501,7 @@ libtre5	libtre5	name
 libtree	libtree	name
 libtree-dagnode-perl	perl-Tree-DAG_Node	perl
 libtree-sitter-dev	pkgconfig(tree-sitter)	pc
-libtree-sitter0.26	libtree-sitter.so.0.26()(64bit)	so
+libtree-sitter0.26	libtree-sitter0_26	norm
 libtreelayout-java	treelayout	norm
 libtrilead-ssh2-java	trilead-ssh2	norm
 libtruth-java	truth	norm
@@ -10540,7 +10549,7 @@ libtypes-serialiser-perl	perl-Types-Serialiser	norm
 libtypesafe-config-java	typesafe-config	norm
 libubootenv-dev	libubootenv-devel	norm
 libubootenv-tool	u-boot-fw-utils	file
-libubootenv0.1	libubootenv.so.0()(64bit)	so
+libubootenv0.1	libubootenv0	norm
 libubsan1	libubsan1	name
 libuchardet-dev	libuchardet-devel	norm
 libuchardet0	libuchardet0	name
@@ -10701,6 +10710,7 @@ libvdeplug-dev	libvdeplug-devel	norm
 libvdpau-dev	libvdpau-devel	norm
 libvdpau1	libvdpau1	name
 libvdt-dev	vdt-devel	include
+libvdt0.4	libvdt0	norm
 libvectorscan-dev	pkgconfig(libhs)	pc
 libvectorscan5	libhs.so.5()(64bit),libhs_runtime.so.5()(64bit)	so
 libverilog-perl	perl-Verilog-Perl	file
@@ -10712,7 +10722,7 @@ libvhdi-dev	libvhdi-devel	norm
 libvhdi-utils	libvhdi-tools	file
 libvhdi1	libvhdi1	name
 libvidstab-dev	libvidstab-devel	norm
-libvidstab1.2	libvidstab.so.1.2()(64bit)	so
+libvidstab1.2	libvidstab1_2	norm
 libvigraimpex-dev	vigra-devel	include
 libvigraimpex11	libvigraimpex11	name
 libvinylapi-dev	pkgconfig(vinylapi)	pc
@@ -10778,8 +10788,9 @@ libvo-amrwbenc-dev	libvo-amrwbenc-devel	norm
 libvo-amrwbenc0	libvo-amrwbenc0	name
 libvoikko-dev	libvoikko-devel	norm
 libvoikko1	libvoikko1	name
+libvolk-bin	volk_modtool	python
 libvolk-dev	pkgconfig(volk)	pc
-libvolk3.3	libvolk.so.3.3()(64bit)	so
+libvolk3.3	libvolk3_3	norm
 libvomsapi1t64	libvomsapi1	norm
 libvorbis-dev	libvorbis-devel	norm
 libvorbis0a	libvorbis.so.0()(64bit)	so
@@ -10885,6 +10896,7 @@ libwireshark-dev	pkgconfig(wireshark)	pc
 libwireshark19	libwireshark19	name
 libwiretap-dev	wireshark-devel	include
 libwiretap16	libwiretap16	name
+libwlroots-0.20	libwlroots-0_20	norm
 libwlroots-0.20-dev	pkgconfig(wlroots-0.20)	pc
 libwmaker-dev	pkgconfig(wmlib)	pc
 libwmaker1	libWMaker.so.1()(64bit)	so
@@ -11239,12 +11251,12 @@ libxxx-perl	perl-XXX	norm
 libxy-bin	xyconv	file
 libxy-dev	xylib-devel	include
 libxy3t64	libxy3	norm
-libxz-java	xz	norm
+libxz-java	xz-java	norm
 libyajl-dev	libyajl-devel	norm
 libyajl2	libyajl2	name
 libyaml-0-2	libyaml-0-2	name
 libyaml-cpp-dev	pkgconfig(yaml-cpp)	pc
-libyaml-cpp0.9	libyaml-cpp.so.0.9()(64bit)	so
+libyaml-cpp0.9	libyaml-cpp0_9	norm
 libyaml-dev	libyaml-devel	norm
 libyaml-libyaml-perl	perl-YAML-LibYAML	norm
 libyaml-perl	perl-YAML	norm
@@ -11280,7 +11292,7 @@ libyyjson0	libyyjson0	name
 libz3-dev	pkgconfig(z3)	pc
 libz3-java	z3	norm
 libzarchive-dev	pkgconfig(zarchive)	pc
-libzarchive0.1	libzarchive.so.0.1()(64bit)	so
+libzarchive0.1	libzarchive0_1	norm
 libzbar-dev	libzbar-devel	norm
 libzbar0t64	libzbar0	norm
 libzck-dev	libzck-devel	norm
@@ -11654,6 +11666,7 @@ memtest86+	memtest86+	name
 menhir	ocaml-menhir	file
 menulibre	menulibre	name
 mercurial	mercurial	name
+mercurial-common	mercurial	python
 merge3	python313-merge3	file
 merkuro	merkuro	name
 mesa-common-dev	pkgconfig(dri)	pc
@@ -12526,6 +12539,7 @@ privoxy	privoxy	name
 procdump	procdump	name
 procinfo	procinfo	name
 procmail	procmail	name
+procmail-lib	procmail	norm
 procmeter3	procmeter	norm
 procps	procps	name
 procs	procs	name
@@ -12717,7 +12731,6 @@ python3-aeidon	python3-aeidon	name
 python3-aenum	python3-aenum	name
 python3-affine	python3-affine	name
 python3-agate	python3-agate	name
-python3-ahocorasick	python314-pyahocorasick	python
 python3-aiocsv	python3-aiocsv	name
 python3-aiodns	python3-aiodns	name
 python3-aiofile	python3-aiofile	name
@@ -12742,7 +12755,6 @@ python3-ajsonrpc	python3-ajsonrpc	name
 python3-alabaster	python3-alabaster	name
 python3-alembic	python3-alembic	name
 python3-allpairspy	python3-allpairspy	name
-python3-alsaaudio	python314-pyalsaaudio	python
 python3-altair	python3-altair	name
 python3-altgraph	python3-altgraph	name
 python3-amqp	python3-amqp	name
@@ -12840,6 +12852,7 @@ python3-baron	python3-baron	name
 python3-base36	python3-base	norm
 python3-base58	python3-base58	name
 python3-bashate	python3-bashate	name
+python3-bcj	python313-pybcj	python
 python3-bcrypt	python3-bcrypt	name
 python3-beaker	python3-Beaker	case
 python3-beartype	python3-beartype	name
@@ -12854,6 +12867,7 @@ python3-billiard	python3-billiard	name
 python3-binaryornot	python3-binaryornot	name
 python3-bincopy	python3-bincopy	name
 python3-biopython	python3-biopython	name
+python3-biopython-sql	python313-biopython	python
 python3-biplist	python3-biplist	name
 python3-bitarray	python3-bitarray	name
 python3-bitstring	python3-bitstring	name
@@ -12866,6 +12880,7 @@ python3-blinker	python3-blinker	name
 python3-blockbuster	python3-blockbuster	name
 python3-blockdiag	python3-blockdiag	name
 python3-blosc	python3-blosc	name
+python3-bluez	python313-pybluez	python
 python3-boltons	python3-boltons	name
 python3-booleanoperations	python3-booleanOperations	case
 python3-boost-histogram	python3-boost-histogram	name
@@ -12883,10 +12898,12 @@ python3-brotli	python3-Brotli	case
 python3-bs4	python3-bs4	name
 python3-bsddb3	python3-bsddb3	name
 python3-bson	python3-bson	name
+python3-bt2	python3-babeltrace2	python
 python3-btrees	python3-BTrees	case
 python3-btrfsutil	python3-btrfsutil	name
 python3-bugzilla	python3-bugzilla	name
 python3-build	python3-build	name
+python3-buildstream	buildstream	python
 python3-bytecode	python3-bytecode	name
 python3-bytesize	python3-bytesize	name
 python3-cachecontrol	python3-cachecontrol	name
@@ -12908,6 +12925,7 @@ python3-canonicaljson	python3-canonicaljson	name
 python3-cap-ng	python3-capng	python
 python3-capstone	python3-capstone	name
 python3-casacore	python3-casacore	name
+python3-cassandra	python313-cassandra-driver	python
 python3-castellan	python3-castellan	name
 python3-casttube	python3-casttube	name
 python3-catalogus	python3-catalogus	name
@@ -12938,7 +12956,6 @@ python3-certipy	python3-certipy	name
 python3-certstream	python3-certstream	name
 python3-certvalidator	python3-certvalidator	name
 python3-cffi	python3-cffi	name
-python3-cffi-backend	python314-cffi	python
 python3-cfgv	python3-cfgv	name
 python3-cftime	python3-cftime	name
 python3-chameleon	python3-Chameleon	case
@@ -12948,6 +12965,7 @@ python3-charset-normalizer	python3-charset-normalizer	name
 python3-cheetah	python3-cheetah	name
 python3-cheroot	python3-cheroot	name
 python3-cherrypy3	python3-CherryPy	norm
+python3-chm	python313-pychm	python
 python3-cinderclient	python3-cinderclient	name
 python3-circuitbreaker	python3-circuitbreaker	name
 python3-ciso8601	python3-ciso8601	name
@@ -13016,6 +13034,7 @@ python3-crayons	python3-crayons	name
 python3-crc32c	python3-crc32c	name
 python3-crccheck	python3-crccheck	name
 python3-crcmod	python3-crcmod	name
+python3-createrepo-c	python3-createrepo_c	python
 python3-crispy-bootstrap3	python3-crispy-bootstrap3	name
 python3-crispy-bootstrap4	python3-crispy-bootstrap4	name
 python3-crispy-bootstrap5	python3-crispy-bootstrap5	name
@@ -13056,6 +13075,7 @@ python3-dateutil	python3-dateutil	name
 python3-datrie	python3-datrie	name
 python3-dbf	python3-dbf	name
 python3-dbfread	python3-dbfread	name
+python3-dbus-fast	python313-dbus_fast	python
 python3-dbusdeviation	python313-dbus-deviation	file
 python3-dbusmock	python3-dbusmock	name
 python3-ddt	python3-ddt	name
@@ -13213,6 +13233,7 @@ python3-envs	python3-envs	name
 python3-enzyme	python3-enzyme	name
 python3-ephem	python3-ephem	name
 python3-ephemeral-port-reserve	python3-ephemeral-port-reserve	name
+python3-erfa	python313-pyerfa	python
 python3-espeak	python3-espeak	name
 python3-etcd	python3-etcd	name
 python3-etcd3	python3-etcd	norm
@@ -13241,6 +13262,7 @@ python3-falcon	python3-falcon	name
 python3-fann2	python3-fann2	name
 python3-fastapi	python3-fastapi	name
 python3-fastbencode	python3-fastbencode	name
+python3-fastchunking	suse-sgx-dcap-pccs	python
 python3-fasteners	python3-fasteners	name
 python3-fastimport	python3-fastimport	name
 python3-fastjsonschema	python3-fastjsonschema	name
@@ -13257,6 +13279,7 @@ python3-fiona	python3-Fiona	case
 python3-fire	python3-fire	name
 python3-firewall	python3-firewall	name
 python3-first	python3-first	name
+python3-fitz	python313-PyMuPDF	python
 python3-fixtures	python3-fixtures	name
 python3-flake8	python3-flake8	name
 python3-flake8-blind-except	python3-flake8-blind-except	name
@@ -13311,7 +13334,6 @@ python3-freezerclient	python3-freezerclient	name
 python3-fritzconnection	python3-fritzconnection	name
 python3-frozendict	python3-frozendict	name
 python3-frozenlist	python3-frozenlist	name
-python3-fsfat	python314-libfsfat	python
 python3-fsspec	python3-fsspec	name
 python3-ftdi1	python3-libftdi1	python
 python3-ftfy	python3-ftfy	name
@@ -13342,6 +13364,7 @@ python3-gexiv2	python3-gexiv2	name
 python3-gfloat	python3-gfloat	name
 python3-gguf	python3-gguf	name
 python3-ghostscript	python3-ghostscript	name
+python3-gi	python313-gobject	python
 python3-gitdb	python3-gitdb	name
 python3-glad	python3-glad2	file
 python3-glanceclient	python3-glanceclient	name
@@ -13369,9 +13392,11 @@ python3-graphql-relay	python3-graphql-relay	name
 python3-graphviz	python3-graphviz	name
 python3-greenlet	python3-greenlet	name
 python3-griddataformats	python3-GridDataFormats	case
+python3-gridfs	python313-pymongo	python
 python3-griffe	python3-griffe	name
 python3-griffecli	python3-griffecli	name
 python3-griffelib	python3-griffelib	name
+python3-grpc-tools	python313-grpcio-tools	python
 python3-grpcio	python3-grpcio	name
 python3-grpclib	python3-grpclib	name
 python3-gspread	python3-gspread	name
@@ -13407,13 +13432,11 @@ python3-healpy	python3-healpy	name
 python3-heapdict	python3-HeapDict	case
 python3-heatclient	python3-heatclient	name
 python3-hepunits	python3-hepunits	name
-python3-hid	python314-hidapi	python
 python3-hidapi	python3-hidapi	name
 python3-hiredis	python3-hiredis	name
 python3-hishel	python3-hishel	name
 python3-hivex	python3-hivex	name
 python3-hjson	python3-hjson	name
-python3-hnswlib	python314-chroma-hnswlib	python
 python3-holidays	python3-holidays	name
 python3-hpack	python3-hpack	name
 python3-hsluv	python3-hsluv	name
@@ -13523,6 +13546,7 @@ python3-joblib	python3-joblib	name
 python3-josepy	python3-josepy	name
 python3-joserfc	python3-joserfc	name
 python3-jplephem	python3-jplephem	name
+python3-jpype	python313-JPype1	python
 python3-jsbeautifier	python3-jsbeautifier	name
 python3-jschema-to-python	python3-jschema-to-python	name
 python3-jsmin	python3-jsmin	name
@@ -13677,7 +13701,6 @@ python3-lupa	python3-lupa	name
 python3-lxml	python3-lxml	name
 python3-ly	python3-ly	name
 python3-lz4	python3-lz4	name
-python3-lzo	python314-python-lzo	python
 python3-macholib	python3-macholib	name
 python3-magic	python3-magic	name
 python3-magic-wormhole-mailbox-server	python3-magic-wormhole-mailbox-server	name
@@ -13690,6 +13713,7 @@ python3-mako	python3-mako	name
 python3-mando	python3-mando	name
 python3-manilaclient	python3-manilaclient	name
 python3-manuel	python3-manuel	name
+python3-mapscript	python313-mapserver	python
 python3-marathon	python3-marathon	name
 python3-marisa	python3-marisa	name
 python3-markdown	python3-Markdown	case
@@ -13717,6 +13741,7 @@ python3-mdit-py-plugins	python3-mdit-py-plugins	name
 python3-mdurl	python3-mdurl	name
 python3-mechanicalsoup	python3-MechanicalSoup	case
 python3-mechanize	python3-mechanize	name
+python3-med	libmed-python	python
 python3-mediafile	python3-mediafile	name
 python3-mercantile	python3-mercantile	name
 python3-merge3	python3-merge3	name
@@ -13772,7 +13797,9 @@ python3-mutf8	python3-mutf8	name
 python3-mwclient	python3-mwclient	name
 python3-mygpoclient	python3-mygpoclient	name
 python3-mypy	python3-mypy	name
+python3-mysqldb	python313-mysqlclient	python
 python3-myst-parser	python3-myst-parser	name
+python3-nacl	python313-PyNaCl	python
 python3-nagiosplugin	python3-nagiosplugin	name
 python3-nanobind	python3-nanobind	name
 python3-narwhals	python3-narwhals	name
@@ -13829,6 +13856,7 @@ python3-olefile	python3-olefile	name
 python3-ollama	python3-ollama	name
 python3-olm	python3-olm	name
 python3-omemo-dr	python3-omemo-dr	name
+python3-onnxruntime	python313-onnxruntime	python
 python3-opcodes	python3-opcodes	name
 python3-openai	python3-openai	name
 python3-openapi-core	python3-openapi-core	name
@@ -13896,6 +13924,7 @@ python3-palettable	python3-palettable	name
 python3-pallets-sphinx-themes	python3-Pallets-Sphinx-Themes	case
 python3-pamela	python3-pamela	name
 python3-pandas	python3-pandas	name
+python3-pandas-lib	python3-pandas	norm
 python3-pandocfilters	python3-pandocfilters	name
 python3-panflute	python3-panflute	name
 python3-papermill	python3-papermill	name
@@ -13956,12 +13985,14 @@ python3-pika	python3-pika	name
 python3-pikepdf	python3-pikepdf	name
 python3-pil	python3-PIL	case
 python3-pilkit	python3-pilkit	name
+python3-pillow-jpegxl-plugin	python313-pillow-jxl-plugin	python
 python3-pims	python3-pims	name
 python3-pint	python3-Pint	case
 python3-pip	python3-pip	name
 python3-pipdeptree	python3-pipdeptree	name
 python3-pivy	python3-pivy	name
 python3-pixelmatch	python3-pixelmatch	name
+python3-pkcs11	python313-python-pkcs11	python
 python3-pkgconfig	python3-pkgconfig	name
 python3-pkginfo	python3-pkginfo	name
 python3-plaster	python3-plaster	name
@@ -14022,7 +14053,6 @@ python3-psycopg-c	python3-psycopg-c	name
 python3-psycopg-pool	python3-psycopg-pool	name
 python3-psycopg2	python3-psycopg2	name
 python3-psygnal	python3-psygnal	name
-python3-ptrace	python314-cptrace	python
 python3-ptyprocess	python3-ptyprocess	name
 python3-pubchempy	python3-PubChemPy	case
 python3-publicsuffix2	python3-publicsuffix2	name
@@ -14037,6 +14067,7 @@ python3-pwquality	python3-pwquality	name
 python3-py-vapid	python3-py-vapid	name
 python3-py7zr	python3-py7zr	name
 python3-pyaes	python3-pyaes	name
+python3-pyalsa	python313-alsa	python
 python3-pyarrow	python3-pyarrow	name
 python3-pyasn1	python3-pyasn1	name
 python3-pyasn1-modules	python3-pyasn1-modules	name
@@ -14051,6 +14082,7 @@ python3-pybind11-stubgen	python3-pybind11-stubgen	name
 python3-pybindgen	python3-PyBindGen	case
 python3-pybtex	python3-pybtex	name
 python3-pycadf	python3-pycadf	name
+python3-pycangjie	python313-cangjie	python
 python3-pycares	python3-pycares	name
 python3-pycdlib	python3-pycdlib	name
 python3-pychromecast	python3-PyChromecast	case
@@ -14146,6 +14178,7 @@ python3-pyocd	python3-pyocd	name
 python3-pyocr	python3-pyocr	name
 python3-pyodbc	python3-pyodbc	name
 python3-pyogrio	python3-pyogrio	name
+python3-pyopencolorio	python3-OpenColorIO	python
 python3-pyotp	python3-pyotp	name
 python3-pypandoc	python3-pypandoc	name
 python3-pyparsing	python3-pyparsing	name
@@ -14271,6 +14304,7 @@ python3-pytest-xvfb	python3-pytest-xvfb	name
 python3-python-multipart	python3-python-multipart	name
 python3-python-socks	python3-python-socks	name
 python3-python-utils	python3-python-utils	name
+python3-python-zxcvbn-rs-py	python313-zxcvbn-rs-py	python
 python3-pythran	python3-pythran	name
 python3-pytimeparse	python3-pytimeparse	name
 python3-pytokens	python3-pytokens	name
@@ -14288,6 +14322,7 @@ python3-pyvo	python3-pyvo	name
 python3-pyvows	python3-pyVows	case
 python3-pywayland	python3-pywayland	name
 python3-pywebpush	python3-pywebpush	name
+python3-pywt	python313-PyWavelets	python
 python3-pyx	python3-pyx	name
 python3-pyxattr	python3-pyxattr	name
 python3-q	python3-q	name
@@ -14304,11 +14339,11 @@ python3-quart	python3-Quart	case
 python3-quart-trio	python3-quart-trio	name
 python3-questionary	python3-questionary	name
 python3-queuelib	python3-queuelib	name
+python3-radix	python313-py-radix	python
 python3-rados	python3-rados	name
 python3-railroad-diagrams	python3-railroad-diagrams	name
 python3-rangehttpserver	python3-RangeHTTPServer	case
 python3-rapidfuzz	python3-rapidfuzz	name
-python3-rapidjson	python314-python-rapidjson	python
 python3-rarfile	python3-rarfile	name
 python3-rbd	python3-rbd	name
 python3-rcssmin	python3-rcssmin	name
@@ -14379,6 +14414,7 @@ python3-rrdtool	python3-rrdtool	name
 python3-rsa	python3-rsa	name
 python3-rstcheck	python3-rstcheck	name
 python3-rt	python3-rt	name
+python3-rtmidi	python313-python-rtmidi	python
 python3-rtree	python3-rtree	name
 python3-rtslib-fb	python3-rtslib-fb	name
 python3-ruamel.yaml	python3-ruamel.yaml	name
@@ -14405,6 +14441,9 @@ python3-scrypt	python3-scrypt	name
 python3-sdjson	python3-sdjson	name
 python3-sdnotify	python3-sdnotify	name
 python3-seaborn	python3-seaborn	name
+python3-seadrive	seadrive-fuse	python
+python3-seafile	seafile	python
+python3-searpc	python3-pysearpc	python
 python3-seccomp	python3-seccomp	name
 python3-secretstorage	python3-SecretStorage	case
 python3-securesystemslib	python3-securesystemslib	name
@@ -14415,7 +14454,6 @@ python3-selinux	python3-selinux	name
 python3-semanage	python3-semanage	name
 python3-semver	python3-semver	name
 python3-send2trash	python3-send2trash	name
-python3-sendfile	python314-pysendfile	python
 python3-sentencepiece	python3-sentencepiece	name
 python3-sentry-sdk	python3-sentry-sdk	name
 python3-seqdiag	python3-seqdiag	name
@@ -14423,6 +14461,7 @@ python3-serial	python3-serial	name
 python3-serpent	python3-serpent	name
 python3-serverfiles	python3-serverfiles	name
 python3-setools	python3-setools	name
+python3-setoolsgui	python313-setools	python
 python3-setproctitle	python3-setproctitle	name
 python3-setuptools	python3-setuptools	name
 python3-setuptools-gettext	python3-setuptools-gettext	name
@@ -14452,12 +14491,15 @@ python3-simplejson	python3-simplejson	name
 python3-siphash24	python3-siphash24	name
 python3-siphashc	python3-siphashc	name
 python3-six	python3-six	name
+python3-skimage	python313-scikit-image	python
 python3-sklearn	python3-sklearn	name
+python3-sklearn-lib	python3-sklearn	norm
 python3-sklearn-pandas	python3-sklearn-pandas	name
 python3-skyfield	python3-skyfield	name
 python3-slicerator	python3-slicerator	name
 python3-slimit	python3-slimit	name
 python3-slixmpp	python3-slixmpp	name
+python3-slixmpp-lib	python3-slixmpp	norm
 python3-smart-open	python3-smart-open	name
 python3-smartypants	python3-smartypants	name
 python3-smbc	python3-smbc	name
@@ -14537,6 +14579,7 @@ python3-standard-xdrlib	python3-standard-xdrlib	name
 python3-starlette	python3-starlette	name
 python3-statsd	python3-statsd	name
 python3-statsmodels	python3-statsmodels	name
+python3-statsmodels-lib	python3-statsmodels	norm
 python3-stem	python3-stem	name
 python3-stestr	python3-stestr	name
 python3-stevedore	python3-stevedore	name
@@ -14553,6 +14596,7 @@ python3-striprtf	python3-striprtf	name
 python3-structlog	python3-structlog	name
 python3-subliminal	python3-subliminal	name
 python3-subprocess-tee	python3-subprocess-tee	name
+python3-subversion	subversion-python	python
 python3-suds	python3-suds	name
 python3-sunpy	python3-sunpy	name
 python3-suntime	python3-suntime	name
@@ -14561,15 +14605,16 @@ python3-sure	python3-sure	name
 python3-sushy	python3-sushy	name
 python3-svglib	python3-svglib	name
 python3-svgwrite	python3-svgwrite	name
+python3-svn	python313-pysvn	python
 python3-swagger-spec-validator	python3-swagger-spec-validator	name
 python3-swiftclient	python3-swiftclient	name
 python3-sybil	python3-sybil	name
 python3-sympy	python3-sympy	name
 python3-syrupy	python3-syrupy	name
 python3-systemd	python3-systemd	name
-python3-sysv-ipc	python314-sysv_ipc	python
 python3-tabledata	python3-tabledata	name
 python3-tables	python3-tables	name
+python3-tables-lib	python3-tables	norm
 python3-tablib	python3-tablib	name
 python3-tabulate	python3-tabulate	name
 python3-taglib	python313-pytaglib	file
@@ -14671,7 +14716,7 @@ python3-typogrify	python3-typogrify	name
 python3-tzlocal	python3-tzlocal	name
 python3-ua-parser	python3-ua-parser	name
 python3-ubelt	python3-ubelt	name
-python3-ubjson	python314-py-ubjson	python
+python3-ubjson	python313-py-ubjson	python
 python3-ufo-tofu	opentofu	file
 python3-ufolib2	python3-ufoLib2	case
 python3-ufonormalizer	python3-ufonormalizer	name
@@ -14723,8 +14768,6 @@ python3-vobject	python3-vobject	name
 python3-volatile	python3-volatile	name
 python3-voluptuous	python3-voluptuous	name
 python3-voluptuous-serialize	python3-voluptuous-serialize	name
-python3-vsapm	python314-libvsapm	python
-python3-vsgpt	python314-libvsgpt	python
 python3-vtk9	python3-vtk	norm
 python3-w3lib	python3-w3lib	name
 python3-wadllib	python3-wadllib	name
@@ -14763,6 +14806,7 @@ python3-wsproto	python3-wsproto	name
 python3-wtf-peewee	python3-wtf-peewee	name
 python3-wtforms	python3-WTForms	case
 python3-wurlitzer	python3-wurlitzer	name
+python3-wxgtk4.0	python313-wxPython	python
 python3-wyoming	python3-wyoming	name
 python3-xapian	python3-xapian	name
 python3-xapian-haystack	python3-xapian-haystack	name
@@ -14797,6 +14841,7 @@ python3-xvfbwrapper	python3-xvfbwrapper	name
 python3-xxhash	python3-xxhash	name
 python3-xyzservices	python3-xyzservices	name
 python3-yamale	python3-yamale	name
+python3-yaml	python313-PyYAML	python
 python3-yapf	python3-yapf	name
 python3-yappi	python3-yappi	name
 python3-yapsy	python3-yapsy	name
@@ -14820,6 +14865,7 @@ python3-zict	python3-zict	name
 python3-zipp	python3-zipp	name
 python3-zipstream	python3-zipstream	name
 python3-zipstream-ng	python3-zipstream-ng	name
+python3-zmq	python313-pyzmq	python
 python3-zope.component	python3-zope.component	name
 python3-zope.configuration	python3-zope.configuration	name
 python3-zope.deferredimport	python3-zope.deferredimport	name
@@ -14839,12 +14885,15 @@ python3-zopfli	python3-zopfli	name
 python3-zstandard	python3-zstandard	name
 python3-zstd	python3-zstd	name
 python3-zxcvbn	python3-zxcvbn	name
+python3.13	python3	norm
 python3.13-dev	python313-devel	file
 python3.13-minimal	python313-base	file
 python3.13-nopie	python313-base	file
+python3.14	python3	norm
 python3.14-dev	python314-devel	file
 python3.14-minimal	python314-base	file
 python3.14-nopie	python314-base	file
+python3.15	python3	norm
 python3.15-dev	python315-devel	file
 python3.15-minimal	python315-base	file
 python3.15-nopie	python315-base	file
@@ -15503,6 +15552,7 @@ simh	simh	name
 simple-ccsm	simple-ccsm	name
 simple-scan	simple-scan	name
 simplescreenrecorder	simplescreenrecorder	name
+simplescreenrecorder-lib	simplescreenrecorder	norm
 simutrans	simutrans	name
 simutrans-makeobj	simutrans-makeobj	name
 singular	singular	name
@@ -15865,6 +15915,7 @@ testssl.sh	testssl.sh	name
 tetrinet-server	tetrinet-server	name
 texi2html	texi2html	name
 texinfo	texinfo	name
+texinfo-lib	texinfo	norm
 texlab	texlab	name
 texlive	texlive	name
 texlive-base	texlive-scripts-bin	file
@@ -16627,13 +16678,31 @@ xsel	xsel	name
 xserver-xephyr	xorg-x11-server-extra	file
 xserver-xorg-core	xorg-x11-server	file
 xserver-xorg-dev	pkgconfig(xorg-server)	pc
+xserver-xorg-input-evdev	xf86-input-evdev	norm
 xserver-xorg-input-evdev-dev	xf86-input-evdev-devel	include
+xserver-xorg-input-joystick	xf86-input-joystick	norm
 xserver-xorg-input-joystick-dev	xf86-input-joystick-devel	include
+xserver-xorg-input-libinput	xf86-input-libinput	norm
 xserver-xorg-input-libinput-dev	pkgconfig(xorg-libinput)	pc
-xserver-xorg-input-synaptics	xf86-input-synaptics	file
+xserver-xorg-input-mouse	xf86-input-mouse	norm
+xserver-xorg-input-synaptics	xf86-input-synaptics	norm
 xserver-xorg-input-synaptics-dev	xf86-input-synaptics-devel	include
-xserver-xorg-input-wacom	pkgconfig(xorg-wacom)	pc
-xserver-xorg-video-intel	xf86-video-intel	file
+xserver-xorg-input-wacom	xf86-input-wacom	norm
+xserver-xorg-video-amdgpu	xf86-video-amdgpu	norm
+xserver-xorg-video-ati	xf86-video-ati	norm
+xserver-xorg-video-cirrus	xf86-video-cirrus	norm
+xserver-xorg-video-dummy	xf86-video-dummy	norm
+xserver-xorg-video-intel	xf86-video-intel	norm
+xserver-xorg-video-mach64	xf86-video-mach64	norm
+xserver-xorg-video-mga	xf86-video-mga	norm
+xserver-xorg-video-neomagic	xf86-video-neomagic	norm
+xserver-xorg-video-nouveau	xf86-video-nouveau	norm
+xserver-xorg-video-r128	xf86-video-r128	norm
+xserver-xorg-video-savage	xf86-video-savage	norm
+xserver-xorg-video-siliconmotion	xf86-video-siliconmotion	norm
+xserver-xorg-video-sisusb	xf86-video-sisusb	norm
+xserver-xorg-video-tdfx	xf86-video-tdfx	norm
+xserver-xorg-video-vesa	xf86-video-vesa	norm
 xsettingsd	xsettingsd	name
 xsltproc	xsltproc	name
 xsnow	xsnow	name

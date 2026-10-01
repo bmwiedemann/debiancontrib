@@ -77,6 +77,7 @@ sub normalize_name($) {
         [qr/^lib(.*)-java$/, '$1'],
         [qr/^(.*)-java$/, '$1'],
         [qr/^lib(.*)/, '$1'],
+        [qr/^(.*)-lib$/, '$1'],
         [qr/^python-(.*)/, 'python3-$1'],
         [qr/^python3-(.*)/, 'python-$1'],
         [qr/^(.*)-opensource-src$/, '$1'],
