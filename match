@@ -35,7 +35,8 @@ my (@res, @audit, %count);
 tsv::read_tsv("$cache/debian-sources.tsv", sub {
     my ($name, $ver, $comp, $sec, $prio, $dir, $files, $bins, $home) = @_;
     my ($status, $ev);
-    if ($have{$name}) { ($status, $ev) = ('have-manual', $have{$name}) }
+    if ($have{$name} && $have{$name} eq '-') { ($status, $ev) = ('missing', 'distinct (exceptions/have)') }
+    elsif ($have{$name}) { ($status, $ev) = ('have-manual', $have{$name}) }
     elsif ($src{lc $name}) { ($status, $ev) = ('have-name', join(' ', @{$src{lc $name}})) }
     elsif (my ($n, @o) = insrc($name)) { ($status, $ev) = ('have-norm', "$n @o") }
     elsif (length $home && $url{norm_url($home)}) { ($status, $ev) = ('have-url', "$home = @{$url{norm_url($home)}}[0]") }
@@ -69,7 +70,7 @@ tsv::read_tsv("$cache/debian-sources.tsv", sub {
 });
 # metapackages / transitional packages (no files beyond /usr/share/doc) whose dependencies openSUSE already has
 my %st = map { $_->[0] => $_->[1] } @res;
-for my $r (grep { $_->[1] eq 'missing' } @res) {
+for my $r (grep { $_->[1] eq 'missing' && !$have{$_->[0]} } @res) {
     my @b = grep { !/-(doc|dbg|dbgsym|udeb)$/ } split /,/, $r->[3];
     next if !@b || grep { $nfiles{$_} || !exists $bindeps{$_} } @b; # not built on amd64 counts as unknown
     my %own = map { $_ => 1 } @b;
@@ -82,6 +83,10 @@ for (@res) {
     $count{$_->[1]}++;
     push @audit, $_ if $_->[1] =~ /^have-(url|binary|files|meta)$/ || $_->[2] =~ /^weak/;
 }
+# our own packages that now look like duplicates of something openSUSE has
+my %ours;
+tsv::read_tsv("$cache/project-provides.tsv", sub { $ours{$1} = 1 if $_[0] =~ /^src:(.+)/ }) if -e "$cache/project-provides.tsv";
+print STDERR "possible duplicate in project: $_->[0] $_->[1] $_->[2]\n" for grep { $ours{$_->[0]} && $_->[1] ne 'missing' } @res;
 tsv::write_tsv("$cache/match.tsv", \@res);
 tsv::write_tsv("$out/match-audit.tsv", \@audit);
 print map { sprintf "%-12s %d\n", $_, $count{$_} } sort keys %count;

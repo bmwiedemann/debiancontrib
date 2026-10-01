@@ -66,11 +66,14 @@ devel project. Files are compared as distro-neutral keys (`file_key` in
 lib/deb.pm: command, font file, soname, .pc and header names, perl/python/lua
 module paths), so google-caladea-fonts is found for fonts-crosextra-caladea by
 its Caladea-*.ttf (fonts also by family name prefix, for .ttc vs .otf). Half
-of the keys of one class must exist in openSUSE, and
-at least two for commands, headers and .pc files, which are too generic alone.
-Metapackages and transitional packages (no files outside /usr/share/doc, from
+of the keys of one class must exist in openSUSE, and at least two for
+commands, headers and .pc files, which are too generic alone. Metapackages and
+transitional packages (no files outside /usr/share/doc, from
 `cache/debian-nfiles.tsv`) count as present when most of their dependencies
-are (xfce4 -> xfwm4, thunar, ...). `candidates` ranks the rest by popcon, drops `exceptions/blocklist`
+are (xfce4 -> xfwm4, thunar, ...). `exceptions/have` with `-` overrides a
+false match. `match` warns about packages of our project that now look
+present.
+`candidates` ranks the rest by popcon, drops `exceptions/blocklist`
 (Debian infrastructure, kernel, firmware, patent-encumbered codecs) and the ecosystems in
 `exceptions/ecosystems` (rust, go, haskell, R, ocaml unless `ecosystems=`
 enables them) and counts build dependencies that neither depmap nor our own

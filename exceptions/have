@@ -1,4 +1,5 @@
-# Debian source<TAB>openSUSE source  - equivalents the name heuristics of match miss (verified by hand)
+# Debian source<TAB>openSUSE source  - equivalents the heuristics of match miss (verified by hand);
+# openSUSE source "-" marks a false match: a different thing that only shares files or names
 kwallet-pam	pam_kwallet6
 plasma5support	plasma5support6
 phonon-backend-vlc	phonon-vlc-qt6
@@ -17,3 +18,7 @@ pyatspi	python-atspi
 gnome-colors	gnome-colors-icon-theme
 steam-installer	steam
 libhdf4	hdf
+db5.3	-
+ssmtp	-
+hiredict	-
+vdr-plugin-osdteletext	-
