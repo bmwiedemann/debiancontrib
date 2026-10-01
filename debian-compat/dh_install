@@ -1,17 +1,21 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-2.0-or-later
 # debian-compat wrapper: debian/*.install files hard-code Debian's perl and python paths,
-# so expose them inside debian/tmp as symlinks to where openSUSE's interpreters installed the files
-for d in debian/tmp; do
-    [ -d $d ] || continue
-    v=$(perl -MConfig -e 'print $Config{version}' 2>/dev/null)
-    if [ -n "$v" ] && [ -d $d/usr/lib/perl5/vendor_perl/$v ] && [ ! -e $d/usr/share/perl5 ]; then
-        mkdir -p $d/usr/share && ln -s ../lib/perl5/vendor_perl/$v $d/usr/share/perl5
-    fi
-    for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))' 2>/dev/null); do
-        if [ -d $d$site ] && [ ! -e $d/usr/lib/python3/dist-packages ]; then
-            mkdir -p $d/usr/lib/python3 && ln -s $d$site $d/usr/lib/python3/dist-packages
-        fi
+# so move what openSUSE's interpreters installed into debian/tmp to those paths
+# (debian-install relocates them back when building the rpm)
+move() { # move SRC DST: merge directory SRC into DST and remove SRC
+    [ -d "$1" ] || return 0
+    mkdir -p "$2" && (cd "$1" && tar cf - .) | (cd "$2" && tar xf -) && rm -rf "$1"
+    rmdir -p --ignore-fail-on-non-empty "$(dirname "$1")" 2>/dev/null; return 0
+}
+d=debian/tmp
+if [ -d $d ]; then
+    v=$(perl -MConfig -e 'print $Config{version}')
+    vmaj=${v%.*}
+    move $d/usr/lib/perl5/vendor_perl/$v/x86_64-linux-thread-multi $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
+    move $d/usr/lib/perl5/vendor_perl/$v $d/usr/share/perl5
+    for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))'); do
+        move $d$site $d/usr/lib/python3/dist-packages
     done
-done
+fi
 exec /usr/bin/dh_install "$@"
