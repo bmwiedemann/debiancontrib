@@ -19,6 +19,9 @@ rpmbuild --define '_topdir $out/rpmbuild' --define '_sourcedir $d' --define '_rp
 grep -E '^(Wrote|debian-install|debian-compat):' $out/localbuild-$(basename $d).log
 if [ '$install' = 1 ]; then
     sudo -n zypper -n ref debiancontrib-local >/dev/null
-    sudo -n zypper -n in --no-recommends --allow-unsigned-rpm \$(grep '^Wrote:' $out/localbuild-$(basename $d).log | cut -d' ' -f2 | grep -v -e '\.src\.rpm' -e debuginfo -e debugsource) >/dev/null && echo installed
+    rpms=\$(grep '^Wrote:' $out/localbuild-$(basename $d).log | cut -d' ' -f2 | grep -v -e '\.src\.rpm' -e debuginfo -e debugsource)
+    # of debian-compat only the core subpackages; the mapping ones get pulled in as build dependencies
+    rpms=\$(echo \"\$rpms\" | grep -v 'debian-compat-[^/]*\$'; echo \"\$rpms\" | grep -E 'debian-compat-(filesystem|toolchain|sensible-utils|init-system-helpers)-')
+    sudo -n zypper -n in -f --no-recommends --allow-unsigned-rpm \$rpms >/dev/null && echo installed
 fi
 "

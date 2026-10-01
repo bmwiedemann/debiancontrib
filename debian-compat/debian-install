@@ -36,7 +36,7 @@ close $fh;
 my %fsdir = map { chomp; $_ => 1 } qx(rpm -ql filesystem);
 my %owned = map { chomp; $_ => 1 } grep { !/^#/ && /\S/ } do { open(my $o, '<', "$compat/owned-dirs") or die; <$o> };
 # directories already owned by a package in the build root need no %dir
-sub owned(@) { my @d = grep { !$fsdir{$_} && !$owned{$_} } @_ or return (); my %u; $u{$1} = 1 for grep { s/^file (.*) is not owned by any package$/$1/ } split /\n/, qx(rpm -qf @d 2>&1); return grep { !$u{$_} } @d }
+sub owned(@) { my @d = grep { !$fsdir{$_} && !$owned{$_} } @_ or return (); my %u; $u{$_} = 1 for grep { s/^(?:error: )?file (.*?)(?: is not owned by any package|: No such file or directory)$/$1/ } split /\n/, qx(rpm -qf @d 2>&1); return grep { !$u{$_} } @d }
 
 # relocate("/usr/lib/x86_64-linux-gnu/libfoo.so.1", $isarch) -> new path, or undef to drop
 sub relocate($$) {
