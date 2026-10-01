@@ -19,7 +19,7 @@ Conventions (user memory/skill): flat dir of small executables without extension
 ```
 README.md  docs/design.md  docs/workflow.md
 setup                 # `source setup` → PATH, default env
-lib.sh                # bash: defaults (prj, repo=openSUSE_Slowroll, arch=x86_64, cache, obs, mirror=http://ftp.gwdg.de/pub/linux/debian/debian, dist=testing, components="main contrib", author), die/log, sources osc.sh with sloguard, debfetch, verify_sha256
+lib.sh                # bash: defaults (prj, repo=openSUSE_Slowroll, arch=x86_64, cache, obs, mirror=http://ftp.gwdg.de/pub/linux/debian/debian, dist=testing, components="main contrib", author), die/log, sources osc.sh with sloguard, tsvget, verify_sha256
 lib/deb.pm            # perl: parse_deb822, parse_deps (alternatives, [arch] qualifiers, <profiles>), debvercmp, debver2rpm, normalize_name
 lib/tsv.pm            # read/write TSV caches (replaces susepkginfo dblib/DB_File)
 fetchindex            # Debian Sources/Packages/Contents + popcon; suse src+bin primary + filelists (slowroll, tumbleweed src); Factory search → devel project lists (cache/devel/<prj>.list)

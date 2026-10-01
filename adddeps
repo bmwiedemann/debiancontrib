@@ -8,7 +8,7 @@ for r in $(seq $rounds); do
     mkcompat 2>/dev/null
     [ -s $out/unmapped.txt ] || { log "nothing unmapped"; exit 0; }
     srcs=$(cut -f1 $out/unmapped.txt | while read -r n; do
-        grep -P "^$n\t" $cache/debian-binaries.tsv | cut -f2 | head -1
+        tsvget $cache/debian-binaries.tsv "$n" 2 | head -1
     done | sort -u | while read -r s; do
         [ -n "$s" ] || continue
         [ -e $obs/$s/$s.spec ] && continue

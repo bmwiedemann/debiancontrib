@@ -10,9 +10,9 @@ pkgs="$*"
 for p in $pkgs; do
     spec=$(osc_api "source/$prj/$p/$p.spec" 2>/dev/null) || { log "$p: no spec"; continue; }
     have=$(echo "$spec" | grep '^%global debian_version' | awk '{print $3}')
-    new=$(grep -P "^$p\t" $cache/debian-sources.tsv | cut -f2)
+    new=$(tsvget $cache/debian-sources.tsv "$p" 2)
     [ -n "$new" ] || { log "$p: gone from Debian $dist"; continue; }
-    status=$(grep -P "^$p\t" $cache/match.tsv | cut -f2)
+    status=$(tsvget $cache/match.tsv "$p" 2)
     [ "$status" = missing ] || echo "$p $status" >> $out/obsolete.txt
     [ "$have" = "$new" ] && continue
     if dpkg --compare-versions "$new" gt "$have"; then

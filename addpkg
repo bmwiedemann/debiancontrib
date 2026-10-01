@@ -7,7 +7,7 @@
 [ $# -gt 0 ] || die "usage: addpkg SRCNAME..."
 [ -d $obs/.osc ] || (cd $obs && osc init $prj) || die "osc init failed"
 for src in "$@"; do
-    status=$(grep -P "^$src\t" $cache/match.tsv | cut -f2)
+    status=$(tsvget $cache/match.tsv "$src" 2)
     case "$status" in
         missing|'') ;;
         *) [ "$force" = 1 ] || { log "$src: openSUSE already has it ($status), use force=1"; continue; } ;;
@@ -32,7 +32,7 @@ for src in "$@"; do
     fi
     mv $pkgdir/$src.spec.new $pkgdir/$src.spec
     # sources: drop old files, add current ones
-    newfiles=$(grep -P "^$src\t" $cache/debian-sources.tsv | cut -f7 | tr ';' '\n' | cut -d: -f1)
+    newfiles=$(tsvget $cache/debian-sources.tsv "$src" 7 | tr ';' '\n' | cut -d: -f1)
     (cd $pkgdir && for f in $(osc ls -u . 2>/dev/null; ls); do
         case "$f" in *.spec|*.changes|*.patch|_*|.osc) continue;; esac
         echo "$newfiles" | grep -qx "$f" || { osc rm -f "$f" 2>/dev/null || rm -f "$f"; }

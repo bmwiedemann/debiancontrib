@@ -24,7 +24,8 @@ mkdir -p "$cache" "$obs" "$out"
 die() { echo "${0##*/}: $*" >&2; exit 1; }
 log() { echo "$(date +%T) $*" >&2; }
 
-# debfetch URL DEST: download if missing or newer upstream
-debfetch() { wget -q -N -O "$2" "$1" || die "fetch failed: $1"; }
+# tsvget FILE KEY [FIELD]: rows (or one field) whose first column is exactly KEY; fails if none
+# (grep -P "^$name\t" breaks on names like libsigc++-2.0)
+tsvget() { awk -F'\t' -v k="$2" -v f="${3:-0}" '$1 == k { print (f ? $f : $0); n++ } END { exit !n }' "$1"; }
 
 verify_sha256() { echo "$2  $1" | sha256sum -c --quiet - ; }
