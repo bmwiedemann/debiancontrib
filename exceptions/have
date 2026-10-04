@@ -32,3 +32,5 @@ quickjs-ng	-
 ccid	pcsc-ccid
 unicode-data	unicode-ucd
 seabios	qemu
+python-service-identity	python-service_identity
+cloud-utils	growpart
