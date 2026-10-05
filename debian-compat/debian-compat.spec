@@ -354,17 +354,6 @@ Pulls in the openSUSE packages providing what Debian's dmidecode provides.
 
 %files -n debian-compat-dmidecode
 
-%package -n debian-compat-docbook-to-man
-Summary:        Debian compatibility: docbook-to-man -> docbook2x
-Provides:       deb(docbook-to-man)
-Requires:       docbook2x
-BuildArch:      noarch
-
-%description -n debian-compat-docbook-to-man
-Pulls in the openSUSE packages providing what Debian's docbook-to-man provides.
-
-%files -n debian-compat-docbook-to-man
-
 %package -n debian-compat-docbook-xml
 Summary:        Debian compatibility: docbook-xml -> docbook_4
 Provides:       deb(docbook-xml)
@@ -1021,17 +1010,6 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's liblog-any-perl provides.
 
 %files -n debian-compat-liblog-any-perl
-
-%package -n debian-compat-liblua5.1-0-dev
-Summary:        Debian compatibility: liblua5.1-0-dev -> lua51-devel
-Provides:       deb(liblua5.1-0-dev)
-Requires:       lua51-devel
-BuildArch:      noarch
-
-%description -n debian-compat-liblua5.1-0-dev
-Pulls in the openSUSE packages providing what Debian's liblua5.1-0-dev provides.
-
-%files -n debian-compat-liblua5.1-0-dev
 
 %package -n debian-compat-liblua5.3-dev
 Summary:        Debian compatibility: liblua5.3-dev -> pkgconfig(lua5.3)
