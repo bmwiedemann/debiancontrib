@@ -1,0 +1,13 @@
+Description: take JAVA_HOME from the environment: openSUSE has no /usr/lib/jvm/default-java
+
+--- a/Makefile
++++ b/Makefile
+@@ -4,7 +4,7 @@
+ # Copyright: 2018 Geert Stappers <stappers@stappers.it>
+ #
+ 
+-JAVA_HOME = /usr/lib/jvm/default-java
++JAVA_HOME ?= /usr/lib/jvm/default-java
+ JAVA_INCLUDE_PATH = $(JAVA_HOME)/include
+ 
+ CC = gcc
