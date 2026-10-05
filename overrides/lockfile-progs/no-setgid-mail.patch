@@ -1,0 +1,12 @@
+Description: no setgid mail for mail-lock: OBS builds unprivileged, so chown fails,
+ and the rpm would not record the group anyway. mail-lock can only create
+ locks where the user may write (setgid mail would need %attr in the spec).
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -15,5 +15,3 @@
+ 
+ override_dh_fixperms:
+ 	dh_fixperms
+-	chown :mail debian/lockfile-progs/usr/bin/mail-lock
+-	chmod g+s debian/lockfile-progs/usr/bin/mail-lock

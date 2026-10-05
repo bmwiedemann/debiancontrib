@@ -6,3 +6,4 @@ netcat: update-alternatives from postinst is ignored, so /usr/bin/nc is not prov
 dh-elpa: Slowroll's mailutils wants guile = 3.0.9 while 3.0.11 is shipped; worked around with `Ignore: emacs:mailutils` in data/prjconf
 ann: ann_test.cpp used operator>>(istream&, char*), gone in C++20 (openSUSE g++ default); overrides/ann/cxx20-istream.patch takes an array reference
 javatools: jarwrapper.1.gz conflicts with openSUSE java-binfmt-misc (file conflict on install; OBS build roots do not have it)
+lockfile-progs: mail-lock is not setgid mail (deb2spec has no %attr support); mail-lock works only in user-writable spools
