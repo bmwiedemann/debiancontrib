@@ -129,7 +129,7 @@ ln -s ../$(basename $(dirname %{python3_sitelib}))/site-packages %{buildroot}/us
 ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{buildroot}/usr/share/perl5
 # Debian ships triplet-prefixed toolchain names
 mkdir -p %{buildroot}%{_bindir}
-for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
+for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config pkgconf; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 ln -s gawk %{buildroot}%{_bindir}/mawk
 # Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
 mkdir -p %{buildroot}/usr/share/misc
