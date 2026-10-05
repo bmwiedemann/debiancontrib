@@ -1,0 +1,44 @@
+Description: build with libcupsfilters 2 / libppd, which renamed cups_lut_t, cupsDither*, cupsCMYK* to cf_*/cf*
+ and moved the PPD API to libppd
+
+--- a/src/c2esp.c
++++ b/src/c2esp.c
+@@ -44,6 +44,18 @@
+ 
+ #if HAVE_CUPSFILTERS_DRIVER_H == 1
+ #include <cupsfilters/driver.h> //has the dither functions
++#include <ppd/ppd.h> //ppdOpenFile, ppdCMYKLoad
++/* libcupsfilters 2 renamed the dither API */
++#define cups_lut_t cf_lut_t
++#define cups_dither_t cf_dither_t
++#define cupsLutNew(n, v) cfLutNew(n, v, NULL, NULL)
++#define cupsLutDelete cfLutDelete
++#define cupsDitherNew cfDitherNew
++#define cupsDitherLine cfDitherLine
++#define cupsDitherDelete cfDitherDelete
++#define cups_cmyk_t cf_cmyk_t
++#define cupsCMYKLoad(p, c, m, r) ppdCMYKLoad(p, c, m, r, NULL, NULL)
++#define cupsCMYKDoRGB cfCMYKDoRGB
+ #else
+ #include <cups/driver.h> //has the dither functions
+ #endif
+--- a/configure.ac
++++ b/configure.ac
+@@ -17,13 +17,14 @@
+ 
+ # Checks for libraries.
+ AC_CHECK_LIB(cups, ppdOpenFile)
++AC_CHECK_LIB(ppd, ppdOpenFile)
+ 
+ #-lcupsdriver for cups < ver 1.6
+-AC_SEARCH_LIBS(cupsDitherNew, cupsdriver cupsfilters)
+-if test "$ac_cv_search_cupsDitherNew" = "-lcupsdriver"; then :
++AC_SEARCH_LIBS(cfDitherNew, cupsdriver cupsfilters)
++if test "$ac_cv_search_cfDitherNew" = "-lcupsdriver"; then :
+ 	HAVE_LIBCUPSDRIVER="1"
+ fi
+-if test "$ac_cv_search_cupsDitherNew" = "-lcupsfilters"; then :
++if test "$ac_cv_search_cfDitherNew" = "-lcupsfilters"; then :
+ 	HAVE_LIBCUPSFILTERS="1"
+ fi
+ 
