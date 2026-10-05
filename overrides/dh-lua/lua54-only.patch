@@ -1,5 +1,7 @@
 Description: build only for lua 5.4 (skip others like 5.2): openSUSE's lua5x-devel packages
- conflict with each other, and lua 5.1 exists only as luajit, without lua51-devel
+ conflict with each other, and lua 5.1 exists only as luajit, without lua51-devel.
+ openSUSE's lua5.4.pc has absolute INSTALL_LMOD/INSTALL_CMOD paths that
+ --define-variable=prefix cannot move into DESTDIR, so use Debian's layout directly.
 
 --- a/make/dh-lua.Makefile.multiple
 +++ b/make/dh-lua.Makefile.multiple
@@ -12,3 +14,16 @@ Description: build only for lua 5.4 (skip others like 5.2): openSUSE's lua5x-dev
  LUA_SINGLE_MAKEFILE=/usr/share/dh-lua/make/dh-lua.Makefile.single
  H=@
  
+--- a/make/dh-lua.Makefile.single
++++ b/make/dh-lua.Makefile.single
+@@ -86,8 +86,8 @@
+ LUA_LBTL_D := $(shell $(PKGCONF) --libs)
+ 
+ # /usr/lib/, /usr/lib/lua/5.1, /usr/share/lua/5.1/
+-LUA_CPATH:=$(shell $(PKGCONF) --define-variable=abiver=$(LUA_VERSION) --variable=INSTALL_CMOD)
+-LUA_SPATH:=$(shell $(PKGCONF) --define-variable=abiver=$(LUA_VERSION) --variable=INSTALL_LMOD)
++LUA_CPATH:=$(PREFIX)lib/$(DEB_HOST_MULTIARCH)/lua/$(LUA_VERSION)
++LUA_SPATH:=$(PREFIX)share/lua/$(LUA_VERSION)
+ LUA_LPATH=$(PREFIX)/lib/$(DEB_HOST_MULTIARCH)
+ 
+ # /usr/include/lua5.1
