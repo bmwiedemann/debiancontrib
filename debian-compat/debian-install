@@ -13,9 +13,10 @@ use Dpkg::Control::Info;
 my $root = shift or die "usage: $0 BUILDROOT\n";
 my $compat = '/usr/lib/debian-compat';
 my $listdir = '../rpmfiles';
-my @pkgs = map { chomp; $_ } qx(dh_listpackages);
-die "dh_listpackages found nothing\n" unless @pkgs;
 my @ctrl = Dpkg::Control::Info->new()->get_packages;
+my %debug = map { $_->{Package} => 1 } grep { ($_->{Section} // '') eq 'debug' || $_->{Package} =~ /-dbg(sym)?$/ } @ctrl;
+my @pkgs = grep { !$debug{$_} } map { chomp; $_ } qx(dh_listpackages); # like deb2spec: rpm makes its own debuginfo
+die "dh_listpackages found nothing\n" unless @pkgs;
 my %arch = map { $_->{Package} => $_->{Architecture} } @ctrl;
 my $mainpkg = $ctrl[0]{Package}; # debhelper's main package: first in debian/control, even if not built
 
