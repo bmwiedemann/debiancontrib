@@ -1,4 +1,5 @@
-Description: skip lua 5.1 like 5.2: Slowroll has lua 5.1 only as luajit, without lua51-devel
+Description: build only for lua 5.4 (skip others like 5.2): openSUSE's lua5x-devel packages
+ conflict with each other, and lua 5.1 exists only as luajit, without lua51-devel
 
 --- a/make/dh-lua.Makefile.multiple
 +++ b/make/dh-lua.Makefile.multiple
@@ -7,7 +8,7 @@ Description: skip lua 5.1 like 5.2: Slowroll has lua 5.1 only as luajit, without
  # vim: ft=make
  
 -MODULES=$(sort $(filter-out debian/lua5.2%,$(wildcard debian/*dh-lua.conf)))
-+MODULES=$(sort $(filter-out debian/lua5.1% debian/lua5.2%,$(wildcard debian/*dh-lua.conf)))
++MODULES=$(sort $(filter-out debian/lua5.1% debian/lua5.2% debian/lua5.3% debian/lua5.5%,$(wildcard debian/*dh-lua.conf)))
  LUA_SINGLE_MAKEFILE=/usr/share/dh-lua/make/dh-lua.Makefile.single
  H=@
  
