@@ -1,0 +1,12 @@
+Description: openSUSE's setuptools has no install_layout option (a Debian python patch)
+
+--- a/dhpython/build/plugin_distutils.py
++++ b/dhpython/build/plugin_distutils.py
+@@ -75,7 +75,6 @@
+                          'build_lib={}\n'.format(args.build_dir),
+                          '[install]\n',
+                          'force=1\n',
+-                         'install_layout=deb\n',
+                          'install_scripts=$base/bin\n',
+                          'install_lib={}\n'.format(args.install_dir),
+                          'prefix=/usr\n']
