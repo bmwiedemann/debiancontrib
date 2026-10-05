@@ -1011,17 +1011,6 @@ Pulls in the openSUSE packages providing what Debian's liblog-any-perl provides.
 
 %files -n debian-compat-liblog-any-perl
 
-%package -n debian-compat-liblua5.3-dev
-Summary:        Debian compatibility: liblua5.3-dev -> pkgconfig(lua5.3)
-Provides:       deb(liblua5.3-dev)
-Requires:       pkgconfig(lua5.3)
-BuildArch:      noarch
-
-%description -n debian-compat-liblua5.3-dev
-Pulls in the openSUSE packages providing what Debian's liblua5.3-dev provides.
-
-%files -n debian-compat-liblua5.3-dev
-
 %package -n debian-compat-liblua5.4-dev
 Summary:        Debian compatibility: liblua5.4-dev -> pkgconfig(lua5.4)
 Provides:       deb(liblua5.4-dev)
@@ -1032,17 +1021,6 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's liblua5.4-dev provides.
 
 %files -n debian-compat-liblua5.4-dev
-
-%package -n debian-compat-liblua5.5-dev
-Summary:        Debian compatibility: liblua5.5-dev -> pkgconfig(lua5.5)
-Provides:       deb(liblua5.5-dev)
-Requires:       pkgconfig(lua5.5)
-BuildArch:      noarch
-
-%description -n debian-compat-liblua5.5-dev
-Pulls in the openSUSE packages providing what Debian's liblua5.5-dev provides.
-
-%files -n debian-compat-liblua5.5-dev
 
 %package -n debian-compat-libmail-sendmail-perl
 Summary:        Debian compatibility: libmail-sendmail-perl -> perl-Mail-Sendmail
