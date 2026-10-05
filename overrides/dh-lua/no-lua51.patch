@@ -1,0 +1,13 @@
+Description: skip lua 5.1 like 5.2: Slowroll has lua 5.1 only as luajit, without lua51-devel
+
+--- a/make/dh-lua.Makefile.multiple
++++ b/make/dh-lua.Makefile.multiple
+@@ -2,7 +2,7 @@
+ # License: MIT/X
+ # vim: ft=make
+ 
+-MODULES=$(sort $(filter-out debian/lua5.2%,$(wildcard debian/*dh-lua.conf)))
++MODULES=$(sort $(filter-out debian/lua5.1% debian/lua5.2%,$(wildcard debian/*dh-lua.conf)))
+ LUA_SINGLE_MAKEFILE=/usr/share/dh-lua/make/dh-lua.Makefile.single
+ H=@
+ 

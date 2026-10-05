@@ -1,5 +1,4 @@
-# regex per line: Debian source names never to package (Debian infrastructure, kernel, firmware,
-# lua 5.1-only modules: Slowroll has lua 5.1 only as luajit)
+# regex per line: Debian source names never to package (Debian infrastructure, kernel, firmware, lua-bitop: lua 5.2+ has bit ops built in, 5.1 is only luajit here)
 ^apt$
 ^apt-
 ^aptitude
@@ -86,7 +85,6 @@
 ^insserv$
 ^binfmt-support$
 ^android-platform-external-boringssl$
-^lua-bitop$
 ^menu-xdg$
 ^doc-base$
 ^extra-xdg-menus$
@@ -98,3 +96,4 @@
 ^infinipath-psm$
 ^unrar-free$
 ^asterisk-moh-
+^lua-bitop$
