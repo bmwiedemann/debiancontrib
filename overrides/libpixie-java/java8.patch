@@ -1,0 +1,8 @@
+Description: current JDKs no longer compile for Java 5
+
+--- a/debian/ant.properties
++++ b/debian/ant.properties
+@@ -1 +1,3 @@
+ antcontrib.build.cache.dir=/usr/share/java
++javac.source=1.8
++javac.target=1.8

@@ -1,0 +1,20 @@
+Description: openSUSE's mythes-devel has th_gen_idx.pl in /usr/bin, without Debian's -o option
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -20,11 +20,11 @@
+ build-indep: build-indep-stamp
+ build-indep-stamp: configure-stamp 
+ 	TZ=UTC unzip -o Deutscher-Thesaurus.oxt && \
+-		/usr/share/mythes/th_gen_idx.pl -o th_de_DE_v2.idx \
+-			< th_de_DE_v2.dat && \
++		th_gen_idx.pl \
++			< th_de_DE_v2.dat > th_de_DE_v2.idx && \
+ 		LANG=C cat th_de_DE_v2.dat | sed -e 's/ß/ss/g' > th_de_CH_v2.dat; \
+-		/usr/share/mythes/th_gen_idx.pl -o th_de_CH_v2.idx \
+-			< th_de_CH_v2.dat
++		th_gen_idx.pl \
++			< th_de_CH_v2.dat > th_de_CH_v2.idx
+ 
+ 	touch build-indep-stamp
+ 
