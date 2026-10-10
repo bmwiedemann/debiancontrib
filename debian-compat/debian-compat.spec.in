@@ -137,6 +137,19 @@ for f in config.guess config.sub; do install -m755 $(ls -d /usr/share/automake-*
 # dpkg-vendor must answer Debian (DEB_VENDOR is set by %%debian_env)
 mkdir -p %{buildroot}%{_sysconfdir}/dpkg/origins
 printf 'Vendor: Debian\nVendor-URL: https://www.debian.org/\nBugs: debbugs://bugs.debian.org\n' > %{buildroot}%{_sysconfdir}/dpkg/origins/debian
+# Debian's docbook-to-man converts SGML DocBook to a man page on stdout; openSUSE's (docbook2x) reads only XML
+cat > %{buildroot}/usr/lib/debian-compat/bin/docbook-to-man <<'SH'
+#!/bin/sh
+set -e
+in=$(readlink -f "$1"); d=$(mktemp -d)
+trap 'rm -rf "$d"' EXIT
+(cd "$d" && docbook2man "$in" >&2) || echo "docbook-to-man: docbook2man failed on $1, using its output anyway" >&2
+out=$(ls "$d" | grep -v '^manpage\.' | head -1)
+[ -n "$out" ] && cat "$d/$out"
+SH
+# Debian's c99 is gcc -std=c99 (openSUSE's posix_cc c99 rejects gcc options)
+printf '#!/bin/sh\nexec gcc -std=c99 "$@"\n' > %{buildroot}/usr/lib/debian-compat/bin/c99
+chmod 755 %{buildroot}/usr/lib/debian-compat/bin/docbook-to-man %{buildroot}/usr/lib/debian-compat/bin/c99
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'

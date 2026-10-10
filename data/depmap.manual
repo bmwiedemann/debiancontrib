@@ -38,3 +38,4 @@ emacs-nox	emacs-nox	manual
 ruby-all-dev	ruby-devel	manual
 libcompress-zlib-perl	perl	manual
 liblua5.1-0-dev	lua51-devel	manual
+docbook-to-man	docbook-utils-minimal	manual
