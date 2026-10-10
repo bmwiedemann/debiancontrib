@@ -31,6 +31,7 @@ Source4:        dh_install
 Source5:        py3versions
 BuildRequires:  automake
 BuildRequires:  binutils
+BuildRequires:  docbook-xsl-stylesheets
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
 BuildRequires:  perl
@@ -131,6 +132,10 @@ ln -s ../lib/perl5/vendor_perl/$(perl -MConfig -e 'print $Config{version}') %{bu
 mkdir -p %{buildroot}%{_bindir}
 for t in gcc g++ cpp gcc-ar gcc-nm gcc-ranlib ar as ld ld.bfd nm objcopy objdump ranlib readelf strip pkg-config pkgconf; do ln -s $t %{buildroot}%{_bindir}/x86_64-linux-gnu-$t; done
 ln -s gawk %{buildroot}%{_bindir}/mawk
+# Debian's docbook-xsl location (packages hard-code it in debian/rules)
+mkdir -p %{buildroot}/usr/share/sgml/docbook/stylesheet/xsl %{buildroot}/usr/share/xml/docbook/stylesheet
+ln -s /usr/share/xml/docbook/stylesheet/nwalsh/current %{buildroot}/usr/share/sgml/docbook/stylesheet/xsl/nwalsh
+ln -s nwalsh/current %{buildroot}/usr/share/xml/docbook/stylesheet/docbook-xsl
 # Debian's autotools-dev location of config.guess/config.sub (dh_update_autotools_config)
 mkdir -p %{buildroot}/usr/share/misc
 for f in config.guess config.sub; do install -m755 $(ls -d /usr/share/automake-*/$f | sort -V | tail -1) %{buildroot}/usr/share/misc/$f; done
@@ -180,6 +185,9 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %dir /usr/lib/python3
 /usr/lib/python3/dist-packages
 /usr/share/perl5
+%dir /usr/share/sgml/docbook/stylesheet
+/usr/share/sgml/docbook/stylesheet/xsl
+/usr/share/xml/docbook/stylesheet/docbook-xsl
 
 %files -n debian-compat-toolchain
 %{_bindir}/x86_64-linux-gnu-*
