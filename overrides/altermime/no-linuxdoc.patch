@@ -1,0 +1,15 @@
+Description: openSUSE has no linuxdoc-tools: ship the SGML howto instead of rendered HTML
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -14,9 +14,8 @@
+ 	dh $@
+ 
+ override_dh_auto_configure:
+-	linuxdoc --backend=html debian/docs/postfix-altermime-howto.sgml
+ 	mkdir -p debian/docs/html
+-	mv -f postfix-altermime-howto*.html debian/docs/html
++	cp debian/docs/postfix-altermime-howto.sgml debian/docs/html/
+ 	dh_auto_configure
+ 
+ override_dh_auto_build:

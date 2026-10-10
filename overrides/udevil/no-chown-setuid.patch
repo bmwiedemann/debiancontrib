@@ -1,0 +1,13 @@
+Description: install /usr/bin/udevil without chown and setuid: OBS builds
+ unprivileged, so install -o root fails, and the rpm would need %attr and
+ a permissions whitelist entry for the setuid bit.
+
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -12,5 +12,5 @@
+ 
+ install-data-hook:
+ 	test -z $(INSTALL_DIR) || mkdir -p -- $(INSTALL_DIR)
+-	$(INSTALL_DATA) -o root -g root -m 4755 -D $(INSTALL_SRC)/udevil $(INSTALL_DIR)/udevil
++	$(INSTALL_DATA) -m 0755 -D $(INSTALL_SRC)/udevil $(INSTALL_DIR)/udevil
+ 

@@ -1,0 +1,13 @@
+Description: use the JAVA_HOME of the build environment: openSUSE has no
+ /usr/lib/jvm/default-java
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -4,7 +4,6 @@
+ # Uncomment this to turn on verbose mode.
+ #export DH_VERBOSE=1
+ 
+-export JAVA_HOME=/usr/lib/jvm/default-java
+ export CLASSPATH=/usr/share/java/xom.jar
+ 
+ %:

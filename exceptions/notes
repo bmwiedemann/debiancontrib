@@ -7,3 +7,4 @@ dh-elpa: Slowroll's mailutils wants guile = 3.0.9 while 3.0.11 is shipped; worke
 ann: ann_test.cpp used operator>>(istream&, char*), gone in C++20 (openSUSE g++ default); overrides/ann/cxx20-istream.patch takes an array reference
 javatools: jarwrapper.1.gz conflicts with openSUSE java-binfmt-misc (file conflict on install; OBS build roots do not have it)
 lockfile-progs: mail-lock is not setgid mail (deb2spec has no %attr support); mail-lock works only in user-writable spools
+udevil: /usr/bin/udevil is not setuid root (deb2spec has no %attr support); mounting as a normal user needs it

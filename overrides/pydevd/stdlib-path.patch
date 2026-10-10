@@ -1,0 +1,14 @@
+Description: openSUSE keeps the standard library in /usr/lib64/python3.x
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -20,8 +20,7 @@
+ 	dh $@ --buildsystem=pybuild
+ 
+ _pydevd_bundle/pydevd_runpy.py:
+-	libdir=/usr/lib/$$(py3versions --min-supported); \
+-	    cp $$libdir/runpy.py _pydevd_bundle/pydevd_runpy.py
++	cp $$(python3 -c "import runpy; print(runpy.__file__)") _pydevd_bundle/pydevd_runpy.py
+ 	patch -p1 < debian/runpy.patch
+ 
+ _pydevd_frame_eval/vendored/bytecode/__init__.py:
