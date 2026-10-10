@@ -101,6 +101,17 @@ BuildArch:      noarch
 No-op deb-systemd-helper, invoke-rc.d and update-rc.d; openSUSE handles
 service enablement with presets.
 
+%package -n debian-compat-adduser
+Summary:        Debian compatibility: adduser -> busybox-adduser
+Provides:       deb(adduser)
+Requires:       busybox-adduser
+BuildArch:      noarch
+
+%description -n debian-compat-adduser
+Pulls in the openSUSE packages providing what Debian's adduser provides.
+
+%files -n debian-compat-adduser
+
 %package -n debian-compat-ant
 Summary:        Debian compatibility: ant -> ant
 Provides:       deb(ant)
@@ -265,6 +276,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's chrpath provides.
 
 %files -n debian-compat-chrpath
+
+%package -n debian-compat-cifs-utils
+Summary:        Debian compatibility: cifs-utils -> cifs-utils
+Provides:       deb(cifs-utils)
+Requires:       cifs-utils
+BuildArch:      noarch
+
+%description -n debian-compat-cifs-utils
+Pulls in the openSUSE packages providing what Debian's cifs-utils provides.
+
+%files -n debian-compat-cifs-utils
 
 %package -n debian-compat-cmake
 Summary:        Debian compatibility: cmake -> cmake
@@ -508,6 +530,17 @@ Pulls in the openSUSE packages providing what Debian's dpkg provides.
 
 %files -n debian-compat-dpkg
 
+%package -n debian-compat-eject
+Summary:        Debian compatibility: eject -> eject
+Provides:       deb(eject)
+Requires:       eject
+BuildArch:      noarch
+
+%description -n debian-compat-eject
+Pulls in the openSUSE packages providing what Debian's eject provides.
+
+%files -n debian-compat-eject
+
 %package -n debian-compat-emacs-nox
 Summary:        Debian compatibility: emacs-nox -> emacs-nox
 Provides:       deb(emacs-nox)
@@ -551,6 +584,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's file provides.
 
 %files -n debian-compat-file
+
+%package -n debian-compat-flac
+Summary:        Debian compatibility: flac -> flac
+Provides:       deb(flac)
+Requires:       flac
+BuildArch:      noarch
+
+%description -n debian-compat-flac
+Pulls in the openSUSE packages providing what Debian's flac provides.
+
+%files -n debian-compat-flac
 
 %package -n debian-compat-flex
 Summary:        Debian compatibility: flex -> flex
@@ -794,6 +838,17 @@ Pulls in the openSUSE packages providing what Debian's iproute2 provides.
 
 %files -n debian-compat-iproute2
 
+%package -n debian-compat-iptables
+Summary:        Debian compatibility: iptables -> iptables
+Provides:       deb(iptables)
+Requires:       iptables
+BuildArch:      noarch
+
+%description -n debian-compat-iptables
+Pulls in the openSUSE packages providing what Debian's iptables provides.
+
+%files -n debian-compat-iptables
+
 %package -n debian-compat-jq
 Summary:        Debian compatibility: jq -> jq
 Provides:       deb(jq)
@@ -870,6 +925,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libatomic1 provides.
 
 %files -n debian-compat-libatomic1
+
+%package -n debian-compat-libaudiofile-dev
+Summary:        Debian compatibility: libaudiofile-dev -> pkgconfig(audiofile)
+Provides:       deb(libaudiofile-dev)
+Requires:       pkgconfig(audiofile)
+BuildArch:      noarch
+
+%description -n debian-compat-libaudiofile-dev
+Pulls in the openSUSE packages providing what Debian's libaudiofile-dev provides.
+
+%files -n debian-compat-libaudiofile-dev
 
 %package -n debian-compat-libauthen-sasl-perl
 Summary:        Debian compatibility: libauthen-sasl-perl -> perl-Authen-SASL
@@ -972,6 +1038,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libconfig-tiny-perl provides.
 
 %files -n debian-compat-libconfig-tiny-perl
+
+%package -n debian-compat-libcontextual-return-perl
+Summary:        Debian compatibility: libcontextual-return-perl -> perl-Contextual-Return
+Provides:       deb(libcontextual-return-perl)
+Requires:       perl-Contextual-Return
+BuildArch:      noarch
+
+%description -n debian-compat-libcontextual-return-perl
+Pulls in the openSUSE packages providing what Debian's libcontextual-return-perl provides.
+
+%files -n debian-compat-libcontextual-return-perl
 
 %package -n debian-compat-libcrypt-ssleay-perl
 Summary:        Debian compatibility: libcrypt-ssleay-perl -> perl-Crypt-SSLeay
@@ -1600,6 +1677,17 @@ Pulls in the openSUSE packages providing what Debian's liblua5.4-dev provides.
 
 %files -n debian-compat-liblua5.4-dev
 
+%package -n debian-compat-libmad0-dev
+Summary:        Debian compatibility: libmad0-dev -> pkgconfig(mad)
+Provides:       deb(libmad0-dev)
+Requires:       pkgconfig(mad)
+BuildArch:      noarch
+
+%description -n debian-compat-libmad0-dev
+Pulls in the openSUSE packages providing what Debian's libmad0-dev provides.
+
+%files -n debian-compat-libmad0-dev
+
 %package -n debian-compat-libmail-dkim-perl
 Summary:        Debian compatibility: libmail-dkim-perl -> perl-Mail-DKIM
 Provides:       deb(libmail-dkim-perl)
@@ -1786,6 +1874,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's libnet-dns-perl provides.
 
 %files -n debian-compat-libnet-dns-perl
+
+%package -n debian-compat-libnet-dns-resolver-mock-perl
+Summary:        Debian compatibility: libnet-dns-resolver-mock-perl -> perl-Net-DNS-Resolver-Mock
+Provides:       deb(libnet-dns-resolver-mock-perl)
+Requires:       perl-Net-DNS-Resolver-Mock
+BuildArch:      noarch
+
+%description -n debian-compat-libnet-dns-resolver-mock-perl
+Pulls in the openSUSE packages providing what Debian's libnet-dns-resolver-mock-perl provides.
+
+%files -n debian-compat-libnet-dns-resolver-mock-perl
 
 %package -n debian-compat-libnet-http-perl
 Summary:        Debian compatibility: libnet-http-perl -> perl-Net-HTTP
@@ -2178,6 +2277,17 @@ Pulls in the openSUSE packages providing what Debian's libsystemd-dev provides.
 
 %files -n debian-compat-libsystemd-dev
 
+%package -n debian-compat-libterm-readkey-perl
+Summary:        Debian compatibility: libterm-readkey-perl -> perl-Term-ReadKey
+Provides:       deb(libterm-readkey-perl)
+Requires:       perl-Term-ReadKey
+BuildArch:      noarch
+
+%description -n debian-compat-libterm-readkey-perl
+Pulls in the openSUSE packages providing what Debian's libterm-readkey-perl provides.
+
+%files -n debian-compat-libterm-readkey-perl
+
 %package -n debian-compat-libtest-fatal-perl
 Summary:        Debian compatibility: libtest-fatal-perl -> perl-Test-Fatal
 Provides:       deb(libtest-fatal-perl)
@@ -2530,6 +2640,17 @@ Pulls in the openSUSE packages providing what Debian's meson provides.
 
 %files -n debian-compat-meson
 
+%package -n debian-compat-mpg123
+Summary:        Debian compatibility: mpg123 -> mpg123
+Provides:       deb(mpg123)
+Requires:       mpg123
+BuildArch:      noarch
+
+%description -n debian-compat-mpg123
+Pulls in the openSUSE packages providing what Debian's mpg123 provides.
+
+%files -n debian-compat-mpg123
+
 %package -n debian-compat-msr-tools
 Summary:        Debian compatibility: msr-tools -> msr-tools
 Provides:       deb(msr-tools)
@@ -2795,6 +2916,17 @@ Pulls in the openSUSE packages providing what Debian's python3 provides.
 
 %files -n debian-compat-python3
 
+%package -n debian-compat-python3-aiosqlite
+Summary:        Debian compatibility: python3-aiosqlite -> python3-aiosqlite
+Provides:       deb(python3-aiosqlite)
+Requires:       python3-aiosqlite
+BuildArch:      noarch
+
+%description -n debian-compat-python3-aiosqlite
+Pulls in the openSUSE packages providing what Debian's python3-aiosqlite provides.
+
+%files -n debian-compat-python3-aiosqlite
+
 %package -n debian-compat-python3-all
 Summary:        Debian compatibility: python3-all -> python3
 Provides:       deb(python3-all)
@@ -2816,6 +2948,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's python3-all-dev provides.
 
 %files -n debian-compat-python3-all-dev
+
+%package -n debian-compat-python3-asyncpg
+Summary:        Debian compatibility: python3-asyncpg -> python3-asyncpg
+Provides:       deb(python3-asyncpg)
+Requires:       python3-asyncpg
+BuildArch:      noarch
+
+%description -n debian-compat-python3-asyncpg
+Pulls in the openSUSE packages providing what Debian's python3-asyncpg provides.
+
+%files -n debian-compat-python3-asyncpg
 
 %package -n debian-compat-python3-build
 Summary:        Debian compatibility: python3-build -> python3-build
@@ -2993,6 +3136,17 @@ Pulls in the openSUSE packages providing what Debian's python3-pytz provides.
 
 %files -n debian-compat-python3-pytz
 
+%package -n debian-compat-python3-redis
+Summary:        Debian compatibility: python3-redis -> python3-redis
+Provides:       deb(python3-redis)
+Requires:       python3-redis
+BuildArch:      noarch
+
+%description -n debian-compat-python3-redis
+Pulls in the openSUSE packages providing what Debian's python3-redis provides.
+
+%files -n debian-compat-python3-redis
+
 %package -n debian-compat-python3-requests
 Summary:        Debian compatibility: python3-requests -> python3-requests
 Provides:       deb(python3-requests)
@@ -3047,6 +3201,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's python3-tk provides.
 
 %files -n debian-compat-python3-tk
+
+%package -n debian-compat-python3-uvloop
+Summary:        Debian compatibility: python3-uvloop -> python3-uvloop
+Provides:       deb(python3-uvloop)
+Requires:       python3-uvloop
+BuildArch:      noarch
+
+%description -n debian-compat-python3-uvloop
+Pulls in the openSUSE packages providing what Debian's python3-uvloop provides.
+
+%files -n debian-compat-python3-uvloop
 
 %package -n debian-compat-python3-wheel
 Summary:        Debian compatibility: python3-wheel -> python3-wheel
@@ -3235,6 +3400,17 @@ Pulls in the openSUSE packages providing what Debian's squashfs-tools provides.
 
 %files -n debian-compat-squashfs-tools
 
+%package -n debian-compat-sshfs
+Summary:        Debian compatibility: sshfs -> sshfs
+Provides:       deb(sshfs)
+Requires:       sshfs
+BuildArch:      noarch
+
+%description -n debian-compat-sshfs
+Pulls in the openSUSE packages providing what Debian's sshfs provides.
+
+%files -n debian-compat-sshfs
+
 %package -n debian-compat-tcl-dev
 Summary:        Debian compatibility: tcl-dev -> tcl-devel
 Provides:       deb(tcl-dev)
@@ -3268,6 +3444,17 @@ Pulls in the openSUSE packages providing what Debian's txt2man provides.
 
 %files -n debian-compat-txt2man
 
+%package -n debian-compat-udisks2
+Summary:        Debian compatibility: udisks2 -> udisks2
+Provides:       deb(udisks2)
+Requires:       udisks2
+BuildArch:      noarch
+
+%description -n debian-compat-udisks2
+Pulls in the openSUSE packages providing what Debian's udisks2 provides.
+
+%files -n debian-compat-udisks2
+
 %package -n debian-compat-unzip
 Summary:        Debian compatibility: unzip -> unzip
 Provides:       deb(unzip)
@@ -3289,6 +3476,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's uuid-runtime provides.
 
 %files -n debian-compat-uuid-runtime
+
+%package -n debian-compat-vorbis-tools
+Summary:        Debian compatibility: vorbis-tools -> vorbis-tools
+Provides:       deb(vorbis-tools)
+Requires:       vorbis-tools
+BuildArch:      noarch
+
+%description -n debian-compat-vorbis-tools
+Pulls in the openSUSE packages providing what Debian's vorbis-tools provides.
+
+%files -n debian-compat-vorbis-tools
 
 %package -n debian-compat-wget
 Summary:        Debian compatibility: wget -> wget
@@ -3438,6 +3636,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's zlib1g-dev provides.
 
 %files -n debian-compat-zlib1g-dev
+
+%package -n debian-compat-zsh
+Summary:        Debian compatibility: zsh -> zsh
+Provides:       deb(zsh)
+Requires:       zsh
+BuildArch:      noarch
+
+%description -n debian-compat-zsh
+Pulls in the openSUSE packages providing what Debian's zsh provides.
+
+%files -n debian-compat-zsh
 
 
 %prep
