@@ -80,10 +80,11 @@ for my $pkg (@pkgs) {
         if (-l $e) {
             my $t = readlink $e;
             my $rel = $t !~ m{^/};
-            # dh_compress is a stub: a link to X.gz (from debian/*.links) points to the uncompressed X
+            # dh_compress is a stub: a link to X.gz (from debian/*.links) points to the uncompressed X;
+            # man and info pages are left alone, brp-compress compresses them
             if ($t =~ /\.gz$/) {
                 my $tsrc = $rel ? normpath(dirname($src) . "/$t") : $t;
-                if (!grep { -e "debian/$_$tsrc" } @pkgs and grep { -e "debian/$_" . ($tsrc =~ s/\.gz$//r) } @pkgs) { s/\.gz$// for $t, $dst }
+                if ($tsrc !~ m{^/usr/share/(man|info)/} and !grep { -e "debian/$_$tsrc" } @pkgs and grep { -e "debian/$_" . ($tsrc =~ s/\.gz$//r) } @pkgs) { s/\.gz$// for $t, $dst }
             }
             my $abs = relocate($rel ? normpath(dirname($src) . "/$t") : $t, $isarch) // next;
             $t = $rel ? File::Spec->abs2rel($abs, dirname($dst)) : $abs;
