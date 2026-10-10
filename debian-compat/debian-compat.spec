@@ -387,6 +387,17 @@ Pulls in the openSUSE packages providing what Debian's default-jre provides.
 
 %files -n debian-compat-default-jre
 
+%package -n debian-compat-default-mta
+Summary:        Debian compatibility: default-mta -> smtp_daemon
+Provides:       deb(default-mta)
+Requires:       smtp_daemon
+BuildArch:      noarch
+
+%description -n debian-compat-default-mta
+Pulls in the openSUSE packages providing what Debian's default-mta provides.
+
+%files -n debian-compat-default-mta
+
 %package -n debian-compat-devscripts
 Summary:        Debian compatibility: devscripts -> devscripts
 Provides:       deb(devscripts)
@@ -443,9 +454,9 @@ Pulls in the openSUSE packages providing what Debian's dmidecode provides.
 %files -n debian-compat-dmidecode
 
 %package -n debian-compat-docbook-to-man
-Summary:        Debian compatibility: docbook-to-man -> docbook2x
+Summary:        Debian compatibility: docbook-to-man -> docbook-utils-minimal
 Provides:       deb(docbook-to-man)
-Requires:       docbook2x
+Requires:       docbook-utils-minimal
 BuildArch:      noarch
 
 %description -n debian-compat-docbook-to-man
@@ -749,6 +760,17 @@ BuildArch:      noarch
 Pulls in the openSUSE packages providing what Debian's imagemagick provides.
 
 %files -n debian-compat-imagemagick
+
+%package -n debian-compat-inews
+Summary:        Debian compatibility: inews -> inn
+Provides:       deb(inews)
+Requires:       inn
+BuildArch:      noarch
+
+%description -n debian-compat-inews
+Pulls in the openSUSE packages providing what Debian's inews provides.
+
+%files -n debian-compat-inews
 
 %package -n debian-compat-intltool
 Summary:        Debian compatibility: intltool -> intltool
@@ -3048,6 +3070,17 @@ Pulls in the openSUSE packages providing what Debian's python3-yaml provides.
 
 %files -n debian-compat-python3-yaml
 
+%package -n debian-compat-qemu-user-static
+Summary:        Debian compatibility: qemu-user-static -> qemu-linux-user
+Provides:       deb(qemu-user-static)
+Requires:       qemu-linux-user
+BuildArch:      noarch
+
+%description -n debian-compat-qemu-user-static
+Pulls in the openSUSE packages providing what Debian's qemu-user-static provides.
+
+%files -n debian-compat-qemu-user-static
+
 %package -n debian-compat-qt6-base-dev
 Summary:        Debian compatibility: qt6-base-dev -> qt6-base-devel
 Provides:       deb(qt6-base-dev)
@@ -3441,6 +3474,19 @@ for f in config.guess config.sub; do install -m755 $(ls -d /usr/share/automake-*
 # dpkg-vendor must answer Debian (DEB_VENDOR is set by %%debian_env)
 mkdir -p %{buildroot}%{_sysconfdir}/dpkg/origins
 printf 'Vendor: Debian\nVendor-URL: https://www.debian.org/\nBugs: debbugs://bugs.debian.org\n' > %{buildroot}%{_sysconfdir}/dpkg/origins/debian
+# Debian's docbook-to-man converts SGML DocBook to a man page on stdout; openSUSE's (docbook2x) reads only XML
+cat > %{buildroot}/usr/lib/debian-compat/bin/docbook-to-man <<'SH'
+#!/bin/sh
+set -e
+in=$(readlink -f "$1"); d=$(mktemp -d)
+trap 'rm -rf "$d"' EXIT
+(cd "$d" && docbook2man "$in" >&2) || echo "docbook-to-man: docbook2man failed on $1, using its output anyway" >&2
+out=$(ls "$d" | grep -v '^manpage\.' | head -1)
+[ -n "$out" ] && cat "$d/$out"
+SH
+# Debian's c99 is gcc -std=c99 (openSUSE's posix_cc c99 rejects gcc options)
+printf '#!/bin/sh\nexec gcc -std=c99 "$@"\n' > %{buildroot}/usr/lib/debian-compat/bin/c99
+chmod 755 %{buildroot}/usr/lib/debian-compat/bin/docbook-to-man %{buildroot}/usr/lib/debian-compat/bin/c99
 # sensible-utils
 mkdir -p %{buildroot}%{_bindir}
 cat > %{buildroot}%{_bindir}/sensible-pager <<'SH'
