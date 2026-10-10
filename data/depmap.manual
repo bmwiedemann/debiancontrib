@@ -39,3 +39,6 @@ ruby-all-dev	ruby-devel	manual
 libcompress-zlib-perl	perl	manual
 liblua5.1-0-dev	lua51-devel	manual
 docbook-to-man	docbook-utils-minimal	manual
+default-mta	smtp_daemon	manual
+inews	inn	manual
+qemu-user-static	qemu-linux-user	manual
