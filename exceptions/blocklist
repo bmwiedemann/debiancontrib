@@ -97,3 +97,10 @@
 ^unrar-free$
 ^asterisk-moh-
 ^lua-bitop$
+^dlocate$
+^debfoster$
+^check-dfsg-status$
+^autodep8$
+^wwwconfig-common$
+^kernel-handbook$
+^lxc-ci$

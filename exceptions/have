@@ -58,3 +58,11 @@ vpnc-scripts	vpnc
 zram-tools	zram-generator
 fonts-go	texlive-gofonts
 arduino-core-avr	arduino-core
+latexdiff	texlive-latexdiff
+sphinx-basic-ng	python-sphinx-basic-ng
+tap-plugins	ladspa-tap-plugins
+youtubedl-gui	youtube-dl-gui
+silversearcher-ag	the_silver_searcher
+libf2c2	f2c
+refpolicy	selinux-policy
+pdf-presenter-console	pdfpc
