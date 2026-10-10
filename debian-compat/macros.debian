@@ -16,9 +16,9 @@ export DEB_RULES_REQUIRES_ROOT=no \
 export DEB_VENDOR=Debian \
 unset VENDOR \
 export DEB_BUILD_OPTIONS="%{?debian_nocheck:nocheck }parallel=%{?_smp_build_ncpus}%{!?_smp_build_ncpus:1} %{?debian_build_options}" \
-export DEB_CFLAGS_APPEND="$(echo %{optflags} | sed -e s/-Werror=return-type// -e "s/-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=[0-9]//")" DEB_CXXFLAGS_APPEND="$DEB_CFLAGS_APPEND" \
+export DEB_CFLAGS_APPEND="$(echo %{optflags} | sed -e s/-Werror=return-type// -e "s/-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=[0-9]//" %{?debian_nolto:-e s/-flto=auto//})" DEB_CXXFLAGS_APPEND="$DEB_CFLAGS_APPEND" \
 export DEB_CPPFLAGS_APPEND="$(echo %{optflags} | grep -o -- '-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=[0-9]')" \
-export PERL_MM_OPT="NO_PACKLIST=1 NO_PERLLOCAL=1" \
+export PERL_MM_OPT="NO_PACKLIST=1 NO_PERLLOCAL=1 MAN1EXT=1p MAN3EXT=3pm" PERL_MB_OPT="--config man1ext=1p --config man3ext=3pm" \
 [ -e "$JAVA_HOME/include/jni.h" ] || for j in $(ls -d /usr/lib64/jvm/*/include/jni.h 2>/dev/null | sort -V); do export JAVA_HOME=${j%%/include/jni.h}; done \
 export SOURCE_DATE_EPOCH=$(dpkg-parsechangelog -STimestamp) \
 export LC_ALL=C.UTF-8 \

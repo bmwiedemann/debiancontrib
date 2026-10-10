@@ -83,6 +83,7 @@ push @out, "# needsrootforbuild" if $o{needsroot};
 push @out, "%global debian_source $src", "%global debian_version $debver";
 push @out, "%global debian_nocheck 1" if $nocheck;
 push @out, "%global debian_build_options $o{build_options}" if $o{build_options};
+push @out, "%global debian_nolto 1" if $o{nolto};
 push @out, "%global debian_patches @patches" if @patches;
 push @out, "Name:           $src", "Version:        $version", "Release:        0";
 push @out, "Epoch:          $epoch" if $epoch;
