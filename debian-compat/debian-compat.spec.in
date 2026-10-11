@@ -29,12 +29,16 @@ Source2:        relocate.map
 Source3:        owned-dirs
 Source4:        dh_install
 Source5:        py3versions
+Source6:        dh_bash-completion
+Source7:        bash_completion.pm
 BuildRequires:  automake
 BuildRequires:  binutils
 BuildRequires:  docbook-xsl-stylesheets
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
+BuildRequires:  debhelper
 BuildRequires:  perl
+BuildRequires:  perl-macros
 BuildRequires:  pkgconf-pkg-config
 BuildRequires:  python-rpm-macros
 BuildRequires:  python3-base
@@ -120,6 +124,8 @@ for s in dh_testroot dh_shlibdeps dh_makeshlibs dh_gencontrol dh_md5sums dh_buil
 done
 install -m755 %{SOURCE4} %{buildroot}/usr/lib/debian-compat/bin/dh_install
 install -m755 %{SOURCE5} %{buildroot}/usr/lib/debian-compat/bin/py3versions
+install -m755 %{SOURCE6} %{buildroot}/usr/lib/debian-compat/bin/dh_bash-completion
+install -Dm644 %{SOURCE7} %{buildroot}%{perl_vendorlib}/Debian/Debhelper/Sequence/bash_completion.pm
 # what Debian's python3-defaults ships for dh-python
 mkdir -p %{buildroot}/usr/share/python3
 printf '[DEFAULT]\ndefault-version = python%{python3_version}\nsupported-versions = python%{python3_version}\n' > %{buildroot}/usr/share/python3/debian_defaults
@@ -179,6 +185,7 @@ chmod 755 %{buildroot}%{_bindir}/sensible-* %{buildroot}%{_bindir}/deb-systemd-*
 %config %{_sysconfdir}/dpkg/origins/debian
 %dir /usr/share/python3
 /usr/share/python3/debian_defaults
+%{perl_vendorlib}/Debian/Debhelper/Sequence/bash_completion.pm
 
 %files filesystem
 /usr/lib/x86_64-linux-gnu

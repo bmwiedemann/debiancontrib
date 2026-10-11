@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+# SPDX-License-Identifier: GPL-2.0-or-later
+# debian-compat stand-in for bash-completion's dh_bash-completion: debian/<pkg>.bash-completion is
+# either a list of "file [name]" lines or the completion script itself, installed under the package name
+use strict; use warnings;
+use File::Basename;
+use Debian::Debhelper::Dh_Lib;
+init();
+for my $pkg (@{$dh{DOPACKAGES}}) {
+    my $file = pkgfile($pkg, 'bash-completion') or next;
+    my $tmp = tmpdir($pkg);
+    my $dir = "$tmp/usr/share/bash-completion/completions";
+    my @lines = filearray($file, '.');
+    my @entries = map { [split ' '] } grep { !/^\s*#/ && /\S/ } @lines;
+    install_dir($dir);
+    if (@entries && !grep { @$_ > 2 || !-e $_->[0] && !-e "debian/tmp/$_->[0]" } @entries) {
+        for my $e (@entries) {
+            my $src = -e $e->[0] ? $e->[0] : "debian/tmp/$e->[0]";
+            install_file($src, "$dir/" . ($e->[1] // basename($e->[0])));
+        }
+    } else {
+        install_file($file, "$dir/$pkg");
+    }
+}
