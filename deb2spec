@@ -94,30 +94,34 @@ push @out, sprintf("Source%d:        %s/%s/%s", $i++, $ENV{mirror} // 'http://ft
 $i = 0; push @out, sprintf("Patch%d:         %s", $i++, $_) for @patches;
 push @out, map { "BuildRequires:  $_" } sort { $a cmp $b } grep { !/^\s*$/ } @br;
 push @out, "BuildArch:      noarch" if !grep { $_->{Architecture} ne 'all' } @pkgs;
-push @out, "Provides:       deb(src:$src) = $debver" if $main->{Package} eq $src;
+(my $provver = $debver) =~ s/-(?=.*-)/_/g; # rpm versions allow one dash only
+push @out, "Provides:       deb(src:$src) = $provver" if ($o{"rename_$main->{Package}"} // $main->{Package}) eq $src;
 push @out, "", "%description", desc($main->{Description}), "";
 my $mainpos = $#out - 2; # the main package's dependencies go before its %description
 for my $p (@pkgs) {
     my $n = $p->{Package};
-    my $ismain = $n eq $src;
-    push @out, "%package -n $n", "Summary:        " . summary($p->{Description}) unless $ismain;
+    my $rn = $o{"rename_$n"} // $n; # RPM name, when the Debian name is taken by an openSUSE package
+    my $ismain = $rn eq $src;
+    push @out, "%package -n $rn", "Summary:        " . summary($p->{Description}) unless $ismain;
     my @l;
     push @l, "BuildArch:      noarch" if $p->{Architecture} eq 'all' && !$ismain && grep { $_->{Architecture} ne 'all' } @pkgs;
     push @l, "Provides:       deb($n) = %{version}";
-    push @l, "Provides:       deb(src:$src) = $debver" if $n eq $main->{Package} && !$ismain;
+    push @l, "Provides:       deb(src:$src) = $provver" if $n eq $main->{Package} && !$ismain;
     push @l, map { "Provides:       deb($_)" } dep_names($p->{Provides});
     push @l, map { "Requires:       $_" } deps(join(', ', grep { defined } $p->{'Pre-Depends'}, $p->{Depends}), 0);
     push @l, map { "Requires:       $_" } split /,/, $o{"extra_requires_$n"} // '';
+    push @l, map { "Conflicts:      $_" } split /,/, $o{"extra_conflicts_$n"} // '';
     push @l, map { "Recommends:     $_" } deps($p->{Recommends}, 0);
     push @l, map { "Suggests:       $_" } deps($p->{Suggests}, 0);
     push @l, map { "Conflicts:      $_" } grep { my $x = $_; grep { "deb($_->{Package})" eq $x } @pkgs } deps(join(', ', grep { defined } $p->{Conflicts}, $p->{Breaks}), 0);
-    if ($ismain) { splice @out, $mainpos, 0, @l } else { push @out, @l, "", "%description -n $n", desc($p->{Description}), "" }
+    if ($ismain) { splice @out, $mainpos, 0, @l } else { push @out, @l, "", "%description -n $rn", desc($p->{Description}), "" }
 }
 push @out, "%prep", "%debian_prep", "", "%build", "%debian_build", "", "%install", "%debian_install", "";
 push @out, "%check", "%debian_check", "" unless $nocheck;
 for my $p (@pkgs) {
     my $n = $p->{Package};
-    push @out, ($n eq $src ? "%files" : "%files -n $n") . " -f %{_builddir}/%{buildsubdir}/rpmfiles/$n", "";
+    my $rn = $o{"rename_$n"} // $n;
+    push @out, ($rn eq $src ? "%files" : "%files -n $rn") . " -f %{_builddir}/%{buildsubdir}/rpmfiles/$n", "";
 }
 push @out, "%changelog";
 print join("\n", @out), "\n";
