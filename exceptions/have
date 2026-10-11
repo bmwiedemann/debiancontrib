@@ -67,3 +67,4 @@ libf2c2	f2c
 refpolicy	selinux-policy
 pdf-presenter-console	pdfpc
 modsecurity-crs	owasp-modsecurity-crs
+pyacoustid	python-pyacoustid
