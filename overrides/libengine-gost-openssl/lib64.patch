@@ -1,0 +1,8 @@
+Description: openSUSE installs the engine below /usr/lib64, not the multiarch directory
+
+--- a/debian/libengine-gost-openssl.install
++++ b/debian/libengine-gost-openssl.install
+@@ -1,2 +1,2 @@
+-usr/lib/*/engines-*/*
++usr/lib*/engines-*/*
+ usr/lib/*/ossl-modules/*

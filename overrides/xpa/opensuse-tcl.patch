@@ -1,0 +1,23 @@
+Description: openSUSE has tclConfig.sh in /usr/lib64 and only a versioned libtclstub8.x.a
+
+--- a/debian/rules
++++ b/debian/rules
+@@ -6,13 +6,17 @@
+ 
+ export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+ 
++export LIBRARY_PATH := $(CURDIR)/debian/tclstub
++
+ %:
+ 	dh $@ --with autoreconf
+ 
+ override_dh_auto_configure:
+-	dh_auto_configure -- --enable-shared=link --with-threads --with-tclconfig=/usr/lib --with-tcl=/usr/include/tcl
++	dh_auto_configure -- --enable-shared=link --with-threads --with-tclconfig=/usr/lib64 --with-tcl=/usr/lib64
+ 
+ override_dh_auto_build:
++	mkdir -p debian/tclstub
++	ln -sf $$(ls /usr/lib64/libtclstub8.*.a | tail -n1) debian/tclstub/libtclstub.a
+ 	dh_auto_build -- All tclxpa
+ 
+ ifeq ($(filter nocheck,$(DEB_BUILD_OPTIONS)),)
