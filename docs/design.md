@@ -57,8 +57,11 @@ Two OBS source packages, both generated/staged by `pushcompat`:
 - `debian-compat` is the build environment and changes rarely:
   - `debian-rpm-macros`: macros, dh stubs, debian-install, relocate.map
   - `debian-compat-filesystem`: `/usr/lib/<triplet>-linux-gnu -> ../lib64`
-    for the supported triplets, `/usr/lib/python3/dist-packages`,
-    `/usr/share/perl5` symlinks and `<triplet>-gcc` style toolchain names
+    for the supported triplets, `/usr/lib/python3/dist-packages` and
+    `/usr/share/perl5` symlinks (noarch)
+  - `debian-compat-toolchain`: `<triplet>-gcc` style toolchain names for the
+    native triplet only; shipping arch-specific file names makes this
+    subpackage archful while all the others are `BuildArch: noarch`
   - sensible-utils and init-system-helpers stubs
 - `debian-compat-mappings` is one spec with a fileless
   `debian-compat-<name>` package per Debian name that is in
