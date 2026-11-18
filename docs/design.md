@@ -4,9 +4,18 @@
 `deb2spec` generates a static spec from `debian/control`: one `%package` per
 Debian binary package, `Provides: deb(<name>)`, `Requires: deb(<dep>)` from
 Depends, and `BuildRequires:` from Build-Depends (first alternative,
-arch/profile filtered via Dpkg::Deps, versions dropped) — resolved through
-`data/depmap`/`depmap.manual` to the openSUSE requires themselves, unless the
-name is provided by one of our own packages. The body is only
+versions dropped) — resolved through `data/depmap`/`depmap.manual` to the
+openSUSE requires themselves, unless the name is provided by one of our own
+packages. Dependencies are selected separately for every supported arch (the
+Debian arch table in `lib/deb.pm`), and one that applies to only some of them
+is emitted as `%ifarch x86_64 aarch64` ... `%endif`, so `foo [arm64]`
+becomes an aarch64-only BuildRequires. In a top-level `BuildArch: noarch`
+spec %ifarch is inert, so there the condition tests the worker arch with
+`%if "%{_host_cpu}" == "aarch64"` instead. Build profiles are reduced for
+`nocheck`. If Debian's `Architecture:` on the non-all binaries excludes some
+supported arches, the spec gets `ExclusiveArch: x86_64 ...` (or `none` when no
+supported arch matches), so e.g. an `amd64 i386 x32` source is not scheduled
+on aarch64. The body is only
 
     %prep     %debian_prep      dpkg-source -x of the .dsc (applies Debian patches)
     %build    %debian_build     debian/rules build; debian/rules binary
@@ -21,10 +30,12 @@ debuginfo extraction and brp-compress replace what the stubs skip.
 
 `DEB_RULES_REQUIRES_ROOT=no` (OBS builds as abuild), `DEB_BUILD_OPTIONS=nocheck`
 by default, dpkg-architecture set from the rpm target arch (`x86_64` -> amd64,
-`aarch64` -> arm64, `ppc64le` -> ppc64el, `riscv64`, `s390x`) with
+`aarch64` -> arm64, `ppc64le` -> ppc64el, `riscv64`, `s390x`; `%{_host_cpu}`
+for `BuildArch: noarch`) with
 DEB_BUILD_* = DEB_HOST_* so nothing looks like a cross build; %optflags are
 appended through DEB_CFLAGS_APPEND. New arches are added to the case statement
-in `macros.debian` and to `debian_multiarch` in `debian-compat.spec.in`.
+in `macros.debian`, to `debian_multiarch` in `debian-compat.spec.in`, and to
+the arch table in `lib/deb.pm`.
 
 ## Relocation
 `debian-install` maps paths with `data/relocate.map` (first match wins):

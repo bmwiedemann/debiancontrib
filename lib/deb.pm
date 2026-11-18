@@ -2,13 +2,29 @@
 # thin wrapper around the Dpkg perl modules shipped with the dpkg rpm
 package deb;
 use strict; use warnings;
+use Dpkg::Arch qw(debarch_is);
 use Dpkg::Control;
 use Dpkg::Control::Info;
 use Dpkg::Deps;
 use Dpkg::Index;
 use Dpkg::Version;
 use Exporter 'import';
-our @EXPORT_OK = qw(read_index read_control dep_names debver2rpm debvercmp normalize_name norm_url file_key);
+our @EXPORT_OK = qw(read_index read_control dep_names debver2rpm debvercmp normalize_name norm_url file_key supported_arches debian_arch arch_matches);
+
+# rpm target archs we generate specs for and their Debian names (keep in sync
+# with the case statement in debian-compat/macros.debian)
+my @ARCHS = qw(x86_64 aarch64 ppc64le riscv64 s390x);
+my %DEB_ARCH = (x86_64 => 'amd64', aarch64 => 'arm64', ppc64le => 'ppc64el', riscv64 => 'riscv64', s390x => 's390x');
+sub supported_arches { return @ARCHS }
+sub debian_arch($) { die "unknown rpm arch $_[0]\n" unless exists $DEB_ARCH{$_[0]}; return $DEB_ARCH{$_[0]} }
+
+# Debian "Architecture:" field (space-separated names/wildcards) matches $deb_arch?
+# "any", "linux-any", "any-amd64", "amd64 arm64" etc.; an empty field means any.
+sub arch_matches($$) {
+    my ($deb_arch, $list) = @_;
+    return 1 unless defined $list && length $list;
+    return scalar grep { debarch_is($deb_arch, $_) } split ' ', $list;
+}
 
 # read_index("xzcat Sources.xz |", CTRL_INDEX_SRC) -> Dpkg::Index
 sub read_index($$) {
@@ -23,7 +39,7 @@ sub read_index($$) {
 # read_control("debian/control") -> Dpkg::Control::Info
 sub read_control($) { return Dpkg::Control::Info->new(filename => $_[0]) }
 
-# dep_names($field, build => 1, nocheck => 1, prefer => {name => 1})
+# dep_names($field, build => 1, nocheck => 1, prefer => {name => 1}, host_arch => 'amd64')
 # -> package names after dropping substvars, foreign arches, build profiles,
 #    versions; first alternative wins unless one of them is preferred
 sub dep_names($%) {
@@ -34,8 +50,9 @@ sub dep_names($%) {
     $str =~ s/^[\s,]+|[\s,]+$//g;
     $str =~ s/,[\s,]*,/,/g;
     return () unless length $str;
+    my $host = $o{host_arch} // 'amd64';
     my $deps = deps_parse($str, build_dep => $o{build} // 0, union => 0,
-        reduce_arch => 1, host_arch => 'amd64', build_arch => 'amd64',
+        reduce_arch => 1, host_arch => $host, build_arch => $host,
         reduce_profiles => 1, build_profiles => [$o{nocheck} // 1 ? 'nocheck' : ()]);
     return () unless $deps;
     my @names; my %seen;

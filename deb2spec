@@ -4,7 +4,7 @@
 # generates the shim spec for a Debian source package; knobs come from overrides/SRCNAME.conf
 use strict; use warnings;
 use FindBin; use lib "$FindBin::RealBin/lib";
-use deb qw(read_control dep_names debver2rpm);
+use deb qw(read_control dep_names debver2rpm supported_arches debian_arch arch_matches);
 use tsv;
 use POSIX qw(strftime);
 
@@ -50,18 +50,57 @@ my $srcctrl = $ctrl->get_source();
 my @pkgs = grep { !$skip{$_->{Package}} && ($_->{'Package-Type'} // 'deb') eq 'deb' && ($_->{Section} // '') ne 'debug' && $_->{Package} !~ /-dbg(sym)?$/ } $ctrl->get_packages();
 die "no binary packages\n" unless @pkgs;
 my %sibling = map { $_->{Package} => 1 } @pkgs;
+my $noarch = !grep { $_->{Architecture} ne 'all' } @pkgs; # the whole spec is BuildArch: noarch
+# arches on which every non-all binary package's Debian Architecture permits a build
+my @all_arches = supported_arches();
+my @buildable = grep {
+    my $deb = debian_arch($_);
+    !grep { $_->{Architecture} ne 'all' && !arch_matches($deb, $_->{Architecture}) } @pkgs
+} @all_arches;
 
-sub deps($$@) { # field value, build flag -> rpm dependency strings
-    my ($v, $build, @extra) = @_;
+sub dep_choices($$) { # field value, build flag -> ([rpm dep strings in field order], {dep => {rpm arch => 1}})
+    my ($v, $build) = @_;
     my @d = $build ? @drop : @dropreq;
-    my @n = grep { my $x = $_; !$ignore{$x} && !grep { $_ eq $x } @d } dep_names($v, build => $build, nocheck => $nocheck, prefer => \%prefer);
-    return map {
-        my $x = $_;
-        if ($sibling{$x}) { "deb($x) = %{version}" }          # same source package
-        elsif ($ourprov{$x}) { "deb($x)" }                     # another package of this project
-        elsif ($build && $map{$x}) { @{$map{$x}} }             # mapped openSUSE build requires
-        else { "deb($x)" }
-    } @n;
+    my (@order, %out);
+    for my $rpm (supported_arches()) {
+        my @n = grep { my $x = $_; !$ignore{$x} && !grep { $_ eq $x } @d }
+            dep_names($v, build => $build, nocheck => $nocheck, prefer => \%prefer,
+                      host_arch => debian_arch($rpm));
+        for my $x (@n) {
+            my @r;
+            if ($sibling{$x}) { @r = ("deb($x) = %{version}") }  # same source package
+            elsif ($ourprov{$x}) { @r = ("deb($x)") }             # another package of this project
+            elsif ($build && $map{$x}) { @r = @{$map{$x}} }       # mapped openSUSE build requires
+            else { @r = ("deb($x)") }
+            for (@r) {
+                push @order, $_ unless exists $out{$_};
+                $out{$_}{$rpm} = 1;
+            }
+        }
+    }
+    return (\@order, \%out);
+}
+
+# dep_spec_lines($prefix, $field, $build, $filter, $sort, @extra) -> spec lines,
+# wrapped in an arch condition when Debian's restriction applies to only some
+# arches. %ifarch is inert in a BuildArch: noarch spec, so use the worker's
+# %{_host_cpu} there. @extra are further dependency strings for the same field.
+sub dep_spec_lines {
+    my ($prefix, $v, $build, $filter, $sort, @extra) = @_;
+    my ($order, $choices) = dep_choices($v, $build);
+    my @all = supported_arches();
+    my (@plain, @cond);
+    for my $dep (@$order) {
+        next if $filter && !$filter->($dep);
+        my @a = grep { $choices->{$dep}{$_} } @all;
+        next unless @a;
+        my $if = $noarch ? '%if ' . join(' || ', map { qq{"%{_host_cpu}" == "$_"} } @a)
+                         : '%ifarch ' . join(' ', @a);
+        if (@a == @all) { push @plain, $dep }
+        else { push @cond, $if, $dep, '%endif' }
+    }
+    return (map { "$prefix$_" } $sort ? sort(@extra, @plain) : (@extra, @plain)),
+           (map { /^%/ ? $_ : "$prefix$_" } @cond);
 }
 sub license() {
     my $c = "$dir/debian/copyright";
@@ -89,8 +128,8 @@ sub desc($) { my $d = shift // ''; $d =~ s/^[^\n]*\n//; $d =~ s/^ //mg; $d =~ s/
 sub summary($) { my $s = (shift // '') =~ s/\n.*//sr; $s =~ s/\.$//; return $s || $src }
 
 my $main = (grep { $_->{Package} eq $src } @pkgs)[0] // (grep { $_->{Package} !~ /-(dev|doc|data|common)$/ } @pkgs)[0] // $pkgs[0];
-my @br = ('debian-rpm-macros', deps(join(', ', grep { defined } map { $srcctrl->{$_} } qw(Build-Depends Build-Depends-Indep Build-Depends-Arch)), 1));
-push @br, split /,/, $o{extra_buildrequires} // '';
+my @br = dep_spec_lines('BuildRequires:  ', join(', ', grep { defined } map { $srcctrl->{$_} } qw(Build-Depends Build-Depends-Indep Build-Depends-Arch)), 1, undef, 1,
+    grep { !/^\s*$/ } ('debian-rpm-macros', split /,/, $o{extra_buildrequires} // ''));
 my @patches = sort map { s{.*/}{}r } glob("$top/overrides/$src/*.patch");
 
 my @out;
@@ -113,8 +152,10 @@ push @out, "URL:            $home" if length $home;
 my $i = 0;
 push @out, sprintf("Source%d:        %s/%s/%s", $i++, $ENV{mirror} // 'http://ftp.gwdg.de/pub/linux/debian/debian', $pooldir, $_) for @sources;
 $i = 0; push @out, sprintf("Patch%d:         %s", $i++, $_) for @patches;
-push @out, map { "BuildRequires:  $_" } sort { $a cmp $b } grep { !/^\s*$/ } @br;
-push @out, "BuildArch:      noarch" if !grep { $_->{Architecture} ne 'all' } @pkgs;
+push @out, grep { /\S/ } @br;
+push @out, "BuildArch:      noarch" if $noarch;
+push @out, "ExclusiveArch:  " . join(' ', @buildable ? @buildable : ('none'))
+    if !$noarch && @buildable < @all_arches;
 (my $provver = $debver) =~ s/-(?=.*-)/_/g; # rpm versions allow one dash only
 push @out, "Provides:       deb(src:$src) = $provver" if ($o{"rename_$main->{Package}"} // $main->{Package}) eq $src;
 push @out, "", "%description", desc($main->{Description}), "";
@@ -129,12 +170,13 @@ for my $p (@pkgs) {
     push @l, "Provides:       deb($n) = %{version}";
     push @l, "Provides:       deb(src:$src) = $provver" if $n eq $main->{Package} && !$ismain;
     push @l, map { "Provides:       deb($_)" } dep_names($p->{Provides});
-    push @l, map { "Requires:       $_" } deps(join(', ', grep { defined } $p->{'Pre-Depends'}, $p->{Depends}), 0);
+    push @l, dep_spec_lines('Requires:       ', join(', ', grep { defined } $p->{'Pre-Depends'}, $p->{Depends}), 0);
     push @l, map { "Requires:       $_" } split /,/, $o{"extra_requires_$n"} // '';
     push @l, map { "Conflicts:      $_" } split /,/, $o{"extra_conflicts_$n"} // '';
-    push @l, map { "Recommends:     $_" } deps($p->{Recommends}, 0);
-    push @l, map { "Suggests:       $_" } deps($p->{Suggests}, 0);
-    push @l, map { "Conflicts:      $_" } grep { my $x = $_; grep { "deb($_->{Package})" eq $x } @pkgs } deps(join(', ', grep { defined } $p->{Conflicts}, $p->{Breaks}), 0);
+    push @l, dep_spec_lines('Recommends:     ', $p->{Recommends}, 0);
+    push @l, dep_spec_lines('Suggests:       ', $p->{Suggests}, 0);
+    push @l, dep_spec_lines('Conflicts:      ', join(', ', grep { defined } $p->{Conflicts}, $p->{Breaks}), 0,
+        sub { my $x = shift; grep { "deb($_->{Package})" eq $x } @pkgs });
     if ($ismain) { splice @out, $mainpos, 0, @l } else { push @out, @l, "", "%description -n $rn", desc($p->{Description}), "" }
 }
 push @out, "%prep", "%debian_prep", "", "%build", "%debian_build", "", "%install", "%debian_install", "";
