@@ -18,7 +18,7 @@ Slowroll or their devel projects are packaged (home: projects are ignored).
     addpkg netcat          # stage obs/netcat (spec, sources, .changes)
     localbuild obs/netcat  # rpmbuild in the tumbleweed distrobox
     commit=1 addpkg netcat # commit to OBS
-    pushcompat             # regenerate + stage debian-compat (commit=1 to send)
+    pushcompat             # regenerate + stage debian-compat and debian-compat-mappings (commit=1 to send)
     status                 # build state of the whole project
     showunresolvable       # most wanted missing deb() mappings
     adddeps                # pull in Debian sources for unmapped dependencies

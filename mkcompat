@@ -1,7 +1,8 @@
 #!/usr/bin/perl
 # SPDX-License-Identifier: GPL-2.0-or-later
-# usage: mkcompat  - regenerate debian-compat/debian-compat.spec from data/depmap for every
-# Debian name in data/compat-seed or referenced by obs/*/*.spec; unmapped names go to out/unmapped.txt
+# usage: mkcompat  - regenerate the debian-compat build environment spec and, for every
+# Debian name in data/compat-seed or referenced by obs/*/*.spec, the debian-compat-mappings
+# _multibuild flavor specs from data/depmap; unmapped names go to out/unmapped.txt
 use strict; use warnings;
 use FindBin; use lib "$FindBin::RealBin/lib";
 use tsv;
@@ -10,18 +11,21 @@ use POSIX qw(strftime);
 my $top = $FindBin::RealBin;
 my $obs = $ENV{obs} // "$top/obs";
 my $out = $ENV{out} // "$top/out";
+my $mapdir = "$top/debian-compat-mappings";
+
+sub slurp($) { my $f = shift; local $/; open(my $h, '<', $f) or die "$f: $!\n"; my $t = <$h>; close $h; return $t }
 
 my (%map, %ignore, %need, %ours);
 tsv::read_tsv("$top/data/depmap", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap";
 tsv::read_tsv("$top/data/depmap.manual", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap.manual";
 tsv::read_tsv("$top/data/depmap.ignore", sub { $ignore{$_[0]} = 1 });
 tsv::read_tsv("$top/data/compat-seed", sub { $need{$_[0]} = 'seed' });
-# names provided by debian-compat itself (extras in the template)
+# names provided by the debian-compat build environment itself (extras in the template)
 open(my $tf, "<", "$top/debian-compat/debian-compat.spec.in") or die;
 while (<$tf>) { $ours{$1} = "debian-compat" if /^Provides:\s*deb\(([^)]+)\)/ }
 close $tf;
 for my $spec (glob("$obs/*/*.spec")) {
-    next if $spec =~ m{/debian-compat/};
+    next if $spec =~ m{/debian-compat/} || $spec =~ m{/debian-compat-mappings/};
     (my $pkg = $spec) =~ s{.*/}{};
     open(my $fh, '<', $spec) or die;
     while (<$fh>) {
@@ -30,38 +34,96 @@ for my $spec (glob("$obs/*/*.spec")) {
     }
     close $fh;
 }
-my (@stanzas, @unmapped);
+my (@mapping, @unmapped);
 for my $n (sort keys %need) {
     next if $ignore{$n};
     if ($ours{$n}) { print STDERR "skip $n: provided by our $ours{$n}\n" if $need{$n} eq 'seed'; next }
     unless ($map{$n}) { push @unmapped, "$n\t$need{$n}"; next }
     (my $sub = $n) =~ s/[^A-Za-z0-9._+-]/-/g;
-    push @stanzas, join("\n", "%package -n debian-compat-$sub",
-        "Summary:        Debian compatibility: $n -> " . join(' ', @{$map{$n}}),
-        "Provides:       deb($n)",
-        (map { "Requires:       $_" } @{$map{$n}}),
-        "BuildArch:      noarch", "",
-        "%description -n debian-compat-$sub",
-        "Pulls in the openSUSE packages providing what Debian's $n provides.", "",
-        "%files -n debian-compat-$sub", "");
+    push @mapping, [ $n, $sub, $map{$n} ];
 }
 open(my $u, '>', "$out/unmapped.txt") or die; print $u "$_\n" for @unmapped; close $u;
 my $cache = $ENV{cache} // "$top/cache";
 tsv::write_tsv("$cache/project-provides.tsv", [map { [$_, $ours{$_}] } sort keys %ours]);
-my $specfile = "$top/debian-compat/debian-compat.spec";
-my $tmpl = do { local $/; open(my $t, '<', "$specfile.in") or die; <$t> };
-my $body = join("\n", @stanzas);
-$tmpl =~ s/\@MAPPINGS\@/$body/;
-$tmpl =~ s/\@YEAR\@/strftime('%Y', gmtime)/e;
+
 # keep the version unless the content changed
-my $version = strftime('%Y%m%d', gmtime);
-if (-e $specfile) {
-    my $old = do { local $/; open(my $o, '<', $specfile) or die; <$o> };
-    my ($oldv) = $old =~ /^Version:\s*(\S+)/m;
-    (my $oldbody = $old) =~ s/^Version:.*$//m;
-    (my $newbody = $tmpl) =~ s/^Version:.*$//m;
-    $version = $oldv if $oldbody eq $newbody;
+sub store_versioned($$$) {
+    my ($file, $tmpl, $version) = @_;
+    if (-e $file) {
+        my $old = slurp($file);
+        my ($oldv) = $old =~ /^Version:\s*(\S+)/m;
+        (my $oldbody = $old) =~ s/^Version:.*$//m;
+        (my $newbody = $tmpl) =~ s/^Version:.*$//m;
+        $version = $oldv if defined($oldv) && $oldbody eq $newbody;
+    }
+    $tmpl =~ s/\@VERSION\@/$version/;
+    open(my $s, '>', $file) or die "$file: $!\n"; print $s $tmpl; close $s;
+    return $version;
 }
-$tmpl =~ s/\@VERSION\@/$version/;
-open(my $s, '>', $specfile) or die; print $s $tmpl; close $s;
-printf STDERR "%d mapped subpackages, %d unmapped (out/unmapped.txt), version %s\n", scalar @stanzas, scalar @unmapped, $version;
+
+# debian-compat: build environment (macros, filesystem symlinks, toolchain names, helpers)
+my $specfile = "$top/debian-compat/debian-compat.spec";
+my $tmpl = slurp("$specfile.in");
+$tmpl =~ s/\@YEAR\@/strftime('%Y', gmtime)/e;
+my $version = store_versioned($specfile, $tmpl, strftime('%Y%m%d', gmtime));
+
+# debian-compat-mappings: fileless deb(<name>) providers, one %package per mapping
+mkdir($mapdir) unless -d $mapdir;
+my $stanzas = join("\n", map {
+    my ($n, $sub, $targets) = @$_;
+    join("\n", "%package -n debian-compat-$sub",
+        "Summary:        Debian compatibility: $n -> " . join(' ', @$targets),
+        "Provides:       deb($n)",
+        (map { "Requires:       $_" } @$targets),
+        "BuildArch:      noarch", "",
+        "%description -n debian-compat-$sub",
+        "Pulls in the openSUSE packages providing what Debian's $n provides.", "",
+        "%files -n debian-compat-$sub", "");
+} @mapping);
+my $mapspec = "$mapdir/debian-compat-mappings.spec";
+my $maptmpl = <<'EOF';
+#
+# spec file for package debian-compat-mappings
+#
+# Copyright (c) @YEAR@ SUSE LLC and contributors
+#
+# All modifications and additions to the file contributed by third parties
+# remain the property of their copyright owners, unless otherwise agreed
+# upon. The license for this file, and modifications and additions to the
+# file, is the same license as for the pristine package itself (unless the
+# license for the pristine package is not an Open Source License, in which
+# case the license is the MIT License). An "Open Source License" is a
+# license that conforms to the Open Source Definition (Version 1.9)
+# published by the Open Source Initiative.
+
+# Please submit bugfixes or comments via https://bugs.opensuse.org/
+#
+
+# generated by mkcompat from data/depmap - do not edit
+
+Name:           debian-compat-mappings
+Version:        @VERSION@
+Release:        0
+Summary:        Debian package name mappings for the debiancontrib project
+License:        GPL-2.0-or-later
+URL:            https://github.com/bmwiedemann/debiancontrib
+BuildArch:      noarch
+
+%description
+Fileless packages that map Debian package names to the openSUSE packages
+providing the same content.
+
+@MAPPINGS@
+
+%changelog
+EOF
+$maptmpl =~ s/\@YEAR\@/strftime('%Y', gmtime)/e;
+$maptmpl =~ s/\@MAPPINGS\@/$stanzas/e;
+my $mapver = store_versioned($mapspec, $maptmpl, strftime('%Y%m%d', gmtime));
+# drop the per-mapping specs/_multibuild of the earlier _multibuild layout
+for my $f (glob("$mapdir/*.spec"), glob("$mapdir/_multibuild")) {
+    unlink $f unless $f eq $mapspec;
+}
+
+printf STDERR "%d mappings, %d unmapped (out/unmapped.txt), debian-compat %s, debian-compat-mappings %s\n",
+    scalar @mapping, scalar @unmapped, $version, $mapver;

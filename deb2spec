@@ -16,6 +16,21 @@ my $cache = $ENV{cache} // "$top/cache";
 my %o;
 tsv::read_tsv("$top/overrides/$src.conf", sub { $o{$_[0]} = $_[1] }) if -e "$top/overrides/$src.conf";
 my %ignore; tsv::read_tsv("$top/data/depmap.ignore", sub { $ignore{$_[0]} = 1 });
+# build dependencies are resolved to the openSUSE requires themselves, so that
+# regenerating debian-compat-mappings does not rebuild every consumer
+my %map;
+tsv::read_tsv("$top/data/depmap", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap";
+tsv::read_tsv("$top/data/depmap.manual", sub { $map{$_[0]} = [split /,/, $_[1]] }) if -e "$top/data/depmap.manual";
+my %ourprov; # deb() names provided by packages of this project (except the generated mappings)
+open(my $tprov, '<', "$top/debian-compat/debian-compat.spec.in") or die;
+while (<$tprov>) { $ourprov{$1} = 1 if /^Provides:\s*deb\(([^)]+)\)/ }
+close $tprov;
+for my $spec (glob("$top/obs/*/*.spec")) {
+    next if $spec =~ m{/debian-compat/} || $spec =~ m{/debian-compat-mappings/};
+    open(my $fh, '<', $spec) or next;
+    while (<$fh>) { $ourprov{$1} = 1 if /^Provides:\s*deb\(([^)]+)\)/ }
+    close $fh;
+}
 my %lic; tsv::read_tsv("$top/data/licensemap", sub { $lic{$_[0]} = $_[1] });
 my @drop = split /,/, $o{drop_buildrequires} // '';
 my @dropreq = split /,/, $o{drop_requires} // '';
@@ -36,11 +51,17 @@ my @pkgs = grep { !$skip{$_->{Package}} && ($_->{'Package-Type'} // 'deb') eq 'd
 die "no binary packages\n" unless @pkgs;
 my %sibling = map { $_->{Package} => 1 } @pkgs;
 
-sub deps($$@) { # field value, build flag -> rpm dependency strings in the deb() namespace
+sub deps($$@) { # field value, build flag -> rpm dependency strings
     my ($v, $build, @extra) = @_;
     my @d = $build ? @drop : @dropreq;
     my @n = grep { my $x = $_; !$ignore{$x} && !grep { $_ eq $x } @d } dep_names($v, build => $build, nocheck => $nocheck, prefer => \%prefer);
-    return map { $sibling{$_} ? "deb($_) = %{version}" : "deb($_)" } @n;
+    return map {
+        my $x = $_;
+        if ($sibling{$x}) { "deb($x) = %{version}" }          # same source package
+        elsif ($ourprov{$x}) { "deb($x)" }                     # another package of this project
+        elsif ($build && $map{$x}) { @{$map{$x}} }             # mapped openSUSE build requires
+        else { "deb($x)" }
+    } @n;
 }
 sub license() {
     my $c = "$dir/debian/copyright";

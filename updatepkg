@@ -1,13 +1,36 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0-or-later
-# usage: [commit=1] [list=1] updatepkg [SRCNAME...]  - refresh packages whose Debian version moved on
+# usage: [commit=1] [list=1] [regen=1] updatepkg [SRCNAME...]  - refresh packages whose Debian version moved on
 # without arguments every package of $prj is checked; list=1 only reports
+# regen=1 regenerates every spec from its cached extracted source instead (after a deb2spec/depmap change)
 . "$(dirname "$0")/lib.sh"
 : ${list:=0}
+: ${regen:=0}
 pkgs="$*"
-[ -n "$pkgs" ] || pkgs=$(osc_api "source/$prj" | grep -o '<entry name="[^"]*"' | cut -d'"' -f2 | grep -v '^debian-compat$')
+[ -n "$pkgs" ] || pkgs=$(osc_api "source/$prj" | grep -o '<entry name="[^"]*"' | cut -d'"' -f2 | grep -v -E '^debian-compat(-mappings)?$')
 : > $out/obsolete.txt
 for p in $pkgs; do
+    if [ "$regen" = 1 ]; then
+        d=$obs/$p
+        x=$cache/pool/$p/x/extracted
+        [ -f "$d/$p.spec" ] || { log "$p: no checkout"; continue; }
+        [ -d "$x/debian" ] || { log "$p: no cached source"; continue; }
+        # deb2spec takes the version from the index; only regenerate if the cached tree matches it
+        new=$(tsvget $cache/debian-sources.tsv "$p" 2)
+        orig=$(cd "$x" && dpkg-parsechangelog -S Version 2>/dev/null)
+        [ -n "$new" ] && [ "$orig" = "$new" ] || { log "$p: cached source $orig != index $new, skipping (run updatepkg to fetch)"; continue; }
+        $top/deb2spec "$p" "$x" > "$d/$p.spec.new" || { log "$p: deb2spec failed"; rm -f "$d/$p.spec.new"; continue; }
+        if cmp -s "$d/$p.spec" "$d/$p.spec.new"; then rm -f "$d/$p.spec.new"; continue; fi
+        [ "$list" = 1 ] && { rm -f "$d/$p.spec.new"; echo "$p"; continue; }
+        mv "$d/$p.spec.new" "$d/$p.spec"
+        msg="Regenerate spec (mapped build requires)"
+        [ -e "$d/$p.changes" ] && msg="Update: $msg"
+        echo "- $msg" | changesadd "$d/$p.changes"
+        (cd "$d" && osc addremove >/dev/null && osc status | grep -v '^?')
+        if [ "$commit" = 1 ]; then { (cd "$d" && osc ci --skip-local-service-run -m "$msg" >/dev/null) && log "$p: committed"; } || die "$p: osc ci failed"
+        else log "$p: prepared; commit=1 to send"; fi
+        continue
+    fi
     spec=$(osc_api "source/$prj/$p/$p.spec" 2>/dev/null) || { log "$p: no spec"; continue; }
     have=$(echo "$spec" | grep '^%global debian_version' | awk '{print $3}')
     new=$(tsvget $cache/debian-sources.tsv "$p" 2)
@@ -20,5 +43,5 @@ for p in $pkgs; do
         [ "$list" = 1 ] || addpkg $p
     fi
 done
-[ -s $out/obsolete.txt ] && log "now available in openSUSE (consider dropping): $(wc -l < $out/obsolete.txt), see out/obsolete.txt"
+[ -s $out/obsolete.txt ] && log "now available in openSUSE (consider dropping): $(wc -l < $out/obsolete.txt), see $out/obsolete.txt"
 true

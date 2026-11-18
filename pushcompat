@@ -1,23 +1,48 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0-or-later
-# usage: [commit=1] pushcompat  - regenerate debian-compat and stage it in $obs/debian-compat (commit=1 sends it)
+# usage: [commit=1] pushcompat  - regenerate debian-compat (build environment) and
+# debian-compat-mappings (one spec with one %package per mapping), stage both in $obs
+# (commit=1 sends them)
 . "$(dirname "$0")/lib.sh"
 set -e
 $top/mkcompat
 [ -d $obs/.osc ] || (cd $obs && osc init $prj)
-d=$obs/debian-compat
-if [ ! -d $d/.osc ]; then
-    if osc_api "source/$prj/debian-compat" 2>/dev/null | grep -q '<entry '; then (cd $obs && osc co debian-compat >/dev/null)
-    else (cd $obs && osc mkpac debian-compat >/dev/null); fi
-fi
-cp -p $top/debian-compat/debian-compat.spec $top/debian-compat/macros.debian $top/debian-compat/debian-install $top/debian-compat/dh_install $top/debian-compat/py3versions $top/debian-compat/dh_bash-completion $top/debian-compat/bash_completion.pm $top/data/relocate.map $top/data/owned-dirs $d/
-cd $d
-ver=$(grep '^Version:' debian-compat.spec | awk '{print $2}')
-n=$(grep -c '^%package' debian-compat.spec)
-if [ -z "$(osc status)" ]; then log "debian-compat: unchanged"; exit 0; fi
-osc addremove >/dev/null
-msg="Update debian-compat to $ver ($n subpackages)"
-[ -e debian-compat.changes ] || msg="Initial debian-compat $ver ($n subpackages)"
-echo "- $msg" | changesadd debian-compat.changes
-osc status
-if [ "$commit" = 1 ]; then { osc ci --skip-local-service-run -m "$msg" >/dev/null || die "osc ci failed"; } && log "committed: $msg"; else log "commit=1 to send"; fi
+
+ensurepkg() { # source package name -> checked out in $obs/NAME
+    local d=$obs/$1
+    [ -d "$d/.osc" ] && return 0
+    if osc_api "source/$prj/$1" 2>/dev/null | grep -q '<entry '; then (cd $obs && osc co "$1" >/dev/null)
+    else (cd $obs && osc mkpac "$1" >/dev/null); fi
+}
+
+stage() { # dir, message
+    local d=$1 msg=$2 pkg=${1##*/}
+    (cd "$d" && osc addremove >/dev/null)
+    if [ -z "$(cd "$d" && osc status)" ]; then log "$pkg: unchanged"; return 0; fi
+    if [ -e "$d/$pkg.changes" ]; then msg="Update $msg"; else msg="Initial $msg"; fi
+    echo "- $msg" | changesadd "$d/$pkg.changes"
+    (cd "$d" && osc addremove >/dev/null && osc status)
+    if [ "$commit" = 1 ]; then
+        { (cd "$d" && osc ci --skip-local-service-run -m "$msg" >/dev/null) || die "osc ci failed"; } && log "committed: $msg"
+    else
+        log "$msg: commit=1 to send"
+    fi
+}
+
+# build environment: rpm macros, filesystem symlinks, toolchain names, dh helpers
+ensurepkg debian-compat
+cp -p $top/debian-compat/debian-compat.spec $top/debian-compat/macros.debian $top/debian-compat/debian-install $top/debian-compat/dh_install $top/debian-compat/py3versions $top/debian-compat/dh_bash-completion $top/debian-compat/bash_completion.pm $top/data/relocate.map $top/data/owned-dirs $obs/debian-compat/
+ver=$(grep '^Version:' $top/debian-compat/debian-compat.spec | awk '{print $2}')
+stage $obs/debian-compat "debian-compat $ver (build environment)"
+
+# mapping packages: one spec with one fileless %package per Debian name
+ensurepkg debian-compat-mappings
+d=$obs/debian-compat-mappings
+cp -p $top/debian-compat-mappings/debian-compat-mappings.spec $d/
+for f in "$d"/*.spec "$d"/_multibuild; do
+    [ -e "$f" ] || continue
+    [ "${f##*/}" = debian-compat-mappings.spec ] || rm -f "$f"
+done
+ver=$(grep '^Version:' $top/debian-compat-mappings/debian-compat-mappings.spec | awk '{print $2}')
+n=$(grep -c '^%package' $top/debian-compat-mappings/debian-compat-mappings.spec)
+stage $d "debian-compat-mappings $ver ($n mappings)"

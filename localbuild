@@ -1,7 +1,7 @@
 #!/bin/bash
 # SPDX-License-Identifier: GPL-2.0-or-later
 # usage: [install=1] localbuild PKGDIR  - rpmbuild a package dir inside the tumbleweed distrobox, rpms land in $out/rpms
-# $out/rpms is registered as a plaindir repo in the distrobox, so earlier results (debian-compat) resolve as build deps;
+# $out/rpms is registered as a plaindir repo in the distrobox, so earlier results (debian-compat build environment) resolve as build deps;
 # install=1 also installs the resulting packages there
 . "$(dirname "$0")/lib.sh"
 : ${box:=tumbleweed}
@@ -20,8 +20,6 @@ grep -E '^(Wrote|debian-install|debian-compat):' $out/localbuild-$(basename $d).
 if [ '$install' = 1 ]; then
     sudo -n zypper -n ref debiancontrib-local >/dev/null
     rpms=\$(grep '^Wrote:' $out/localbuild-$(basename $d).log | cut -d' ' -f2 | grep -v -e '\.src\.rpm' -e debuginfo -e debugsource)
-    # of debian-compat only the core subpackages; the mapping ones get pulled in as build dependencies
-    rpms=\$(echo \"\$rpms\" | grep -v 'debian-compat-[^/]*\$'; echo \"\$rpms\" | grep -E 'debian-compat-(filesystem|toolchain|sensible-utils|init-system-helpers)-')
     sudo -n zypper -n in -f --no-recommends --allow-unsigned-rpm \$rpms >/dev/null && echo installed
 fi
 "

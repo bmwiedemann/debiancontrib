@@ -2,7 +2,15 @@
   <title>Debian packages rebuilt for openSUSE Slowroll</title>
   <description>Debian testing source packages built through debhelper with shim .spec files, bridged by debian-compat. Tooling: https://github.com/bmwiedemann/debiancontrib</description>
   <person userid="bmwiedemannai" role="maintainer"/>
-  <repository name="openSUSE_Slowroll">
+  <build>
+    <disable repository="openSUSE_Tumbleweed"/>
+  </build>
+  <repository name="openSUSE_Tumbleweed" rebuild="local">
+    <path project="openSUSE:Factory" repository="snapshot"/>
+    <arch>x86_64</arch>
+    <arch>aarch64</arch>
+  </repository>
+  <repository name="openSUSE_Slowroll" rebuild="local">
     <path project="openSUSE:Slowroll" repository="standard"/>
     <arch>x86_64</arch>
   </repository>

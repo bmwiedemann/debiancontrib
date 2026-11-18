@@ -47,8 +47,8 @@ BuildArch:      noarch
 %description
 Bridges Debian package names, build helpers and filesystem paths to openSUSE
 so that Debian source packages can be built with debhelper through shim spec
-files. The debian-compat-* subpackages map Debian package names to the
-openSUSE packages providing the same content.
+files. The debian-compat-<name> packages that map individual Debian package
+names are built from the debian-compat-mappings source.
 
 %package -n debian-rpm-macros
 Summary:        rpm macros to build Debian sources with debhelper
@@ -105,8 +105,6 @@ BuildArch:      noarch
 %description -n debian-compat-init-system-helpers
 No-op deb-systemd-helper, invoke-rc.d and update-rc.d; openSUSE handles
 service enablement with presets.
-
-@MAPPINGS@
 
 %prep
 %setup -q -c -T

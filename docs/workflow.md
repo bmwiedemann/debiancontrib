@@ -43,8 +43,10 @@ Debian-only names in `data/depmap.ignore`, then `commit=1 pushcompat`.
 
 ## Local build environment
 `localbuild` runs rpmbuild inside the `tumbleweed` distrobox, with `out/rpms`
-registered as a plaindir repo so debian-compat resolves; `install=1` installs
-the results there (needed once for debian-compat).
+registered as a plaindir repo so the debian-compat build environment resolves;
+`install=1` installs the results there (needed once for debian-compat).
+Mapping packages (`debian-compat-mappings`) are not build dependencies: shim
+specs name the mapped openSUSE requires directly.
 
 ## Project config quirks
 `data/prjconf` holds the OBS project configuration (`osc meta prjconf -F data/prjconf $prj`).
