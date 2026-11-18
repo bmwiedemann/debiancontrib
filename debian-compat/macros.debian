@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # rpm macros for building Debian source packages through debhelper
 # a spec only needs: %prep %debian_prep / %build %debian_build / %install %debian_install
+# %debian_env maps the rpm target arch to Debian's arch and GNU triplet
+# (x86_64->amd64, aarch64->arm64, ppc64le->ppc64el, riscv64, s390x); extend the
+# case statement there, and debian_multiarch in debian-compat.spec.in, for new arches.
 %debian_compatdir /usr/lib/debian-compat
 %debian_srcdir src
 
@@ -23,7 +26,8 @@ export PERL_MM_OPT="NO_PACKLIST=1 NO_PERLLOCAL=1 MAN1EXT=1p MAN3EXT=3pm" PERL_MB
 export SOURCE_DATE_EPOCH=$(dpkg-parsechangelog -STimestamp) \
 export LC_ALL=C.UTF-8 \
 export HOME=$PWD/.home; mkdir -p $HOME \
-eval "$(dpkg-architecture -a amd64 -t x86_64-linux-gnu -f -s 2>/dev/null)" \
+case %{_target_cpu} in x86_64) debian_dpkg_arch=amd64; debian_gnu_type=x86_64-linux-gnu ;; aarch64) debian_dpkg_arch=arm64; debian_gnu_type=aarch64-linux-gnu ;; ppc64le) debian_dpkg_arch=ppc64el; debian_gnu_type=powerpc64le-linux-gnu ;; riscv64) debian_dpkg_arch=riscv64; debian_gnu_type=riscv64-linux-gnu ;; s390x) debian_dpkg_arch=s390x; debian_gnu_type=s390x-linux-gnu ;; *) echo "debian-compat: unsupported target arch %{_target_cpu}" >&2; exit 1 ;; esac \
+eval "$(dpkg-architecture -a $debian_dpkg_arch -t $debian_gnu_type -f -s 2>/dev/null)" \
 for v in ARCH ARCH_ABI ARCH_BITS ARCH_CPU ARCH_ENDIAN ARCH_LIBC ARCH_OS GNU_CPU GNU_SYSTEM GNU_TYPE MULTIARCH; do h=DEB_HOST_$v; export DEB_BUILD_$v="${!h}"; done
 
 %debian_build \

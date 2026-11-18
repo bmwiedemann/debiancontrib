@@ -16,7 +16,8 @@ if [ -d $d ]; then
     varch=$(perl -MConfig -e 'print $Config{vendorarch}')
     vlib=$(perl -MConfig -e 'print $Config{vendorlib}')
     [ -n "$varch" ] && [ -n "$vlib" ] || { echo "dh_install: perl reports no vendor paths" >&2; exit 1; }
-    move $d$varch $d/usr/lib/x86_64-linux-gnu/perl5/$vmaj
+    mt=${DEB_HOST_GNU_TYPE:-$(dpkg-architecture -qDEB_HOST_GNU_TYPE 2>/dev/null)}
+    move $d$varch $d/usr/lib/${mt:-x86_64-linux-gnu}/perl5/$vmaj
     move $d$vlib $d/usr/share/perl5
     for site in $(python3 -c 'import sysconfig; print(sysconfig.get_path("purelib"), sysconfig.get_path("platlib"))'); do
         move $d$site $d/usr/lib/python3/dist-packages

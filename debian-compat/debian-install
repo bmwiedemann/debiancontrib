@@ -76,7 +76,7 @@ for my $pkg (@pkgs) {
         my $dst = relocate(-d $e && !-l $e ? "$src/" : $src, $isarch);
         next unless defined $dst;
         $dst =~ s{(.)/$}{$1};
-        die "$pkg: $dst still has the Debian multiarch path\n" if $dst =~ m{^/usr/lib/x86_64-linux-gnu/};
+        die "$pkg: $dst still has the Debian multiarch path\n" if $dst =~ m{^/usr/lib/[^/]+-linux-gnu/};
         if (-l $e) {
             my $t = readlink $e;
             my $rel = $t !~ m{^/};
@@ -104,7 +104,7 @@ for my $pkg (@pkgs) {
             chmod((stat $e)[2] & 07777, "$root$dst");
             if ($dst =~ m{^/usr/(lib64/pkgconfig|share/pkgconfig|lib64/cmake|bin/[^/]*-config$)} && -T "$root$dst") {
                 local ($^I, @ARGV) = ('', "$root$dst");
-                while (<>) { s{/lib/x86_64-linux-gnu}{/lib64}g; print }
+                while (<>) { s{/lib/[^/]+-linux-gnu(?![a-z])}{/lib64}g; print }
             }
             $dirs{$_} = 1 for parents($dst);
             push @list, $dst;
@@ -131,7 +131,8 @@ for my $pkg (@pkgs) {
         push @warn, "$pkg: maintainer script debian/$s is ignored" if $pkg eq $mainpkg && -e "debian/$s"; # debhelper gives unprefixed files to the main package
     }
 }
-my $n = grep { -f "$root$_" && -B _ && do { local $/; open(my $b, '<', "$root$_"); <$b> =~ /x86_64-linux-gnu/ } } keys %owner;
-push @warn, "$n binaries still contain the string x86_64-linux-gnu (debian-compat-filesystem symlink covers it)" if $n;
+my $gnu = $ENV{DEB_HOST_GNU_TYPE} // '';
+my $n = grep { -f "$root$_" && -B _ && do { local $/; open(my $b, '<', "$root$_"); my $c = <$b>; $gnu ? index($c, $gnu) >= 0 : $c =~ /-linux-gnu(?![a-z])/ } } keys %owner;
+push @warn, "$n binaries still contain a Debian multiarch string (debian-compat-filesystem symlink covers it)" if $n;
 print STDERR "debian-install: $_\n" for @warn;
 sub parents { my $p = shift; my @r; while (($p = dirname($p)) ne '/') { push @r, $p } return @r }

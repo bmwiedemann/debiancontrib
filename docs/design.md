@@ -20,13 +20,15 @@ dh_builddeb, ...), so `debian/rules binary` stops after populating
 debuginfo extraction and brp-compress replace what the stubs skip.
 
 `DEB_RULES_REQUIRES_ROOT=no` (OBS builds as abuild), `DEB_BUILD_OPTIONS=nocheck`
-by default, dpkg-architecture forced to amd64/x86_64-linux-gnu with
+by default, dpkg-architecture set from the rpm target arch (`x86_64` -> amd64,
+`aarch64` -> arm64, `ppc64le` -> ppc64el, `riscv64`, `s390x`) with
 DEB_BUILD_* = DEB_HOST_* so nothing looks like a cross build; %optflags are
-appended through DEB_CFLAGS_APPEND.
+appended through DEB_CFLAGS_APPEND. New arches are added to the case statement
+in `macros.debian` and to `debian_multiarch` in `debian-compat.spec.in`.
 
 ## Relocation
 `debian-install` maps paths with `data/relocate.map` (first match wins):
-multiarch `/usr/lib/x86_64-linux-gnu/` -> `/usr/lib64/`, perl -> vendor_perl,
+multiarch `/usr/lib/<triplet>-linux-gnu/` -> `/usr/lib64/`, perl -> vendor_perl,
 `python3/dist-packages` -> site-packages (arch or noarch), ruby, nodejs,
 `/usr/share/doc/<pkg>` -> `/usr/share/doc/packages/<pkg>`, `/bin /sbin /lib`
 -> `/usr/...`; lintian/doc-base/.la/.packlist files are dropped. pkg-config,
@@ -43,9 +45,9 @@ Two OBS source packages, both generated/staged by `pushcompat`:
 
 - `debian-compat` is the build environment and changes rarely:
   - `debian-rpm-macros`: macros, dh stubs, debian-install, relocate.map
-  - `debian-compat-filesystem`: `/usr/lib/x86_64-linux-gnu -> ../lib64`,
-    `/usr/lib/python3/dist-packages`, `/usr/share/perl5` symlinks and
-    `x86_64-linux-gnu-gcc` style toolchain names
+  - `debian-compat-filesystem`: `/usr/lib/<triplet>-linux-gnu -> ../lib64`
+    for the supported triplets, `/usr/lib/python3/dist-packages`,
+    `/usr/share/perl5` symlinks and `<triplet>-gcc` style toolchain names
   - sensible-utils and init-system-helpers stubs
 - `debian-compat-mappings` is one spec with a fileless
   `debian-compat-<name>` package per Debian name that is in
